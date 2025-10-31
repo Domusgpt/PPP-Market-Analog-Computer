@@ -250,4 +250,20 @@ export class HypercubeRenderer {
             target.fill(source);
         }
     }
+
+    getCanvas() {
+        return this.canvas;
+    }
+
+    captureFrame({ format = 'image/png', quality = 0.92 } = {}) {
+        if (!this.canvas || typeof this.canvas.toDataURL !== 'function') {
+            return null;
+        }
+        try {
+            return this.canvas.toDataURL(format, quality);
+        } catch (error) {
+            console.warn('HypercubeRenderer captureFrame failed', error);
+            return null;
+        }
+    }
 }

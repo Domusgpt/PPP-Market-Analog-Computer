@@ -1,0 +1,88 @@
+{
+  "progress": 0.35,
+  "invariants": {
+    "determinant": 1,
+    "trace": 3.335713,
+    "frobenius": 2,
+    "hopfAlignment": 0.849002,
+    "bridgeMagnitude": 0.834791
+  },
+  "topology": {
+    "bridge": [
+      0.998966,
+      -0.039561,
+      0.012862,
+      -0.018336
+    ],
+    "hopf": [
+      0.863857,
+      0.303585,
+      0.271218,
+      0.296695
+    ],
+    "spinorCoherence": 0,
+    "braidDensity": 0
+  },
+  "matrix": [
+    [
+      0.862383,
+      0.36461,
+      0.189796,
+      0.29552
+    ],
+    [
+      -0.485587,
+      0.774859,
+      0.30675,
+      0.264013
+    ],
+    [
+      -0.079807,
+      -0.475789,
+      0.826948,
+      0.288813
+    ],
+    [
+      -0.118874,
+      -0.200692,
+      -0.431323,
+      0.871523
+    ]
+  ],
+  "signal": {
+    "density": 0,
+    "centroid": 0,
+    "spread": 0
+  },
+  "resonance": {
+    "centroid": [
+      0.969555,
+      0.956517,
+      0.362885,
+      -0.388564
+    ],
+    "magnitude": 1.468007,
+    "bridgeProjection": 0.942504,
+    "hopfProjection": 1.111076,
+    "spinorRatio": 1.184828,
+    "gateMean": 1,
+    "gateVariance": 0,
+    "panMean": 0.12074,
+    "panVariance": 0.268359,
+    "phaseVector": [
+      0.945112,
+      0.305219
+    ],
+    "carrierCentroid": [
+      0.469435,
+      0.268247,
+      0.821617,
+      -0.142012
+    ],
+    "carrierMagnitude": 1.026762,
+    "spinorCoherence": 0.348003,
+    "braidDensity": 0.25
+  },
+  "voices": [],
+  "grid": []
+}

@@ -7,6 +7,8 @@ import { buildSpinorMetricManifold, cloneSpinorMetricManifold } from './SpinorMe
 import { buildSpinorTopologyWeave, cloneSpinorTopologyWeave } from './SpinorTopologyWeave.js';
 import { buildSpinorFluxContinuum, cloneSpinorFluxContinuum } from './SpinorFluxContinuum.js';
 import { buildSpinorContinuumLattice, cloneSpinorContinuumLattice } from './SpinorContinuumLattice.js';
+import { buildSpinorContinuumConstellation, cloneSpinorContinuumConstellation } from './SpinorContinuumConstellation.js';
+import { DATA_CHANNEL_COUNT } from './constants.js';
 
 const clamp = (value, min, max) => {
     if (!Number.isFinite(value)) {
@@ -197,6 +199,27 @@ export class SonicGeometryEngine {
         this.lastTopology = null;
         this.lastContinuum = null;
         this.lastLattice = null;
+        this.lastConstellation = null;
+        this.channelLimit = Math.max(1, Math.floor(options.channelLimit || DATA_CHANNEL_COUNT));
+        this.normalizedScratch = new Float32Array(this.channelLimit);
+        const scratchVoiceCount = Math.max(1, this.voiceCount);
+        this.voiceScratch = {
+            size: scratchVoiceCount,
+            sums: new Float32Array(scratchVoiceCount),
+            counts: new Float32Array(scratchVoiceCount),
+            averages: new Float32Array(scratchVoiceCount),
+            energies: new Float32Array(scratchVoiceCount)
+        };
+        this.performanceWindowSize = Number.isFinite(options.performanceWindowSize)
+            ? Math.max(1, Math.floor(options.performanceWindowSize))
+            : 240;
+        this.performanceWindow = [];
+        this.performanceAccumulator = 0;
+        this.performanceMin = Infinity;
+        this.performanceMax = 0;
+        this.performanceAverage = 0;
+        this.lastFrameDuration = 0;
+        this.frameBudgetMs = Number.isFinite(options.frameBudgetMs) ? options.frameBudgetMs : 16.7;
     }
 
     isSupported() {
@@ -226,6 +249,7 @@ export class SonicGeometryEngine {
                 active: this.audioActive,
                 contextState: this.audioContext ? this.audioContext.state : 'uninitialized'
             },
+            performance: this.getPerformanceMetrics(),
             transport: { ...this.transportState },
             lastSummary: this.lastSummary,
             lastAnalysis: this.lastAnalysis
@@ -260,6 +284,9 @@ export class SonicGeometryEngine {
                                 : null,
                             lattice: this.lastAnalysis.transmission.lattice
                                 ? cloneSpinorContinuumLattice(this.lastAnalysis.transmission.lattice)
+                                : null,
+                            constellation: this.lastAnalysis.transmission.constellation
+                                ? cloneSpinorContinuumConstellation(this.lastAnalysis.transmission.constellation)
                                 : null
                         }
                         : null,
@@ -300,6 +327,9 @@ export class SonicGeometryEngine {
                     : null,
                 lattice: this.lastAnalysis.lattice
                     ? cloneSpinorContinuumLattice(this.lastAnalysis.lattice)
+                    : null,
+                constellation: this.lastAnalysis.constellation
+                    ? cloneSpinorContinuumConstellation(this.lastAnalysis.constellation)
                     : null
             }
             : null,
@@ -308,7 +338,29 @@ export class SonicGeometryEngine {
             lastManifold: this.lastManifold ? cloneSpinorMetricManifold(this.lastManifold) : null,
             lastTopology: this.lastTopology ? cloneSpinorTopologyWeave(this.lastTopology) : null,
             lastContinuum: this.lastContinuum ? cloneSpinorFluxContinuum(this.lastContinuum) : null,
-            lastLattice: this.lastLattice ? cloneSpinorContinuumLattice(this.lastLattice) : null
+            lastLattice: this.lastLattice ? cloneSpinorContinuumLattice(this.lastLattice) : null,
+            lastConstellation: this.lastConstellation
+                ? cloneSpinorContinuumConstellation(this.lastConstellation)
+                : null
+        };
+    }
+
+    getPerformanceMetrics() {
+        const samples = this.performanceWindow.length;
+        const average = samples ? this.performanceAverage : 0;
+        const min = samples ? this.performanceMin : 0;
+        const max = samples ? this.performanceMax : 0;
+        const utilization = this.frameBudgetMs > 0 && Number.isFinite(average)
+            ? average / this.frameBudgetMs
+            : 0;
+        return {
+            lastFrameMs: this.lastFrameDuration,
+            averageFrameMs: average,
+            minFrameMs: Number.isFinite(min) ? min : 0,
+            maxFrameMs: Number.isFinite(max) ? max : 0,
+            samples,
+            budgetMs: this.frameBudgetMs,
+            budgetUtilization: utilization
         };
     }
 
@@ -408,7 +460,7 @@ export class SonicGeometryEngine {
                         : this.lastAnalysis.continuum.progress,
                     transport: {
                         playing: Boolean(nextState.playing),
-                        mode: typeof nextState.mode === string ? nextState.mode : idle
+                        mode: typeof nextState.mode === 'string' ? nextState.mode : 'idle'
                     }
                 };
             }
@@ -420,7 +472,19 @@ export class SonicGeometryEngine {
                         : this.lastAnalysis.lattice.progress,
                     transport: {
                         playing: Boolean(nextState.playing),
-                        mode: typeof nextState.mode === string ? nextState.mode : idle
+                        mode: typeof nextState.mode === 'string' ? nextState.mode : 'idle'
+                    }
+                };
+            }
+            if (this.lastAnalysis.constellation) {
+                updatedAnalysis.constellation = {
+                    ...this.lastAnalysis.constellation,
+                    progress: Number.isFinite(nextState.progress)
+                        ? clamp(nextState.progress, 0, 1)
+                        : this.lastAnalysis.constellation.progress,
+                    transport: {
+                        playing: Boolean(nextState.playing),
+                        mode: typeof nextState.mode === 'string' ? nextState.mode : 'idle'
                     }
                 };
             }
@@ -448,7 +512,7 @@ export class SonicGeometryEngine {
                             : this.lastAnalysis.transmission.continuum.progress,
                         transport: {
                             playing: Boolean(nextState.playing),
-                            mode: typeof nextState.mode === string ? nextState.mode : idle
+                            mode: typeof nextState.mode === 'string' ? nextState.mode : 'idle'
                         }
                     };
                 }
@@ -460,7 +524,19 @@ export class SonicGeometryEngine {
                             : this.lastAnalysis.transmission.lattice.progress,
                         transport: {
                             playing: Boolean(nextState.playing),
-                            mode: typeof nextState.mode === string ? nextState.mode : idle
+                            mode: typeof nextState.mode === 'string' ? nextState.mode : 'idle'
+                        }
+                    };
+                }
+                if (this.lastAnalysis.transmission.constellation) {
+                    updatedTransmission.constellation = {
+                        ...this.lastAnalysis.transmission.constellation,
+                        progress: Number.isFinite(nextState.progress)
+                            ? clamp(nextState.progress, 0, 1)
+                            : this.lastAnalysis.transmission.constellation.progress,
+                        transport: {
+                            playing: Boolean(nextState.playing),
+                            mode: typeof nextState.mode === 'string' ? nextState.mode : 'idle'
                         }
                     };
                 }
@@ -514,6 +590,18 @@ export class SonicGeometryEngine {
                 }
             };
         }
+        if (this.lastConstellation) {
+            this.lastConstellation = {
+                ...this.lastConstellation,
+                progress: Number.isFinite(nextState.progress)
+                    ? clamp(nextState.progress, 0, 1)
+                    : this.lastConstellation.progress,
+                transport: {
+                    playing: Boolean(nextState.playing),
+                    mode: typeof nextState.mode === 'string' ? nextState.mode : 'idle'
+                }
+            };
+        }
         this.#updateMasterLevel();
     }
 
@@ -531,7 +619,10 @@ export class SonicGeometryEngine {
         if (!this.active) {
             return null;
         }
+        const frameStart = safeNow();
         const analysis = this.#analyzeFrame(normalizedValues, { ...metadata, transport });
+        const frameDuration = safeNow() - frameStart;
+        this.#recordFrameDuration(frameDuration);
         if (!analysis) {
             return null;
         }
@@ -543,6 +634,9 @@ export class SonicGeometryEngine {
         this.lastTopology = analysis.topology ? cloneSpinorTopologyWeave(analysis.topology) : null;
         this.lastContinuum = analysis.continuum ? cloneSpinorFluxContinuum(analysis.continuum) : null;
         this.lastLattice = analysis.lattice ? cloneSpinorContinuumLattice(analysis.lattice) : null;
+        this.lastConstellation = analysis.constellation
+            ? cloneSpinorContinuumConstellation(analysis.constellation)
+            : null;
         if (this.audioActive) {
             this.#renderAudio(analysis);
         }
@@ -591,6 +685,14 @@ export class SonicGeometryEngine {
             if (this.lastAnalysis.transmission.continuum) {
                 result.transmission.continuum = cloneSpinorFluxContinuum(this.lastAnalysis.transmission.continuum);
             }
+            if (this.lastAnalysis.transmission.lattice) {
+                result.transmission.lattice = cloneSpinorContinuumLattice(this.lastAnalysis.transmission.lattice);
+            }
+            if (this.lastAnalysis.transmission.constellation) {
+                result.transmission.constellation = cloneSpinorContinuumConstellation(
+                    this.lastAnalysis.transmission.constellation
+                );
+            }
         }
         if (this.lastAnalysis.quaternion) {
             result.quaternion = {
@@ -630,6 +732,12 @@ export class SonicGeometryEngine {
         if (this.lastAnalysis.continuum) {
             result.continuum = cloneSpinorFluxContinuum(this.lastAnalysis.continuum);
         }
+        if (this.lastAnalysis.lattice) {
+            result.lattice = cloneSpinorContinuumLattice(this.lastAnalysis.lattice);
+        }
+        if (this.lastAnalysis.constellation) {
+            result.constellation = cloneSpinorContinuumConstellation(this.lastAnalysis.constellation);
+        }
         return result;
     }
 
@@ -657,17 +765,73 @@ export class SonicGeometryEngine {
         return this.lastLattice ? cloneSpinorContinuumLattice(this.lastLattice) : null;
     }
 
+    getLastConstellation() {
+        return this.lastConstellation
+            ? cloneSpinorContinuumConstellation(this.lastConstellation)
+            : null;
+    }
+
     #normalizeValues(values) {
         if (!values || typeof values.length !== 'number') {
-            return [];
+            return this.normalizedScratch.subarray(0, 0);
         }
-        const result = [];
-        for (let index = 0; index < values.length; index += 1) {
-            const value = values[index];
-            const numeric = Number.isFinite(value) ? value : 0;
-            result.push(clamp(numeric, 0, 1));
+        const length = Math.min(this.channelLimit, Math.max(0, Number(values.length) || 0));
+        if (this.normalizedScratch.length < length) {
+            this.normalizedScratch = new Float32Array(length);
         }
-        return result;
+        const scratch = this.normalizedScratch;
+        for (let index = 0; index < length; index += 1) {
+            const numeric = Number.isFinite(values[index]) ? values[index] : 0;
+            scratch[index] = clamp(numeric, 0, 1);
+        }
+        return scratch.subarray(0, length);
+    }
+
+    #ensureVoiceScratch(count) {
+        const required = Math.max(1, count);
+        if (!this.voiceScratch || this.voiceScratch.size < required) {
+            this.voiceScratch = {
+                size: required,
+                sums: new Float32Array(required),
+                counts: new Float32Array(required),
+                averages: new Float32Array(required),
+                energies: new Float32Array(required)
+            };
+        }
+        return this.voiceScratch;
+    }
+
+    #recordFrameDuration(duration) {
+        if (!Number.isFinite(duration)) {
+            return;
+        }
+        this.lastFrameDuration = duration;
+        this.performanceWindow.push(duration);
+        this.performanceAccumulator += duration;
+        if (this.performanceWindow.length > this.performanceWindowSize) {
+            const removed = this.performanceWindow.shift();
+            this.performanceAccumulator -= removed;
+            if (removed === this.performanceMin || removed === this.performanceMax) {
+                if (this.performanceWindow.length) {
+                    this.performanceMin = Math.min(...this.performanceWindow);
+                    this.performanceMax = Math.max(...this.performanceWindow);
+                } else {
+                    this.performanceMin = Infinity;
+                    this.performanceMax = 0;
+                }
+            }
+        }
+        if (duration < this.performanceMin) {
+            this.performanceMin = duration;
+        }
+        if (duration > this.performanceMax) {
+            this.performanceMax = duration;
+        }
+        if (this.performanceWindow.length) {
+            this.performanceAverage = this.performanceAccumulator / this.performanceWindow.length;
+        } else {
+            this.performanceAverage = 0;
+        }
     }
 
     async setOutputMode(mode) {
@@ -917,14 +1081,23 @@ export class SonicGeometryEngine {
         if (!voiceCount) {
             return null;
         }
-        const sums = new Array(voiceCount).fill(0);
-        const counts = new Array(voiceCount).fill(0);
+        const scratch = this.#ensureVoiceScratch(voiceCount);
+        const sums = scratch.sums;
+        const counts = scratch.counts;
+        const averages = scratch.averages;
+        const geometryEnergies = scratch.energies;
+        sums.fill(0, 0, voiceCount);
+        counts.fill(0, 0, voiceCount);
+        averages.fill(0, 0, voiceCount);
+        geometryEnergies.fill(0, 0, voiceCount);
         for (let index = 0; index < values.length; index += 1) {
             const voiceIndex = index % voiceCount;
             sums[voiceIndex] += values[index];
             counts[voiceIndex] += 1;
         }
-        const averages = sums.map((sum, idx) => (counts[idx] ? sum / counts[idx] : 0));
+        for (let index = 0; index < voiceCount; index += 1) {
+            averages[index] = counts[index] ? sums[index] / counts[index] : 0;
+        }
         const visualUniforms = metadata.visualUniforms || metadata.uniforms || null;
         const derivedUniforms = metadata.derivedUniforms || null;
         const transport = metadata.transport || this.transportState;
@@ -959,11 +1132,11 @@ export class SonicGeometryEngine {
         const rightAngle = quaternionTelemetry ? quaternionTelemetry.rightAngle : 0;
         const quaternionDot = quaternionTelemetry ? quaternionTelemetry.dot : 0;
 
-        const geometryEnergies = Array.from({ length: voiceCount }, (_, index) => {
+        for (let index = 0; index < voiceCount; index += 1) {
             const visualEnergy = this.#computeGeometryEnergy(visualUniforms, index);
             const derivedEnergy = this.#computeGeometryEnergy(derivedUniforms, index);
-            return visualEnergy > 0 ? visualEnergy : derivedEnergy;
-        });
+            geometryEnergies[index] = visualEnergy > 0 ? visualEnergy : derivedEnergy;
+        }
 
         const voices = [];
         const modeDescriptor = this.outputMode === 'analysis'
@@ -1235,6 +1408,18 @@ export class SonicGeometryEngine {
             timelineProgress
         });
         const latticeSnapshot = continuumLattice ? cloneSpinorContinuumLattice(continuumLattice) : null;
+        const continuumConstellation = buildSpinorContinuumConstellation({
+            quaternion: quaternionTelemetry,
+            continuum: fluxContinuum,
+            lattice: continuumLattice,
+            signal: signalFabric,
+            manifold: metricManifold,
+            transport,
+            timelineProgress
+        });
+        const constellationSnapshot = continuumConstellation
+            ? cloneSpinorContinuumConstellation(continuumConstellation)
+            : null;
         const summary = `${descriptor} · ${voiceSummaries.join(' · ')} · ${progressLabel}% orbit · ${Math.round(binaryGateDensity * 100)}% gates · ${Math.round(spectralCentroid)}Hz centroid${spinDescriptor}`;
         return {
             timestamp: safeNow(),
@@ -1309,7 +1494,10 @@ export class SonicGeometryEngine {
                 manifold: manifoldSnapshot ? cloneSpinorMetricManifold(manifoldSnapshot) : null,
                 topology: topologySnapshot ? cloneSpinorTopologyWeave(topologySnapshot) : null,
                 continuum: continuumSnapshot ? cloneSpinorFluxContinuum(continuumSnapshot) : null,
-                lattice: latticeSnapshot ? cloneSpinorContinuumLattice(latticeSnapshot) : null
+                lattice: latticeSnapshot ? cloneSpinorContinuumLattice(latticeSnapshot) : null,
+                constellation: constellationSnapshot
+                    ? cloneSpinorContinuumConstellation(constellationSnapshot)
+                    : null
             },
             quaternion: quaternionTelemetry
                 ? {
@@ -1380,7 +1568,8 @@ export class SonicGeometryEngine {
             manifold: manifoldSnapshot,
             topology: topologySnapshot,
             continuum: continuumSnapshot,
-            lattice: latticeSnapshot
+            lattice: latticeSnapshot,
+            constellation: constellationSnapshot
         };
     }
 

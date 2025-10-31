@@ -1,0 +1,60 @@
+{
+  "progress": 0.35,
+  "transport": {
+    "playing": true,
+    "mode": "test"
+  },
+  "voices": [],
+  "carrierMatrix": [],
+  "bitstream": {
+    "sequence": "",
+    "density": 0,
+    "segments": []
+  },
+  "envelope": {
+    "centroid": 0,
+    "spread": 0,
+    "resonance": 0,
+    "progress": 0.35
+  },
+  "quantum": {
+    "hopf": [
+      0.863857,
+      0.303585,
+      0.271218,
+      0.296695
+    ]
+  },
+  "spinor": null,
+  "resonance": {
+    "aggregate": {
+      "centroid": [
+        0.969555,
+        0.956517,
+        0.362885,
+        -0.388564
+      ],
+      "magnitude": 1.468007,
+      "bridgeProjection": 0.942504,
+      "hopfProjection": 1.111076,
+      "spinorRatio": 1.184828,
+      "gateMean": 1,
+      "gateVariance": 0,
+      "panMean": 0.12074,
+      "panVariance": 0.268359,
+      "phaseVector": [
+        0.945112,
+        0.305219
+      ],
+      "carrierCentroid": [
+        0.469435,
+        0.268247,
+        0.821617,
+        -0.142012
+      ],
+      "carrierMagnitude": 1.026762,
+      "spinorCoherence": 0.348003,
+      "braidDensity": 0.25
+    }
+  }
+}

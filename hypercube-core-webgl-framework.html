@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HypercubeCore Data Visualization Platform</title>
+    <script type="module" src="./scripts/console-protect.js" defer></script>
     <style>
         :root {
             color-scheme: dark;
@@ -21,21 +22,6 @@
         body {
             overflow: hidden;
         }
-        body[data-panel-state="collapsed"] #controlPanel {
-            transform: translateX(calc(-100% - 2.5rem));
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-        body[data-panel-state="collapsed"] .control-panel-toggle {
-            background: rgba(16, 40, 76, 0.8);
-            color: #8fd9ff;
-        }
-        body[data-panel-state="expanded"] .control-panel-toggle {
-            background: linear-gradient(120deg, rgba(127, 220, 255, 0.95), rgba(124, 83, 255, 0.95));
-            color: #041326;
-            box-shadow: 0 18px 38px rgba(64, 180, 255, 0.4);
-        }
         #visualizerCanvas {
             position: fixed;
             inset: 0;
@@ -43,6 +29,16 @@
             height: 100vh;
             display: block;
             background: radial-gradient(circle at center, rgba(16, 40, 76, 0.35), rgba(2, 4, 18, 0.95));
+        }
+        #spinorOverlay {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            display: block;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            z-index: 5;
         }
         #controlPanel {
             position: fixed;
@@ -58,55 +54,6 @@
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
             backdrop-filter: blur(14px);
             z-index: 10;
-            transition: transform 0.4s ease, opacity 0.4s ease;
-        }
-        .control-panel-toggle {
-            position: fixed;
-            top: 1.5rem;
-            right: 1.5rem;
-            z-index: 15;
-            border: 1px solid rgba(99, 210, 255, 0.35);
-            border-radius: 999px;
-            padding: 0.55rem 1.35rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            background: rgba(6, 24, 52, 0.85);
-            color: #d2efff;
-            cursor: pointer;
-            transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-        }
-        .control-panel-toggle:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 16px 34px rgba(64, 180, 255, 0.35);
-        }
-        .control-panel-toggle:focus {
-            outline: 2px solid rgba(127, 220, 255, 0.75);
-            outline-offset: 3px;
-        }
-        @media (max-width: 900px) {
-            .control-panel-toggle {
-                top: 1rem;
-                right: 1rem;
-                padding: 0.45rem 1.05rem;
-                font-size: 0.78rem;
-            }
-            #controlPanel {
-                width: min(420px, 94vw);
-            }
-        }
-        @media (max-width: 600px) {
-            #controlPanel {
-                left: 50%;
-                top: auto;
-                bottom: 1.5rem;
-                transform: translateX(-50%);
-                width: min(500px, 92vw);
-            }
-            body[data-panel-state="collapsed"] #controlPanel {
-                transform: translate(-50%, calc(100% + 2rem));
-            }
         }
         #controlPanel h1 {
             margin: 0;
@@ -213,6 +160,17 @@
             appearance: none;
             cursor: pointer;
         }
+        .insight-list {
+            list-style: disc;
+            margin: 0.35rem 0 0;
+            padding-left: 1.25rem;
+            color: rgba(205, 236, 255, 0.78);
+            font-size: 0.78rem;
+            line-height: 1.4;
+        }
+        .insight-list li {
+            margin-bottom: 0.3rem;
+        }
         .control-group select:focus {
             outline: 2px solid rgba(99, 210, 255, 0.5);
             outline-offset: 1px;
@@ -220,6 +178,24 @@
         .control-group select option {
             background-color: #08152b;
             color: #e8f6ff;
+        }
+        .control-group input[type="text"],
+        .control-group input[type="url"],
+        .control-group input[type="number"] {
+            width: 100%;
+            border-radius: 0.85rem;
+            border: 1px solid rgba(120, 200, 255, 0.25);
+            background: rgba(8, 18, 40, 0.85);
+            color: #e8f6ff;
+            padding: 0.6rem 0.85rem;
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+        .control-group input[type="text"]:focus,
+        .control-group input[type="url"]:focus,
+        .control-group input[type="number"]:focus {
+            outline: 2px solid rgba(99, 210, 255, 0.5);
+            outline-offset: 1px;
         }
         .button-row {
             display: flex;
@@ -334,21 +310,18 @@
             color: rgba(160, 200, 240, 0.6);
             line-height: 1.4;
         }
+        .status-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 0.6rem;
+        }
     </style>
 </head>
-<body data-panel-state="collapsed">
-    <button
-        id="controlPanelToggle"
-        class="control-panel-toggle"
-        type="button"
-        aria-expanded="false"
-        aria-controls="controlPanel"
-        aria-label="Show Hypercube controls panel"
-    >
-        Show Controls
-    </button>
+<body>
     <canvas id="visualizerCanvas" aria-label="Hypercube data visualization"></canvas>
-    <aside id="controlPanel" aria-label="Data mapper controls" aria-hidden="true" tabindex="-1">
+    <canvas id="spinorOverlay" aria-hidden="true"></canvas>
+    <aside id="controlPanel" aria-label="Data mapper controls">
         <h1>HypercubeCore</h1>
         <p class="description">
             Route arbitrary data streams into a fully generalized 4D renderer. Use the mapper configuration to bind
@@ -489,12 +462,41 @@
         </div>
 
         <div class="control-group">
+            <label>
+                Live Quaternion Stream
+                <span id="liveStreamMode" class="status-indicator idle">idle</span>
+            </label>
+            <div class="status-stack">
+                <p id="liveStreamStatus" class="small-print">Live stream idle.</p>
+                <p id="liveStreamTelemetry" class="small-print">No live telemetry yet.</p>
+            </div>
+            <label for="websocketUrl">WebSocket URL</label>
+            <input id="websocketUrl" type="url" inputmode="url" placeholder="wss://robot.local:8080/stream">
+            <div class="button-row">
+                <button id="websocketConnect" class="secondary" type="button">Connect WebSocket</button>
+                <button id="serialConnect" class="secondary" type="button">Connect Serial</button>
+            </div>
+            <label for="serialBaudRate">Serial baud rate</label>
+            <select id="serialBaudRate">
+                <option value="115200">115,200</option>
+                <option value="230400">230,400</option>
+                <option value="460800">460,800</option>
+                <option value="921600">921,600</option>
+            </select>
+            <p class="small-print">
+                Streams quaternion frames directly into PPP. WebSocket feeds expect JSON frames with <code>matrix</code> or
+                <code>planes</code> fields plus optional <code>channels</code>. Serial ingestion reads newline-delimited JSON and
+                normalizes values before they hit the mapper, recorder, sonic engine, and PPP APIs.
+            </p>
+        </div>
+
+        <div class="control-group">
             <label class="toggle-label" for="sonicGeometryToggle">
                 <input id="sonicGeometryToggle" type="checkbox">
                 Sonic Geometry Resonance
             </label>
             <p id="sonicGeometryHelper" class="small-print">
-                Enable to translate polytopal motion into double-quaternion harmonic descriptors with optional resonance audio while the spinor coupler, resonance atlas, signal fabric, transduction grid, metric manifold, topology weave, flux continuum, and continuum lattice map the 4D rotation core into harmonic lattices. Streams gating sequences, Hopf fiber telemetry, spinor phase orbits, resonance vectors, carrier matrices, manifold metrics, topology braiding analytics, flux-continuum alignments, lattice synergy reports, and bitstream lattices for robotics or multimodal transformers even when muted.
+                Enable to translate polytopal motion into double-quaternion harmonic descriptors with optional resonance audio while the spinor coupler, resonance atlas, signal fabric, transduction grid, metric manifold, topology weave, flux continuum, continuum lattice, and constellation field map the 4D rotation core into harmonic lattices. Streams gating sequences, Hopf fiber telemetry, spinor phase orbits, resonance vectors, carrier matrices, manifold metrics, topology braiding analytics, flux-continuum alignments, lattice synergy reports, constellation dispersion metrics, and bitstream lattices for robotics or multimodal transformers even when muted.
             </p>
             <div class="button-row">
                 <label for="sonicGeometryMode" style="flex: 1 1 auto;">Output Mode</label>
@@ -504,12 +506,56 @@
                 </select>
             </div>
             <p id="sonicGeometryModeHelper" class="small-print">
-                Dual stream couples resonance audio with quaternion bridges, spinor harmonic lattices, resonance atlas payloads, the spinor signal fabric, transduction grids, metric manifolds, topology weaves, flux continua, and gate density metrics; silent analysis shares the same telemetry without touching the AudioContext—ideal for multimodal transformers.
+                Dual stream couples resonance audio with quaternion bridges, spinor harmonic lattices, resonance atlas payloads, the spinor signal fabric, transduction grids, metric manifolds, topology weaves, flux continua, continuum lattices, constellation telemetry, and gate density metrics; silent analysis shares the same telemetry without touching the AudioContext—ideal for multimodal transformers.
             </p>
         </div>
 
         <div id="statusMessage" role="status">Initializing renderer…</div>
         <pre id="uniformPreview">Awaiting data…</pre>
+
+        <div class="control-group">
+            <label>
+                Calibration Toolkit
+                <span id="calibrationStatus" class="status-indicator idle">Calibration idle.</span>
+            </label>
+            <label for="calibrationSequence">Sequence preset</label>
+            <select id="calibrationSequence"></select>
+            <div class="button-row">
+                <button id="startCalibration" class="primary" type="button">Start Calibration</button>
+                <button id="stopCalibration" class="secondary" type="button">Stop</button>
+            </div>
+            <p class="small-print">
+                Captured samples: <span id="calibrationSamples">0</span>
+                · Toolkit exports synchronized channel values, uniform snapshots, sonic telemetry, and optional overlay captures
+                for dataset tuning loops.
+            </p>
+        </div>
+
+        <div class="control-group">
+            <label>
+                Dataset Builder
+                <span id="datasetStatus" class="status-indicator idle">Dataset idle.</span>
+            </label>
+            <p class="small-print">
+                Execute the full calibration plan, aggregate parity metrics between the WebGL uniforms and sonic telemetry, and
+                export a manifest tuned for multimodal training datasets.
+            </p>
+            <div class="button-row">
+                <button id="runDatasetPlan" class="primary" type="button">Build Dataset</button>
+                <button id="downloadDataset" class="secondary" type="button" disabled>Download Manifest</button>
+            </div>
+            <p id="datasetSummary" class="small-print">No dataset captured yet.</p>
+        </div>
+
+        <div class="control-group">
+            <label>Dataset Insights</label>
+            <p class="small-print">
+                Narrative telemetry summarizing fidelity, parity drift, and recommended follow-ups for the multimodal MVP dataset.
+            </p>
+            <ul id="datasetInsights" class="insight-list">
+                <li>Run the dataset plan to generate insights.</li>
+            </ul>
+        </div>
 
         <p class="small-print">
             Customize <code>scripts/defaultMapping.js</code> or register runtime presets to integrate additional sensors.

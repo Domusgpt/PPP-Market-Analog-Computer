@@ -1,0 +1,115 @@
+{
+  "timestamp": 0,
+  "progress": 0.35,
+  "transport": {
+    "playing": true,
+    "mode": "test"
+  },
+  "orientation": {
+    "continuum": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "voice": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "residual": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "bridge": [
+      0.998966,
+      -0.039561,
+      0.012862,
+      -0.018336
+    ],
+    "hopf": [
+      0.863857,
+      0.303585,
+      0.271218,
+      0.296695
+    ],
+    "centroid": []
+  },
+  "centroid": {
+    "bridgeProjection": 0,
+    "hopfProjection": 0,
+    "dispersion": {
+      "mean": 0,
+      "max": 0
+    }
+  },
+  "nodes": [],
+  "sequence": {
+    "sequence": "",
+    "density": 0,
+    "weights": [],
+    "bitDensity": 0,
+    "bitEntropy": 0
+  },
+  "gating": {
+    "mean": 0,
+    "variance": 0
+  },
+  "spinor": {
+    "coherence": 0,
+    "braid": 0,
+    "ratioMean": 0,
+    "ratioVariance": 0,
+    "panMean": 0,
+    "panVariance": 0,
+    "phaseMean": 0,
+    "phaseVariance": 0
+  },
+  "energy": {
+    "carrier": 0,
+    "grid": 0,
+    "continuum": 0,
+    "signal": 0
+  },
+  "frequency": {
+    "min": 0,
+    "max": 0,
+    "mean": 0,
+    "variance": 0,
+    "centroid": 0,
+    "span": 0
+  },
+  "flux": {
+    "density": 0,
+    "variance": 0,
+    "bridgeAlignment": 0,
+    "hopfAlignment": 0,
+    "voiceAlignment": 0
+  },
+  "synergy": {
+    "bridgeContinuum": 0,
+    "hopfContinuum": 0,
+    "voiceContinuum": 0,
+    "bridgeVoice": 0,
+    "gateMean": 0,
+    "sequenceDensity": 0
+  },
+  "carriers": {
+    "summary": {
+      "active": 0,
+      "energy": 0,
+      "meanFrequency": 0,
+      "span": 0
+    },
+    "spectral": {
+      "span": 0,
+      "variance": 0,
+      "mean": 0,
+      "active": 0
+    },
+    "entries": []
+  }
+}

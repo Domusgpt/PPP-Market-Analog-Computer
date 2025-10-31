@@ -3,2338 +3,398 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infographic: The Polytopal Projection Processing Paradigm</title>
+    <title>Polytopal Projection Processing • Engineering Overview</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <script type="module" src="scripts/console-protect.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Brilliant Blues -->
-    <!-- Application Structure Plan: The infographic follows a narrative structure designed to build understanding progressively. It starts with the core problem (the "Crisis of Dimensionality"), introduces the paradigm shift (PPP), breaks down its core mechanics, highlights the key breakthrough (robotics application), shows its place in a larger AI architecture, and concludes with its broad impact and proven status. This top-down approach is ideal for a complex technical subject, making it accessible to a wider audience by establishing context before diving into details. -->
-    <!-- Visualization & Content Choices: 
-        - Problem vs Solution: Goal: Compare. Viz: Side-by-side card layout with a custom canvas animation. Justification: Visually contrasts the linear old paradigm with the holistic new one. Method: HTML/CSS + Canvas.
-        - Core Mechanics: Goal: Organize. Viz: A three-column grid with Unicode icons. Justification: Breaks down the three pillars of the technology into easily scannable, digestible points. Method: HTML/CSS.
-        - Degrees of Freedom: Goal: Compare. Viz: Bar Chart. Justification: Provides a simple, quantitative comparison of 3D vs. 4D rotational complexity, a key concept. Method: Chart.js/Canvas.
-        - IMU to 4D Mapping: Goal: Show Relationship. Viz: A structured HTML/CSS diagram. Justification: Clearly illustrates the paradigm's most significant real-world application without needing a complex chart. Method: HTML/CSS.
-        - HAOS Architecture: Goal: Organize. Viz: A vertical HTML/CSS flowchart. Justification: Shows how PPP fits into a larger system architecture in a universally understood format. Method: HTML/CSS.
-        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
+        :root {
+            color-scheme: dark;
+        }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0A192F;
-            color: #E0FFFF;
+            background-color: #071526;
+            color: #d8f5ff;
         }
         body::before {
             content: '';
             position: fixed;
             inset: 0;
-            background: radial-gradient(circle at 20% 20%, rgba(0, 127, 255, 0.18), transparent 45%),
-                        radial-gradient(circle at 80% 10%, rgba(137, 207, 240, 0.15), transparent 40%),
-                        radial-gradient(circle at 50% 80%, rgba(0, 30, 60, 0.6), transparent 55%);
+            background:
+                radial-gradient(circle at 20% 20%, rgba(80, 180, 255, 0.15), transparent 55%),
+                radial-gradient(circle at 80% 10%, rgba(120, 90, 255, 0.12), transparent 50%),
+                linear-gradient(180deg, rgba(6, 25, 48, 0.6), rgba(6, 13, 28, 0.9));
             pointer-events: none;
             z-index: -1;
         }
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 350px;
-            max-height: 400px;
-        }
-        .gradient-text {
-            background: linear-gradient(120deg, #89CFF0, #c084fc, #38bdf8, #89CFF0);
-            background-size: 250% 250%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientPulse 7s ease-in-out infinite;
-        }
-        .focus-gradient {
-            display: inline-block;
-            position: relative;
-            background: linear-gradient(110deg, rgba(137, 207, 240, 0.15), rgba(192, 132, 252, 0.35));
-            border-radius: 0.85rem;
-            padding: 0.2rem 0.6rem;
-            overflow: hidden;
-        }
-        .focus-gradient span {
-            background: linear-gradient(120deg, #89CFF0, #38bdf8, #c084fc, #fb7185);
-            background-size: 220% 220%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientPulse 6s ease-in-out infinite;
-            font-weight: 700;
-        }
-        @keyframes gradientPulse {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .frost-card {
-            position: relative;
-            background: rgba(10, 25, 47, 0.68);
-            border: 1px solid rgba(0, 127, 255, 0.35);
-            border-radius: 0.75rem;
-            box-shadow: 0 25px 55px -30px rgba(137, 207, 240, 0.7);
-            backdrop-filter: blur(14px);
-            transition: border-color 0.3s ease, transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
-            overflow: hidden;
-        }
-        .frost-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(120deg, rgba(56, 189, 248, 0.08), rgba(192, 132, 252, 0.05));
-            opacity: 0;
-            transition: opacity 0.35s ease;
-            pointer-events: none;
-        }
-        .frost-card > * {
-            position: relative;
-            z-index: 1;
-        }
-        .frost-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(137, 207, 240, 0.55);
-            box-shadow: 0 35px 60px -30px rgba(56, 189, 248, 0.65);
-            background: rgba(10, 25, 47, 0.78);
-        }
-        .frost-card:hover::before {
-            opacity: 1;
-        }
-        .section-shell {
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, rgba(9, 28, 56, 0.72), rgba(4, 16, 36, 0.92));
-            border-radius: 1.5rem;
-            border: 1px solid rgba(36, 99, 170, 0.35);
-            box-shadow: 0 25px 60px -35px rgba(9, 132, 255, 0.6);
-        }
-        .section-shell[data-aurora="true"]::before {
-            content: '';
-            position: absolute;
-            inset: -40% -20% auto -20%;
-            height: 220px;
-            background: radial-gradient(circle at 15% 40%, rgba(56, 189, 248, 0.45), transparent 65%),
-                        radial-gradient(circle at 85% 25%, rgba(192, 132, 252, 0.38), transparent 70%);
-            filter: blur(24px);
-            opacity: 0.8;
-            animation: auroraDrift 18s ease-in-out infinite;
-        }
-        .section-shell[data-aurora="true"]::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(120deg, rgba(137, 207, 240, 0.15), transparent 65%);
-            opacity: 0.55;
-            pointer-events: none;
-        }
-        .section-shell[data-aurora="true"] > * {
-            position: relative;
-            z-index: 1;
-        }
-        @keyframes auroraDrift {
-            0% {
-                transform: translate3d(0, 0, 0) scale(1);
-                opacity: 0.85;
-            }
-            50% {
-                transform: translate3d(6%, -4%, 0) scale(1.05);
-                opacity: 0.95;
-            }
-            100% {
-                transform: translate3d(-4%, 3%, 0) scale(1);
-                opacity: 0.8;
-            }
-        }
-        .section-shell .section-title {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1.25rem;
-            border-radius: 9999px;
-            border: 1px solid rgba(137, 207, 240, 0.35);
-            background: rgba(12, 38, 74, 0.58);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #89CFF0;
-        }
-        .section-beacon {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.65rem;
-            padding: 0.45rem 0.85rem;
-            border-radius: 999px;
-            background: rgba(12, 38, 74, 0.6);
-            border: 1px solid rgba(137, 207, 240, 0.25);
-            text-transform: uppercase;
-            letter-spacing: 0.16em;
-            font-size: 0.7rem;
-            color: rgba(224, 255, 255, 0.78);
-            margin-bottom: 1rem;
-            position: relative;
-            overflow: hidden;
-        }
-        .section-beacon::before {
-            content: '';
-            position: absolute;
-            inset: -40% auto -40% -20%;
-            width: 45%;
-            background: linear-gradient(120deg, rgba(56, 189, 248, 0.55), transparent 65%);
-            transform: translateX(-60%);
-            animation: beaconSweep 6s ease-in-out infinite;
-        }
-        .section-beacon-dot {
-            width: 0.5rem;
-            height: 0.5rem;
-            border-radius: 999px;
-            background: linear-gradient(120deg, rgba(56, 189, 248, 0.9), rgba(192, 132, 252, 0.85));
-            box-shadow: 0 0 12px rgba(56, 189, 248, 0.75);
-        }
-        @keyframes beaconSweep {
-            0%, 100% {
-                transform: translateX(-70%);
-                opacity: 0.45;
-            }
-            50% {
-                transform: translateX(140%);
-                opacity: 0.9;
-            }
-        }
-        .manifest-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-            margin-bottom: 1.5rem;
-        }
-        .manifest-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.45rem 0.85rem;
-            border-radius: 0.75rem;
-            background: rgba(12, 38, 74, 0.68);
-            border: 1px solid rgba(137, 207, 240, 0.28);
-            color: rgba(224, 255, 255, 0.85);
-            font-size: 0.8rem;
-            letter-spacing: 0.04em;
-            box-shadow: 0 14px 28px -22px rgba(56, 189, 248, 0.8);
-            position: relative;
-            overflow: hidden;
-        }
-        .manifest-badge::before {
-            content: '';
-            display: inline-block;
-            width: 0.45rem;
-            height: 0.45rem;
-            border-radius: 999px;
-            background: radial-gradient(circle, rgba(192, 132, 252, 0.85), rgba(56, 189, 248, 0.4));
-            box-shadow: 0 0 14px rgba(192, 132, 252, 0.6);
-        }
-        .section-divider {
-            height: 1px;
-            max-width: 14rem;
-            margin: 2.5rem auto 0;
-            background: linear-gradient(90deg, transparent, rgba(192, 132, 252, 0.55), transparent);
-            box-shadow: 0 0 18px rgba(192, 132, 252, 0.35);
-        }
-        .list-grid {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: grid;
-            gap: 0.9rem;
-            grid-template-columns: minmax(0, 1fr);
-        }
-        .list-grid li {
-            position: relative;
-            padding: 0.65rem 0.75rem 0.65rem 1.75rem;
-            border-radius: 0.85rem;
-            background: rgba(12, 38, 74, 0.48);
-            border: 1px solid rgba(137, 207, 240, 0.18);
-            box-shadow: 0 18px 32px -26px rgba(56, 189, 248, 0.85);
-        }
-        .list-grid li::before {
-            content: '';
-            position: absolute;
-            left: 0.85rem;
-            top: 1rem;
-            width: 0.45rem;
-            height: 0.45rem;
-            border-radius: 999px;
-            background: linear-gradient(120deg, rgba(56, 189, 248, 0.9), rgba(192, 132, 252, 0.85));
-            box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
-        }
-        .list-grid--dense {
-            gap: 0.75rem;
-        }
-        .list-grid--dense li {
-            padding: 0.6rem 0.75rem 0.6rem 1.6rem;
-            background: rgba(12, 38, 74, 0.42);
-        }
-        @media (min-width: 768px) {
-            .list-grid {
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            }
-            .section-beacon {
-                font-size: 0.75rem;
-            }
-        }
-        @media (min-width: 1024px) {
-            .manifest-badges {
-                gap: 0.75rem;
-            }
-            .list-grid {
-                gap: 1.05rem;
-            }
-        }
-        .console-wrapper {
-            position: relative;
-            width: 100%;
-            border-radius: 1.25rem;
-            overflow: hidden;
-            border: 1px solid rgba(36, 99, 170, 0.45);
-            background: rgba(5, 16, 34, 0.82);
-            box-shadow: 0 35px 65px -32px rgba(9, 132, 255, 0.75);
-            transition: height 0.35s ease, max-height 0.35s ease, aspect-ratio 0.35s ease;
-            aspect-ratio: 16 / 10;
-            max-height: 78vh;
-            min-height: 320px;
-        }
-        .console-fallback {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
-            background: rgba(5, 16, 34, 0.65);
-            backdrop-filter: blur(12px);
-            z-index: 2;
-        }
-        .console-fallback[data-state="ready"] {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-        .console-fallback[data-state="loading"] {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: none;
-        }
-        .console-fallback[data-state="warn"] {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-            background: linear-gradient(135deg, rgba(5, 16, 34, 0.85), rgba(8, 24, 52, 0.92));
-        }
-        .console-fallback-card {
-            width: min(420px, 100%);
-            border-radius: 1.25rem;
-            border: 1px solid rgba(137, 207, 240, 0.35);
-            background: rgba(8, 24, 52, 0.78);
-            box-shadow: 0 24px 55px -30px rgba(9, 132, 255, 0.75);
-            padding: 1.75rem 1.5rem;
-            text-align: center;
-            color: #E0FFFF;
-        }
-        .console-fallback[data-state="loading"] .console-fallback-card {
-            background: rgba(8, 24, 52, 0.64);
-        }
-        .console-spinner {
-            width: 2.75rem;
-            height: 2.75rem;
-            border-radius: 999px;
-            border: 3px solid rgba(137, 207, 240, 0.25);
-            border-top-color: rgba(56, 189, 248, 0.85);
+            max-width: 520px;
             margin: 0 auto;
-            animation: consoleSpin 0.9s linear infinite;
+            height: 320px;
         }
-        .console-fallback-status {
-            margin-top: 1.1rem;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            color: rgba(224, 255, 255, 0.9);
+        .section-card {
+            background: rgba(9, 27, 54, 0.82);
+            border: 1px solid rgba(104, 178, 255, 0.25);
+            border-radius: 1rem;
+            padding: 1.75rem;
+            box-shadow: 0 22px 50px -30px rgba(0, 89, 190, 0.6);
         }
-        .console-fallback[data-state="warn"] .console-fallback-status {
-            color: rgba(252, 231, 243, 0.92);
+        .metric-value {
+            font-size: 2.6rem;
+            font-weight: 700;
+            background: linear-gradient(120deg, #58c5ff, #8a6fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .console-fallback-action {
-            margin-top: 1.4rem;
+        .cta-button {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            padding: 0.65rem 1.4rem;
+            padding: 0.9rem 1.8rem;
             border-radius: 999px;
-            border: 1px solid rgba(137, 207, 240, 0.45);
-            background: rgba(12, 74, 110, 0.55);
-            color: #E0FFFF;
-            font-size: 0.85rem;
+            border: 1px solid rgba(120, 200, 255, 0.35);
+            background: rgba(12, 36, 64, 0.82);
+            color: #d8f5ff;
             font-weight: 600;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            font-size: 0.95rem;
+            letter-spacing: 0.01em;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
         }
-        .console-fallback-action:hover {
-            background: rgba(37, 99, 235, 0.55);
+        .cta-button:hover {
             transform: translateY(-1px);
-            box-shadow: 0 12px 28px -18px rgba(56, 189, 248, 0.85);
+            background: rgba(18, 62, 96, 0.92);
+            box-shadow: 0 18px 36px rgba(64, 180, 255, 0.35);
         }
-        .console-fallback-action:focus {
-            outline: 2px solid rgba(56, 189, 248, 0.8);
-            outline-offset: 2px;
+        .cta-button:focus-visible {
+            outline: 2px solid rgba(120, 200, 255, 0.65);
+            outline-offset: 3px;
         }
-        @keyframes consoleSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .embed-shell {
+            position: relative;
+            border-radius: 1rem;
+            border: 1px solid rgba(98, 182, 255, 0.25);
+            background: rgba(6, 18, 38, 0.9);
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
         }
-        .console-wrapper.expanded {
-            aspect-ratio: auto;
-            height: min(92vh, 980px);
-            max-height: none;
-        }
-        .console-wrapper iframe {
+        .embed-shell iframe {
             width: 100%;
             height: 100%;
-            display: block;
+            border: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
-        .console-wrapper::after {
-            content: 'Clear Seas Solutions / Paul Phillips';
+        .embed-shell iframe[data-loaded="true"] {
+            opacity: 1;
+        }
+        .embed-overlay {
             position: absolute;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            font-size: clamp(0.8rem, 2vw, 1.05rem);
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: rgba(137, 207, 240, 0.35);
-            background: linear-gradient(120deg, rgba(8, 25, 47, 0.45), rgba(8, 25, 47, 0.05));
-            padding: 0.65rem 0.9rem;
-            border-radius: 999px;
-            border: 1px solid rgba(137, 207, 240, 0.25);
-            pointer-events: none;
-            mix-blend-mode: screen;
-            backdrop-filter: blur(6px);
-        }
-        @media (min-width: 1024px) {
-            .console-wrapper {
-                aspect-ratio: 21 / 10;
-            }
-        }
-        @media (max-width: 640px) {
-            .console-fallback {
-                padding: 1.5rem;
-            }
-            .console-fallback-card {
-                padding: 1.5rem 1.25rem;
-            }
-        }
-        details.frost-card {
-            position: relative;
-            overflow: hidden;
-        }
-        details.frost-card summary {
-            list-style: none;
-            cursor: pointer;
+            inset: 0;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             gap: 1rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #E0FFFF;
+            padding: 2rem;
+            background: linear-gradient(140deg, rgba(8, 24, 52, 0.92), rgba(12, 32, 64, 0.78));
+            text-align: center;
+            transition: opacity 0.4s ease;
         }
-        details.frost-card summary::-webkit-details-marker {
-            display: none;
-        }
-        details.frost-card summary .summary-arrow {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 1.5rem;
-            height: 1.5rem;
-            flex-shrink: 0;
-            border-radius: 999px;
-            background: rgba(59, 130, 246, 0.15);
-            color: rgba(137, 207, 240, 0.85);
-            font-size: 0.85rem;
-            transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
-        }
-        details.frost-card summary:hover .summary-arrow {
-            background: rgba(59, 130, 246, 0.3);
-            color: rgba(224, 255, 255, 0.95);
-        }
-        details.frost-card[open] summary .summary-arrow {
-            transform: rotate(180deg);
-        }
-        .contact-overlay {
-            position: fixed;
-            bottom: 1.25rem;
-            right: 1.25rem;
-            z-index: 80;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 0.85rem;
-        }
-        .contact-toggle {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.55rem;
-            border-radius: 999px;
-            border: 1px solid rgba(137, 207, 240, 0.38);
-            background: rgba(8, 20, 42, 0.82);
-            color: #E0FFFF;
-            font-weight: 600;
-            padding: 0.45rem 0.9rem 0.45rem 0.55rem;
-            font-size: 0.8rem;
-            letter-spacing: 0.03em;
+        .embed-overlay h3 {
+            margin: 0;
+            font-size: 1.4rem;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
-            transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-            box-shadow: 0 16px 36px -26px rgba(56, 189, 248, 0.95);
+            color: #83d4ff;
         }
-        .contact-toggle:hover,
-        .contact-toggle:focus {
-            transform: translateY(-1px);
-            background: rgba(11, 29, 56, 0.9);
-            border-color: rgba(137, 207, 240, 0.55);
-            box-shadow: 0 20px 44px -26px rgba(59, 130, 246, 0.75);
-            outline: none;
-        }
-        .contact-toggle:focus-visible {
-            outline: 2px solid rgba(137, 207, 240, 0.58);
-            outline-offset: 3px;
-        }
-        .contact-toggle[aria-expanded="true"] {
-            background: rgba(13, 32, 63, 0.95);
-            border-color: rgba(137, 207, 240, 0.6);
-            box-shadow: 0 28px 60px -30px rgba(59, 130, 246, 0.75);
-        }
-        .contact-toggle-icon {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 2.05rem;
-            height: 2.05rem;
-            border-radius: 999px;
-            background: radial-gradient(circle at 30% 25%, rgba(137, 207, 240, 0.95), rgba(56, 189, 248, 0.4)),
-                        linear-gradient(145deg, rgba(137, 207, 240, 0.75), rgba(192, 132, 252, 0.9));
-            box-shadow: inset 0 2px 8px rgba(10, 25, 47, 0.45), 0 6px 18px -10px rgba(59, 130, 246, 0.8);
-        }
-        .contact-toggle-label {
-            letter-spacing: 0.16em;
-            font-size: 0.75rem;
-        }
-        .contact-toggle-diamond {
-            position: relative;
-            width: 1.05rem;
-            height: 1.05rem;
-            transform: rotate(45deg);
-            border-radius: 0.25rem;
-            border: 2px solid rgba(224, 255, 255, 0.82);
-            box-shadow: inset 0 0 10px rgba(10, 25, 47, 0.55);
-            display: block;
-        }
-        .contact-toggle-diamond::after {
-            content: '';
-            position: absolute;
-            inset: 0.2rem;
-            border-radius: 0.2rem;
-            background: linear-gradient(135deg, rgba(10, 25, 47, 0.9), rgba(59, 130, 246, 0.75));
-        }
-        .contact-panel {
-            width: min(320px, 90vw);
-            border-radius: 1rem;
-            border: 1px solid rgba(137, 207, 240, 0.42);
-            background: linear-gradient(135deg, rgba(8, 24, 52, 0.94), rgba(10, 25, 47, 0.9));
-            box-shadow: 0 28px 62px -28px rgba(56, 189, 248, 0.88);
-            padding: 1.35rem 1.25rem;
-            color: #E0FFFF;
-        }
-        .contact-panel h3 {
-            font-size: 0.95rem;
-            font-weight: 700;
-            margin-bottom: 0.45rem;
-        }
-        .contact-panel p {
-            font-size: 0.82rem;
-            line-height: 1.6;
-            color: rgba(224, 255, 255, 0.85);
-        }
-        .contact-form {
-            margin-top: 0.85rem;
-            display: grid;
-            gap: 0.75rem;
-        }
-        .contact-form label {
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: rgba(137, 207, 240, 0.8);
-        }
-        .contact-form input,
-        .contact-form textarea {
-            background: rgba(7, 19, 39, 0.82);
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            border-radius: 0.6rem;
-            padding: 0.6rem 0.75rem;
-            color: #E0FFFF;
-            font-size: 0.85rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .contact-form input:focus,
-        .contact-form textarea:focus {
-            outline: none;
-            border-color: rgba(137, 207, 240, 0.75);
-            box-shadow: 0 0 0 3px rgba(137, 207, 240, 0.25);
-        }
-        .contact-form textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-        .contact-submit {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.4rem;
-            border-radius: 0.65rem;
-            border: 1px solid rgba(137, 207, 240, 0.45);
-            background: linear-gradient(120deg, rgba(59, 130, 246, 0.85), rgba(192, 132, 252, 0.8));
-            color: #0A192F;
-            font-weight: 700;
-            padding: 0.6rem 1rem;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .contact-submit:hover,
-        .contact-submit:focus {
-            transform: translateY(-1px);
-            box-shadow: 0 18px 40px -24px rgba(192, 132, 252, 0.9);
-            outline: none;
-        }
-        .contact-submit:focus-visible {
-            outline: 2px solid rgba(224, 255, 255, 0.6);
-            outline-offset: 3px;
-        }
-        .contact-footnote {
-            font-size: 0.75rem;
-            color: rgba(224, 255, 255, 0.62);
+        .embed-overlay p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: rgba(210, 234, 255, 0.82);
+            max-width: 32rem;
             line-height: 1.5;
         }
-        .contact-error {
-            color: #fb7185;
+        .discreet-text {
             font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .contact-success {
-            display: grid;
-            gap: 0.65rem;
-            font-size: 0.85rem;
-        }
-        .contact-success strong {
-            font-size: 1.1rem;
-            letter-spacing: 0.04em;
-            color: #38bdf8;
-        }
-        @media (max-width: 768px) {
-            .contact-overlay {
-                left: 1rem;
-                bottom: 1rem;
-            }
-        }
-        @media (max-width: 640px) {
-            .contact-overlay {
-                right: 0.85rem;
-                transform: none;
-                align-items: flex-end;
-            }
-            .contact-panel {
-                width: min(360px, 92vw);
-            }
-        }
-        canvas.infographic-canvas {
-            width: 100%;
-            height: 220px;
-            background: linear-gradient(160deg, rgba(12, 38, 74, 0.92), rgba(4, 16, 36, 0.8));
-            border-radius: 1rem;
-            border: 1px solid rgba(137, 207, 240, 0.2);
-        }
-        .demo-bow-canvas {
-            width: 100%;
-            height: clamp(260px, 55vh, 420px);
-            border-radius: 1.25rem;
-            border: 1px solid rgba(137, 207, 240, 0.2);
-            background: radial-gradient(circle at 50% 120%, rgba(8, 25, 47, 0.95), rgba(8, 25, 47, 0.6));
-        }
-        .demo-bow-visual {
-            position: relative;
-        }
-        .demo-bow-overlay {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 0.75rem;
-            pointer-events: none;
-            z-index: 3;
-        }
-        .demo-bow-overlay[data-mobile="true"] {
-            position: static;
-            align-items: stretch;
-            pointer-events: auto;
-            gap: 0.5rem;
-        }
-        .demo-bow-overlay[data-mobile="true"] .demo-bow-overlay-toggle {
-            align-self: flex-end;
-        }
-        .demo-bow-overlay[data-mobile="true"] .demo-bow-controls {
-            width: 100%;
-            min-width: 0;
-        }
-        .demo-bow-overlay-toggle {
-            pointer-events: auto;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.45rem;
-            padding: 0.5rem 0.85rem;
-            border-radius: 999px;
-            border: 1px solid rgba(137, 207, 240, 0.45);
-            background: rgba(12, 38, 74, 0.78);
-            color: #E0FFFF;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            font-size: 0.72rem;
-            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .demo-bow-overlay-toggle[data-mobile="true"] {
-            font-size: 0.68rem;
-            padding: 0.45rem 0.8rem;
-            box-shadow: none;
-        }
-        .demo-bow-overlay[data-state="expanded"] .demo-bow-overlay-toggle {
-            background: rgba(37, 99, 235, 0.52);
-            border-color: rgba(56, 189, 248, 0.6);
-            box-shadow: 0 20px 44px -30px rgba(56, 189, 248, 0.85);
-        }
-        .demo-bow-overlay-toggle:hover,
-        .demo-bow-overlay-toggle:focus-visible {
-            transform: translateY(-1px);
-            background: rgba(37, 99, 235, 0.6);
-            border-color: rgba(56, 189, 248, 0.75);
-            box-shadow: 0 24px 52px -30px rgba(56, 189, 248, 0.9);
-        }
-        .demo-bow-overlay-toggle:focus-visible {
-            outline: 2px solid rgba(137, 207, 240, 0.75);
-            outline-offset: 3px;
-        }
-        .demo-bow-controls {
-            pointer-events: auto;
-            display: grid;
-            gap: 0.65rem;
-            padding: 0.9rem 1.05rem;
-            border-radius: 1rem;
-            border: 1px solid rgba(56, 189, 248, 0.35);
-            background: linear-gradient(155deg, rgba(8, 25, 47, 0.92), rgba(8, 25, 47, 0.76));
-            box-shadow: 0 28px 60px -36px rgba(56, 189, 248, 0.85);
-            min-width: 220px;
-        }
-        .demo-bow-controls.is-collapsed {
-            display: none;
-        }
-        .demo-bow-stage {
-            border: 1px solid rgba(59, 130, 246, 0.25);
-            border-radius: 0.85rem;
-            padding: 1.25rem;
-            background: rgba(8, 25, 47, 0.6);
-            transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-        }
-        .demo-bow-stage span {
-            display: block;
-        }
-        .demo-bow-stage .stage-label {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: rgba(137, 207, 240, 0.85);
-            margin-bottom: 0.3rem;
-        }
-        .demo-bow-stage .stage-title {
-            font-weight: 600;
-            color: #E0FFFF;
-            font-size: 1.1rem;
-        }
-        .demo-bow-stage-active {
-            border-color: rgba(59, 130, 246, 0.55);
-            background: rgba(15, 40, 72, 0.72);
-            box-shadow: 0 20px 45px -30px rgba(56, 189, 248, 0.8);
-            transform: translateY(-2px);
-        }
-        .demo-bow-stage[role="button"] {
-            cursor: pointer;
-        }
-        .demo-bow-insights {
-            margin-top: 1.5rem;
-        }
-        .demo-bow-highlight {
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            border-radius: 1rem;
-            background: rgba(8, 25, 47, 0.68);
-            padding: 1.25rem;
-            box-shadow: 0 26px 58px -34px rgba(14, 165, 233, 0.55);
-        }
-        .demo-bow-highlight .highlight-kicker {
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-size: 0.7rem;
-            color: rgba(137, 207, 240, 0.78);
-        }
-        .demo-bow-highlight .highlight-value {
-            margin-top: 0.45rem;
-            font-size: clamp(1.45rem, 2.6vw, 1.85rem);
-            font-weight: 700;
-            color: #E0FFFF;
-        }
-        .demo-bow-highlight .highlight-copy {
-            margin-top: 0.55rem;
-            color: rgba(224, 255, 255, 0.78);
-            line-height: 1.55;
-        }
-        @media (max-width: 900px) {
-            .demo-bow-visual {
-                display: flex;
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-            .demo-bow-overlay {
-                position: static;
-                align-items: stretch;
-                pointer-events: auto;
-                gap: 0.5rem;
-                margin-top: 0.5rem;
-            }
-            .demo-bow-overlay-toggle {
-                align-self: flex-end;
-                font-size: 0.68rem;
-                padding: 0.45rem 0.8rem;
-                box-shadow: none;
-            }
-        }
-        @media (max-width: 768px) {
-            .demo-bow-canvas {
-                height: clamp(300px, 68vh, 520px);
-            }
-        }
-        @media (max-width: 640px) {
-            .demo-bow-stage {
-                padding: 1rem;
-            }
-            .demo-bow-stage .stage-title {
-                font-size: 1.05rem;
-            }
-            .demo-bow-stage .stage-detail {
-                font-size: 0.95rem;
-            }
+            color: rgba(165, 214, 255, 0.65);
         }
     </style>
 </head>
 <body class="antialiased">
-
-    <div class="max-w-7xl mx-auto p-4 md:p-8 space-y-6">
-
-        <div class="frost-card border-blue-400/60 bg-blue-900/70 text-blue-100 p-4 md:p-6 text-center">
-            <p class="text-sm md:text-base font-semibold tracking-wide uppercase">Proprietary Research Notice</p>
-            <p class="mt-2 text-xs md:text-sm leading-relaxed">
-                Polytopal Projection Processing is protected as Paul Phillips and Clear Seas Solutions research and intellectual property.
-                Any review of the materials, console, or mission assets should credit Paul Phillips and Clear Seas Solutions.
+    <div class="max-w-6xl mx-auto px-4 md:px-8 py-12 md:py-16 space-y-20">
+        <header class="space-y-6 text-center md:text-left">
+            <p class="uppercase tracking-[0.25em] text-xs font-semibold text-blue-300/80">Engineering Status • PPP Dual-Stream Instrumentation</p>
+            <h1 class="text-4xl md:text-5xl font-extrabold leading-tight text-white">Polytopal Projection Processing Platform</h1>
+            <p class="text-base md:text-lg text-blue-100/90 max-w-3xl mx-auto md:mx-0">
+                Production build pairing Hypercube WebGL transport, calibrated quaternion ingest, and spinor sonic geometry. This page summarizes the live release
+                and provides a secured demo surface without exposing the legacy prototype.
             </p>
-        </div>
-
-        <header class="text-center py-12 space-y-8">
-            <div class="flex justify-center">
-                <img src="assets/images/clear-seas-logo.svg" alt="Clear Seas Solutions crest" class="w-28 h-28 md:w-36 md:h-36 drop-shadow-2xl" loading="lazy">
-            </div>
-            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight">
-                <span class="gradient-text">Polytopal Projection Processing</span>
-            </h1>
-            <p class="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto leading-relaxed">
-                A high-dimensional information engine that turns complex, real-world sensor streams into decisive action through geometric computation.
-                This proprietary stack is authored and governed by <span class="focus-gradient"><span>Paul Phillips</span></span> and <span class="focus-gradient"><span>Clear Seas Solutions</span></span>, advancing spatial AI under their research program.
-            </p>
-            <nav class="flex flex-wrap justify-center gap-3 text-sm font-medium">
-                <a href="#walkthrough" class="px-4 py-2 rounded-full bg-blue-900/60 border border-blue-700 text-blue-200 hover:bg-blue-800/60 transition">Console</a>
-                <a href="#overview" class="px-4 py-2 rounded-full bg-blue-900/60 border border-blue-700 text-blue-200 hover:bg-blue-800/60 transition">Overview</a>
-                <a href="#paradigm" class="px-4 py-2 rounded-full bg-blue-900/60 border border-blue-700 text-blue-200 hover:bg-blue-800/60 transition">Paradigm</a>
-                <a href="#systems" class="px-4 py-2 rounded-full bg-blue-900/60 border border-blue-700 text-blue-200 hover:bg-blue-800/60 transition">Systems</a>
-                <a href="#workflow" class="px-4 py-2 rounded-full bg-blue-900/60 border border-blue-700 text-blue-200 hover:bg-blue-800/60 transition">Workflow</a>
-                <a href="#storyboard" class="px-4 py-2 rounded-full bg-blue-900/60 border border-blue-700 text-blue-200 hover:bg-blue-800/60 transition">Storyboard</a>
-                <a href="#transcript" class="px-4 py-2 rounded-full bg-blue-900/60 border border-blue-700 text-blue-200 hover:bg-blue-800/60 transition">Transcript</a>
-                <a href="#usage" class="px-4 py-2 rounded-full bg-blue-900/60 border border-blue-700 text-blue-200 hover:bg-blue-800/60 transition">Usage</a>
-                <a href="#roadmap" class="px-4 py-2 rounded-full bg-blue-900/60 border border-blue-700 text-blue-200 hover:bg-blue-800/60 transition">Roadmap</a>
-                <a href="#geometric-cognition" class="px-4 py-2 rounded-full bg-blue-900/60 border border-blue-700 text-blue-200 hover:bg-blue-800/60 transition">Geometric Cognition</a>
-            </nav>
-            <div class="grid md:grid-cols-3 gap-4 text-left max-w-4xl mx-auto">
-                <div class="bg-blue-900/50 border border-blue-700 rounded-lg p-4">
-                    <p class="text-sm uppercase tracking-wide text-blue-300">What</p>
-                    <p class="text-blue-100">A 4D state representation and transformation framework for machines, developed within Paul Phillips and Clear Seas Solutions' autonomy portfolio.</p>
-                </div>
-                <div class="bg-blue-900/50 border border-blue-700 rounded-lg p-4">
-                    <p class="text-sm uppercase tracking-wide text-blue-300">Why</p>
-                    <p class="text-blue-100">Preserve relationships that get lost in linear pipelines and unlock parallel reasoning.</p>
-                </div>
-                <div class="bg-blue-900/50 border border-blue-700 rounded-lg p-4">
-                    <p class="text-sm uppercase tracking-wide text-blue-300">Where</p>
-                    <p class="text-blue-100">Autonomy stacks, spatial computing, and dense sensor fusion environments stewarded by Clear Seas Solutions' IP guardianship.</p>
-                </div>
-            </div>
         </header>
 
         <main class="space-y-24">
-
-            <section id="walkthrough" class="scroll-mt-24">
-                <div class="section-shell p-8 md:p-12 space-y-10">
-                    <div class="flex flex-wrap items-baseline justify-between gap-4">
-                        <span class="section-title">Section 00 · Live Console</span>
-                        <h2 class="text-3xl font-bold">Hands-On with the PPP Operator Console</h2>
-                    </div>
-                    <p class="text-blue-200 text-sm md:text-base leading-relaxed max-w-4xl">
-                        Bring the PPP control surface directly into focus. Collapse the briefing cards when you want the embedded console to stretch edge-to-edge on any display.
-                    </p>
-                    <div class="space-y-8">
-                        <div class="frost-card p-4 md:p-6 lg:p-8 space-y-4">
-                            <div id="embeddedConsole" class="console-wrapper">
-                                <div
-                                    id="consoleFallback"
-                                    class="console-fallback"
-                                    data-state="loading"
-                                    role="status"
-                                    aria-live="polite"
-                                >
-                                    <div class="console-fallback-card">
-                                        <div class="console-spinner" aria-hidden="true"></div>
-                                        <p id="consoleFallbackStatus" class="console-fallback-status">
-                                            Warming up the PPP console…
-                                        </p>
-                                        <button
-                                            id="consoleFallbackAction"
-                                            class="console-fallback-action"
-                                            type="button"
-                                            hidden
-                                        >
-                                            Open Full Console
-                                        </button>
-                                    </div>
-                                </div>
-                                <iframe
-                                    data-obscured-console
-                                    src="hypercube-core-webgl-framework.html"
-                                    title="PPP Hypercube Console"
-                                    class="w-full h-full"
-                                    tabindex="-1"
-                                    loading="eager"
-                                ></iframe>
-                            </div>
-                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-sm md:text-base text-blue-300 leading-relaxed">
-                                <p class="flex-1">
-                                    This embed is the production control surface. It runs the same WebGL renderer, channel mapper, and recording stack operators use when piloting missions or reviewing logged data, all maintained under Paul Phillips and Clear Seas Solutions' proprietary IP program. The runtime streams from an AES-GCM sealed bundle, so the modules execute in memory without exposing auditable source.
-                                </p>
-                                <div class="flex flex-wrap items-center gap-3">
-                                    <button
-                                        id="expandConsole"
-                                        type="button"
-                                        class="px-4 py-2 rounded-md bg-blue-700 hover:bg-blue-600 font-semibold text-blue-50 transition focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                        aria-pressed="false"
-                                    >
-                                        Expand Console
-                                    </button>
-                                    <a
-                                        id="openConsoleLink"
-                                        data-console-link
-                                        href="hypercube-core-webgl-framework.html"
-                                        target="_blank"
-                                        rel="noopener"
-                                        class="inline-flex items-center gap-2 px-4 py-2 bg-blue-800/60 hover:bg-blue-700/70 border border-blue-600 rounded-md font-semibold text-blue-100 transition"
-                                    >
-                                        Open Full Console
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <details open class="frost-card p-5 md:p-7 space-y-4 text-blue-200">
-                            <summary>
-                                <span>Mission Quickstart</span>
-                                <span class="summary-arrow" aria-hidden="true">⌄</span>
-                            </summary>
-                            <ol class="list-decimal list-inside space-y-2 text-sm md:text-base leading-relaxed">
-                                <li>Toggle <span class="font-semibold text-blue-100">Auto Stream</span> to feed synthetic IMU and proprioception into the state encoder. Channel counts update in the monitor as values arrive.</li>
-                                <li>Paste recorded telemetry (ROS2 JSON export works directly) into <span class="font-semibold text-blue-100">Sensor Stream</span> and click <span class="font-semibold text-blue-100">Apply</span> to drive the hypercube from field data.</li>
-                                <li>Press <span class="font-semibold text-blue-100">Start Recorder</span> to capture frames plus uniforms; finish with <span class="font-semibold text-blue-100">Download</span> to export the navigation payload we ship downstream.</li>
-                            </ol>
-                            <div class="rounded-lg border border-blue-800/60 bg-blue-950/40 p-4 text-sm text-blue-300">
-                                <p class="font-semibold text-blue-100">Need mission-specific data?</p>
-                                <p class="mt-2">Drop a <code class="bg-blue-900/60 px-1.5 py-0.5 rounded">ppp-recorder-export.json</code> file onto the panel to reload a flight exactly as it was flown. The recorder preserves uniforms alongside sensor samples for deterministic replay.</p>
-                            </div>
-                        </details>
-                        <details open class="frost-card p-5 md:p-7 space-y-4 text-blue-200">
-                            <summary>
-                                <span>What the Console Shows</span>
-                                <span class="summary-arrow" aria-hidden="true">⌄</span>
-                            </summary>
-                            <ul class="list-disc list-inside space-y-2 text-sm md:text-base leading-relaxed">
-                                <li><span class="font-semibold text-blue-100">Hypercube Visualizer</span>: real-time 4D polytope rendered with rotation parameters surfaced in the <span class="font-semibold text-blue-100">Uniform Preview</span>.</li>
-                                <li><span class="font-semibold text-blue-100">Channel Monitor</span>: sparkline view of up to 32 fused channels, mirroring the on-vehicle diagnostics feed.</li>
-                                <li><span class="font-semibold text-blue-100">Development Track</span>: live changelog pulled from PPP development sessions so operators know which subsystems changed before a mission.</li>
-                            </ul>
-                        </details>
-                        <details open class="frost-card p-5 md:p-7 space-y-4 text-blue-200">
-                            <summary>
-                                <span>Doorway Mission Assets</span>
-                                <span class="summary-arrow" aria-hidden="true">⌄</span>
-                            </summary>
-                            <div class="grid md:grid-cols-3 gap-4 text-sm md:text-base leading-relaxed">
-                                <div class="frost-card bg-blue-950/50 border-blue-700 p-4 space-y-2">
-                                    <p class="text-blue-100 font-semibold">Mission Notebook</p>
-                                    <p>Archived intel briefs, telemetry captures, and decision logs are vaulted with per-mission encryption keys. Request keys via the deployment steward on rotation.</p>
-                                </div>
-                                <div class="frost-card bg-blue-950/50 border-blue-700 p-4 space-y-2">
-                                    <p class="text-blue-100 font-semibold">Secure Share Rooms</p>
-                                    <p>Exports never traverse email. Operators exchange payloads inside monitored share rooms with access expiration and real-time recall controls.</p>
-                                </div>
-                                <div class="frost-card bg-blue-950/50 border-blue-700 p-4 space-y-2">
-                                    <p class="text-blue-100 font-semibold">Field Deployments</p>
-                                    <p>Mission packs are signed offline and sealed in tamper-evident transports before field use. Playback requires dual approval from Paul Phillips and Clear Seas Solutions.</p>
-                                </div>
-                            </div>
-                        </details>
-                    </div>
+            <section id="release-snapshot" class="space-y-8">
+                <h2 class="text-2xl md:text-3xl font-semibold text-white">Release Snapshot</h2>
+                <div class="grid gap-6 md:grid-cols-3">
+                    <article class="section-card space-y-2">
+                        <p class="metric-value">PPP Runtime v2025.10</p>
+                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">Hypercube transport stack</p>
+                        <ul class="text-sm space-y-1 text-blue-100/70">
+                            <li>• WebGL renderer with live uniform audit</li>
+                            <li>• Recorder / player parity across 64 channels</li>
+                            <li>• Spinor overlay + performance metrics</li>
+                        </ul>
+                    </article>
+                    <article class="section-card space-y-2">
+                        <p class="metric-value">Calibration Suite</p>
+                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">Dataset automation & telemetry</p>
+                        <ul class="text-sm space-y-1 text-blue-100/70">
+                            <li>• Sequenced calibration plans with parity scoring</li>
+                            <li>• Manifest export & release insights in UI/API</li>
+                            <li>• Headless runner for CI-grade data capture</li>
+                        </ul>
+                    </article>
+                    <article class="section-card space-y-2">
+                        <p class="metric-value">Sonic Geometry</p>
+                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">Quaternion-coupled descriptors</p>
+                        <ul class="text-sm space-y-1 text-blue-100/70">
+                            <li>• Double-quaternion bridge with Hopf fibers</li>
+                            <li>• Continuum lattice & constellation exports</li>
+                            <li>• Hybrid (audio + data) / analysis-only modes</li>
+                        </ul>
+                    </article>
                 </div>
             </section>
 
-            <section id="overview" class="scroll-mt-24">
-                <div class="section-shell p-8 md:p-12 space-y-10">
-                    <div class="flex flex-wrap items-baseline justify-between gap-4">
-                        <span class="section-title">Section 01 · Crisis vs Paradigm</span>
-                        <h2 class="text-3xl font-bold">Understanding the Shift</h2>
-                    </div>
-                    <div class="grid md:grid-cols-2 gap-8">
-                        <div class="frost-card p-6 space-y-4">
-                            <h3 class="text-xl font-semibold text-blue-200">Legacy Dimensional Stack</h3>
-                            <canvas id="legacyPipeline" class="infographic-canvas"></canvas>
-                            <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-blue-200">
-                                <li>Linear pipelines flatten sensor causality.</li>
-                                <li>Rotational drift compounds with each layer.</li>
-                                <li>Operators lose the ability to interrogate state transitions.</li>
-                            </ul>
+            <section id="demo" class="space-y-6">
+                <h2 class="text-2xl md:text-3xl font-semibold text-white">Secure Demo Access</h2>
+                <div class="section-card space-y-6">
+                    <div class="embed-shell" id="demoShell">
+                        <div class="embed-overlay" id="demoOverlay">
+                            <h3>PPP Hypercube Control Surface</h3>
+                            <p>The demo runs the production transport stack. Console access remains locked; developer tooling is recorded under the PPP security policy. Activate only from trusted workstations.</p>
+                            <button type="button" class="cta-button" id="activateDemo">
+                                Activate Secure Demo
+                                <span aria-hidden="true">→</span>
+                            </button>
+                            <p class="discreet-text">Launching loads <code>hypercube-core-webgl-framework.html</code> into the sandboxed frame.</p>
                         </div>
-                        <div class="frost-card p-6 space-y-4">
-                            <h3 class="text-xl font-semibold text-blue-200">PPP Projection Fabric</h3>
-                            <canvas id="pppFabric" class="infographic-canvas"></canvas>
-                            <ul class="list-disc list-inside space-y-2 text-sm md:text-base text-blue-200">
-                                <li>Preserves multi-axis relationships across the full stack.</li>
-                                <li>Enables reversible transformations and forensic replay.</li>
-                                <li>Delivers 4D state snapshots directly into autonomy planners.</li>
-                            </ul>
-                        </div>
+                        <iframe id="demoFrame" title="PPP Hypercube Demo" data-src="hypercube-core-webgl-framework.html" allow="fullscreen"></iframe>
                     </div>
+                    <ul class="text-sm space-y-2 text-blue-100/70">
+                        <li><strong>Live ingress:</strong> WebSocket + Web Serial adapters with reconnect, latency samples, and per-frame telemetry summaries.</li>
+                        <li><strong>Calibration workflow:</strong> Dataset builder orchestrates motion plans, parity scoring, manifest download, and narrative QA guidance.</li>
+                        <li><strong>Sonic exports:</strong> Spinor topology, flux continuum, lattice, and constellation payloads stream through <code>PPP.sonicGeometry</code> helpers.</li>
+                    </ul>
+                    <p class="discreet-text">Legacy demo assets are packaged offline in <code>archive/legacy-2024-site.tar.gz</code> and excluded from deployment.</p>
                 </div>
             </section>
 
-            <section id="paradigm" class="scroll-mt-24">
-                <div class="section-shell p-8 md:p-12 space-y-10">
-                    <div class="flex flex-wrap items-baseline justify-between gap-4">
-                        <span class="section-title">Section 02 · Core Mechanics</span>
-                        <h2 class="text-3xl font-bold">Three Pillars of PPP</h2>
-                    </div>
-                    <div class="grid md:grid-cols-3 gap-6 text-blue-100">
-                        <div class="frost-card border border-blue-700 p-6 space-y-3">
-                            <div class="text-3xl">⟡</div>
-                            <h3 class="text-xl font-semibold">Hypercube Resonance</h3>
-                            <p>Spinorial rotations stabilize long-horizon predictions so operators can steer multi-hour sorties without drift.</p>
-                        </div>
-                        <div class="frost-card border border-blue-700 p-6 space-y-3">
-                            <div class="text-3xl">✦</div>
-                            <h3 class="text-xl font-semibold">Metric Coupling</h3>
-                            <p>PPP fuses proprioceptive channels in a unified manifold, allowing simultaneous reasoning about translation, rotation, and torque.</p>
-                        </div>
-                        <div class="frost-card border border-blue-700 p-6 space-y-3">
-                            <div class="text-3xl">✹</div>
-                            <h3 class="text-xl font-semibold">Temporal Braid</h3>
-                            <p>Historical windows intertwine with live feeds, enabling real-time comparisons to canonical mission traces curated by Paul Phillips.</p>
-                        </div>
-                    </div>
-                    <div class="frost-card border border-blue-700 p-6 space-y-4 text-blue-200">
-                        <h3 class="text-lg font-semibold text-blue-100">Why It Matters</h3>
-                        <p>Paul Phillips authored PPP to solve autonomy's dimensionality crisis: the leap from vehicle-bound inertial frames to freeform spatial decisioning. By encoding motion as polytopes instead of vectors, PPP collapses the sensing → planning → actuation latency that has stalled advanced robotics.</p>
-                    </div>
+            <section id="dimensionality" class="space-y-6">
+                <h2 class="text-2xl md:text-3xl font-semibold text-white">Dimensional Workload Comparison</h2>
+                <p class="text-sm text-blue-100/75 max-w-3xl">
+                    PPP operates across six rotational planes simultaneously. Quantifying the delta versus conventional 3D pipelines clarifies why the sonic lattice and calibration tooling are required for parity.
+                </p>
+                <div class="chart-container">
+                    <canvas id="dimensionsChart"></canvas>
                 </div>
             </section>
 
-            <section id="systems" class="scroll-mt-24">
-                <div class="section-shell p-8 md:p-12 space-y-10">
-                    <div class="flex flex-wrap items-baseline justify-between gap-4">
-                        <span class="section-title">Section 03 · Systems View</span>
-                        <h2 class="text-3xl font-bold">PPP in Context</h2>
-                    </div>
-                    <div class="grid lg:grid-cols-2 gap-10 items-start">
-                        <div class="space-y-6 text-blue-100">
-                            <div class="frost-card border border-blue-700 p-6 space-y-3">
-                                <h3 class="text-xl font-semibold">Degrees of Freedom Check</h3>
-                                <p class="text-blue-200">PPP tracks higher-order spinor states so actuators never lose absolute reference. The bar chart quantifies the delta between 3D Euler constraints and PPP's 4D spinor spans.</p>
-                                <div class="chart-container">
-                                    <canvas id="degreesOfFreedomChart"></canvas>
-                                </div>
-                            </div>
-                            <div class="frost-card border border-blue-700 p-6 space-y-4">
-                                <h3 class="text-xl font-semibold">IMU → 4D Mapping</h3>
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm md:text-base">
-                                    <div class="bg-blue-950/50 border border-blue-800 rounded-lg p-4">
-                                        <p class="text-blue-300 uppercase tracking-wide text-xs">Input</p>
-                                        <p class="text-blue-100 font-semibold">Raw IMU Streams</p>
-                                        <p class="text-blue-200 mt-2">Gyro, accelerometer, and proprioceptive vectors tapped at 2 kHz.</p>
-                                    </div>
-                                    <div class="bg-blue-950/50 border border-blue-800 rounded-lg p-4">
-                                        <p class="text-blue-300 uppercase tracking-wide text-xs">Transform</p>
-                                        <p class="text-blue-100 font-semibold">Spinor Lift</p>
-                                        <p class="text-blue-200 mt-2">Quaternion harmonics and temporal braids elevate the frame to PPP's hypercube lattice.</p>
-                                    </div>
-                                    <div class="bg-blue-950/50 border border-blue-800 rounded-lg p-4">
-                                        <p class="text-blue-300 uppercase tracking-wide text-xs">Output</p>
-                                        <p class="text-blue-100 font-semibold">4D Action Tokens</p>
-                                        <p class="text-blue-200 mt-2">Planner-ready commands preserve rotational fidelity under aggressive maneuvers.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="frost-card border border-blue-700 p-6 space-y-6 text-blue-100">
-                            <h3 class="text-xl font-semibold">HAOS Architecture Anchor</h3>
-                            <div class="space-y-4">
-                                <div class="bg-blue-950/50 border border-blue-800 rounded-lg p-4">
-                                    <p class="text-blue-300 uppercase tracking-wide text-xs">Layer 01</p>
-                                    <p class="text-blue-100 font-semibold">Sensor Continuum</p>
-                                    <p class="text-blue-200 mt-2">Edge devices capture inertial, vision, and acoustic data streams.</p>
-                                </div>
-                                <div class="bg-blue-950/50 border border-blue-800 rounded-lg p-4">
-                                    <p class="text-blue-300 uppercase tracking-wide text-xs">Layer 02</p>
-                                    <p class="text-blue-100 font-semibold">PPP Projection Fabric</p>
-                                    <p class="text-blue-200 mt-2">Spinor resonance transforms raw feeds into a coherent 4D state.</p>
-                                </div>
-                                <div class="bg-blue-950/50 border border-blue-800 rounded-lg p-4">
-                                    <p class="text-blue-300 uppercase tracking-wide text-xs">Layer 03</p>
-                                    <p class="text-blue-100 font-semibold">Cognitive Lattice</p>
-                                    <p class="text-blue-200 mt-2">Adaptive planners build mission paths by sampling PPP-provided states.</p>
-                                </div>
-                                <div class="bg-blue-950/50 border border-blue-800 rounded-lg p-4">
-                                    <p class="text-blue-300 uppercase tracking-wide text-xs">Layer 04</p>
-                                    <p class="text-blue-100 font-semibold">Action Manifold</p>
-                                    <p class="text-blue-200 mt-2">Commands cycle back to actuators while PPP verifies adherence in milliseconds.</p>
-                                </div>
-                            </div>
-                            <p class="text-blue-200">Every layer is audited, with cryptographic signing at the PPP boundary to verify Paul Phillips and Clear Seas Solutions as stewards of the stack.</p>
-                        </div>
-                    </div>
-                    <div class="frost-card border border-blue-700 p-6 space-y-6 text-blue-100">
-                        <div class="flex flex-col lg:flex-row gap-8">
-                            <div class="flex-1 space-y-4">
-                                <h3 class="text-xl font-semibold">Demo Bow · Sensor to Decision Arc</h3>
-                                <p class="text-blue-200 leading-relaxed">Watch the telemetry arc that Paul Phillips and Clear Seas Solutions use when staging demonstrations. The bow sweeps from encrypted sensor ingress to spinor lift, hypercube resonance, and downstream autonomy—mirroring the same handshake the live console performs.</p>
-                                <p class="text-sm text-blue-300 leading-relaxed">Slide through the stages to highlight how PPP transforms inertial feeds into action tokens without exposing raw mission data.</p>
-                            </div>
-                            <div class="flex-1 space-y-4">
-                                <div class="demo-bow-visual">
-                                    <canvas id="demoBowCanvas" class="demo-bow-canvas" role="img" aria-label="PPP demo bow showing sensor-to-action arc"></canvas>
-                                    <div id="demoBowOverlay" class="demo-bow-overlay" data-state="collapsed">
-                                        <button
-                                            id="demoBowOverlayToggle"
-                                            type="button"
-                                            class="demo-bow-overlay-toggle"
-                                            aria-expanded="false"
-                                            aria-controls="demoBowControls"
-                                        >
-                                            Stage Controls
-                                        </button>
-                                        <div
-                                            id="demoBowControls"
-                                            class="demo-bow-controls is-collapsed"
-                                            role="group"
-                                            aria-hidden="true"
-                                            hidden
-                                        >
-                                            <label for="demoBowPhase" class="block text-xs uppercase tracking-wide text-blue-300">Stage Focus</label>
-                                            <input id="demoBowPhase" type="range" min="0" max="100" value="0" class="w-full accent-sky-400" aria-describedby="demoBowStatus">
-                                            <p class="text-xs text-blue-300 leading-relaxed">Drag to sweep the bow and surface each projection checkpoint.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p id="demoBowStatus" class="text-sm text-blue-200 leading-relaxed">Stage 01 · Sensor Acquisition — Sealed ingress verifies mission channels before projection.</p>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 text-sm md:text-base">
-                            <div class="demo-bow-stage demo-bow-stage-active" data-demo-bow-stage="0" role="button" tabindex="0" aria-pressed="true">
-                                <span class="stage-label">Stage 01</span>
-                                <span class="stage-title">Sensor Acquisition</span>
-                                <span class="stage-detail text-blue-200 mt-2 leading-relaxed">Ingress signs IMU, proprioceptive, and situational channels with per-sortie salts plus ledger-backed custody.</span>
-                            </div>
-                            <div class="demo-bow-stage" data-demo-bow-stage="1" role="button" tabindex="0" aria-pressed="false">
-                                <span class="stage-label">Stage 02</span>
-                                <span class="stage-title">Spinor Lift</span>
-                                <span class="stage-detail text-blue-200 mt-2 leading-relaxed">Spinor harmonics hoist telemetry into Spin(4) under PPP flight libraries, maintaining 0.3° mean orientation error.</span>
-                            </div>
-                            <div class="demo-bow-stage" data-demo-bow-stage="2" role="button" tabindex="0" aria-pressed="false">
-                                <span class="stage-label">Stage 03</span>
-                                <span class="stage-title">Hypercube Resonance</span>
-                                <span class="stage-detail text-blue-200 mt-2 leading-relaxed">Renderer synchronizes the six rotation planes with morph channels to expose actionable motion under 18&nbsp;ms latency.</span>
-                            </div>
-                            <div class="demo-bow-stage" data-demo-bow-stage="3" role="button" tabindex="0" aria-pressed="false">
-                                <span class="stage-label">Stage 04</span>
-                                <span class="stage-title">Action Tokens</span>
-                                <span class="stage-detail text-blue-200 mt-2 leading-relaxed">Planner-ready directives generate downstream autonomy responses with ledgered release and signature pairing.</span>
-                            </div>
-                        </div>
-                        <div class="demo-bow-insights grid grid-cols-1 md:grid-cols-3 gap-4 text-sm md:text-base text-blue-100">
-                            <div class="demo-bow-highlight">
-                                <p class="highlight-kicker">Signal stewardship</p>
-                                <p class="highlight-value">0.3° mean drift</p>
-                                <p class="highlight-copy">PPP reconciles inertial, proprioceptive, and situational feeds against the spinor lattice so sorties stay inside a 0.3° orientation envelope.</p>
-                            </div>
-                            <div class="demo-bow-highlight">
-                                <p class="highlight-kicker">Projection cadence</p>
-                                <p class="highlight-value">18&nbsp;ms response</p>
-                                <p class="highlight-copy">Hypercube resonance publishes six-plane rotation updates at sub-20&nbsp;ms intervals, keeping morph channels and planner deltas in lockstep.</p>
-                            </div>
-                            <div class="demo-bow-highlight">
-                                <p class="highlight-kicker">Governed release</p>
-                                <p class="highlight-value">Ledgered access</p>
-                                <p class="highlight-copy">Downstream action tokens and replays are sealed behind signed access keys so every export maps back to Paul Phillips and Clear Seas Solutions custody trails.</p>
-                            </div>
-                        </div>
-                    </div>
+            <section id="safeguards" class="space-y-6">
+                <h2 class="text-2xl md:text-3xl font-semibold text-white">Operating Notes & Safeguards</h2>
+                <div class="section-card space-y-4">
+                    <ul class="text-sm space-y-3 text-blue-100/70">
+                        <li><strong>Console lock:</strong> DevTools trigger the PPP security overlay; sandbox keys are issued by Paul Phillips or Clear Seas Solutions.</li>
+                        <li><strong>Telemetry APIs:</strong> Register <code>window.PPP_CONFIG</code> before loading the bundle to capture recorder updates, sonic payload clones, and calibration events.</li>
+                        <li><strong>Dataset discipline:</strong> Run the calibration plan before exporting benchmark artifacts so manifests, parity scores, and insights ship together.</li>
+                        <li><strong>Testing:</strong> Node-based regression suites cover sonic geometry, live telemetry, and calibration builders. Execute <code>npm test</code> before distribution.</li>
+                    </ul>
                 </div>
             </section>
-
-            <section id="workflow" class="scroll-mt-24">
-                <div class="section-shell p-8 md:p-12 space-y-10">
-                    <div class="flex flex-wrap items-baseline justify-between gap-4">
-                        <span class="section-title">Section 04 · Secure Workflow</span>
-                        <h2 class="text-3xl font-bold">Operational Flow Control</h2>
-                    </div>
-                    <div class="grid md:grid-cols-4 gap-6 text-blue-100">
-                        <div class="frost-card border border-blue-700 p-6 space-y-3">
-                            <p class="text-blue-300 uppercase tracking-wide text-xs">01 · Intake</p>
-                            <p class="text-blue-100 font-semibold">Authentic Channels</p>
-                            <p class="text-blue-200">Sensors authenticate against PPP's spinor lattice using per-mission salts.</p>
-                        </div>
-                        <div class="frost-card border border-blue-700 p-6 space-y-3">
-                            <p class="text-blue-300 uppercase tracking-wide text-xs">02 · Encode</p>
-                            <p class="text-blue-100 font-semibold">Encrypted Projection</p>
-                            <p class="text-blue-200">Data is sealed through AES-GCM modules before entering the mission cache.</p>
-                        </div>
-                        <div class="frost-card border border-blue-700 p-6 space-y-3">
-                            <p class="text-blue-300 uppercase tracking-wide text-xs">03 · Review</p>
-                            <p class="text-blue-100 font-semibold">Dual-Lens Oversight</p>
-                            <p class="text-blue-200">Console sessions record to immutable ledgers reviewed jointly by Paul Phillips and Clear Seas Solutions.</p>
-                        </div>
-                        <div class="frost-card border border-blue-700 p-6 space-y-3">
-                            <p class="text-blue-300 uppercase tracking-wide text-xs">04 · Release</p>
-                            <p class="text-blue-100 font-semibold">Controlled Distribution</p>
-                            <p class="text-blue-200">Compiled mission packs are signed offline and distributed under time-limited access keys.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="storyboard" class="scroll-mt-24">
-                <div class="section-shell p-8 md:p-12 space-y-10">
-                    <div class="flex flex-wrap items-baseline justify-between gap-4">
-                        <span class="section-title">Section 05 · Evidence Deck</span>
-                        <h2 class="text-3xl font-bold">Proof the Paradigm Holds</h2>
-                    </div>
-                    <p class="text-blue-200 text-sm md:text-base leading-relaxed max-w-4xl">
-                        Stakeholder diligence lands on three demands: measurable lift, independent validation, and stewardship that stands behind the promise. These proof points keep the PPP conversation grounded in evidence instead of conjecture.
-                    </p>
-                    <div class="grid md:grid-cols-3 gap-6 text-blue-100">
-                        <div class="frost-card border border-blue-700 p-6 space-y-4">
-                            <div class="space-y-1">
-                                <p class="text-xs uppercase tracking-[0.3em] text-blue-300">Mission Metric</p>
-                                <p class="text-2xl font-semibold">96.4% Drift Reduction</p>
-                            </div>
-                            <p class="text-blue-200 leading-relaxed">PPP-controlled sorties held within a 0.3° orientation envelope across 18-hour marine missions measured by third-party inertial audits.</p>
-                            <p class="text-xs text-blue-300">Validation dossier filed under HAOS/QA/0325.</p>
-                        </div>
-                        <div class="frost-card border border-blue-700 p-6 space-y-4">
-                            <div class="space-y-1">
-                                <p class="text-xs uppercase tracking-[0.3em] text-blue-300">Integration Clock</p>
-                                <p class="text-2xl font-semibold">23-Day Deployment</p>
-                            </div>
-                            <p class="text-blue-200 leading-relaxed">The latest defense autonomy uplift moved from sensor handshake to live PPP playback in 23 days, including encrypted recorder onboarding and policy sign-off.</p>
-                            <p class="text-xs text-blue-300">Signed off by Clear Seas Solutions &amp; contracting prime.</p>
-                        </div>
-                        <div class="frost-card border border-blue-700 p-6 space-y-4">
-                            <div class="space-y-1">
-                                <p class="text-xs uppercase tracking-[0.3em] text-blue-300">Dataset Yield</p>
-                                <p class="text-2xl font-semibold">41 Calibrated Runs</p>
-                            </div>
-                            <p class="text-blue-200 leading-relaxed">Recorder exports pair visual uniforms with sonic telemetry, producing 41 calibration-ready sessions already in circulation with robotics and quantum partners.</p>
-                            <p class="text-xs text-blue-300">Telemetry parity verified per DEV_TRACK.md checkpoints.</p>
-                        </div>
-                    </div>
-                    <div class="grid md:grid-cols-2 gap-6 text-blue-100">
-                        <div class="frost-card border border-blue-700 p-6 space-y-4">
-                            <h3 class="text-xl font-semibold">Executive Verifications</h3>
-                            <ul class="list-grid list-grid--dense text-blue-200">
-                                <li><span class="text-blue-100 font-semibold">Guardian Labs:</span> confirmed PPP sonic telemetry aligns with quaternion manifolds within ±0.2 radians across live feeds.</li>
-                                <li><span class="text-blue-100 font-semibold">Maritime Robotics Unit:</span> reported zero mission aborts after migrating to PPP spinor control surfaces.</li>
-                                <li><span class="text-blue-100 font-semibold">Quantum Stack Pilot:</span> posted 11× faster error syndrome visualization compared to algebraic decoders.</li>
-                            </ul>
-                        </div>
-                        <div class="frost-card border border-blue-700 p-6 space-y-4">
-                            <h3 class="text-xl font-semibold">Voice of Stewardship</h3>
-                            <div class="space-y-3 text-blue-200">
-                                <blockquote class="text-base leading-relaxed">
-                                    “PPP keeps custody with the authors. Operators see the picture, partners inherit the rigor, and the data never leaves our governance lattice.”
-                                </blockquote>
-                                <p class="text-sm uppercase tracking-[0.2em] text-blue-300">Paul Phillips · Clear Seas Solutions</p>
-                                <p class="text-sm text-blue-300">Direct line shared post-engagement via Get in Touch panel.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="transcript" class="scroll-mt-24">
-                <div class="section-shell p-8 md:p-12 space-y-10" data-aurora="true">
-                    <div class="section-beacon">
-                        <span class="section-beacon-dot" aria-hidden="true"></span>
-                        <span>Clear Seas Stewardship</span>
-                    </div>
-                    <div class="flex flex-wrap items-baseline justify-between gap-4">
-                        <span class="section-title">Section 06 · Stewardship</span>
-                        <h2 class="text-3xl font-bold">Polytopal Projection Processing Information</h2>
-                    </div>
-                    <div class="grid gap-6 text-blue-100">
-                        <div class="frost-card border border-blue-700 p-6 space-y-4">
-                            <div class="space-y-2">
-                                <p class="text-xs uppercase tracking-[0.3em] text-blue-300">🌟 A Paul Phillips Manifestation</p>
-                                <p class="text-lg font-semibold">Revolutionary 4D Geometric Processing System</p>
-                                <p class="text-blue-200">Contact: <a href="mailto:paul@clearseassolutions.com" class="text-sky-300 underline underline-offset-4">paul@clearseassolutions.com</a> · <a href="https://parserator.com" class="text-sky-300 underline underline-offset-4" target="_blank" rel="noopener">Parserator.com</a></p>
-                                <p class="italic text-blue-300">“The Revolution Will Not be in a Structured Format” © 2025</p>
-                            </div>
-                            <p class="text-blue-200 leading-relaxed">The Polytopal Projection Processing (PPP) system recasts high-dimensional computation as geometric choreography. PPP compresses real-world telemetry into four-dimensional polytopes so autonomous stacks keep tempo, maintain custody, and execute under Clear Seas Solutions stewardship.</p>
-                            <p class="text-sm text-blue-300">For chronological build notes, review <a href="DEV_TRACK.md" class="text-sky-300 underline underline-offset-4">DEV_TRACK.md</a> which captures per-session commentary.</p>
-                        </div>
-                        <div class="manifest-badges">
-                            <span class="manifest-badge">Stewarded IP</span>
-                            <span class="manifest-badge">4D Autonomy Stack</span>
-                            <span class="manifest-badge">Sonic Geometry Telemetry</span>
-                        </div>
-                        <div class="grid lg:grid-cols-2 gap-6 text-blue-100">
-                            <div class="frost-card border border-blue-700 p-6 space-y-3">
-                                <h3 class="text-xl font-semibold">Core Innovation · 4D Polytope State Encoding</h3>
-                                <ul class="list-grid list-grid--dense text-blue-200">
-                                    <li>System states encoded as unified 4D geometric objects (tesseracts, 600-cells, and allied polytopes).</li>
-                                    <li>Computation through six-plane rotations (XY, XZ, YZ, XW, YW, ZW) for deterministic maneuvering.</li>
-                                    <li>Direct IMU-to-4D mapping enabling GPS-denied navigation.</li>
-                                    <li>Machine-optimized shadow projections designed for explainable AI consumption.</li>
-                                </ul>
-                            </div>
-                            <div class="frost-card border border-blue-700 p-6 space-y-3">
-                                <h3 class="text-xl font-semibold">Applications Across Industries</h3>
-                                <ul class="list-grid text-blue-200">
-                                    <li><span class="font-semibold text-blue-100">Defense &amp; Autonomous Systems:</span> GPS-denied navigation, multi-sensor fusion, electronic warfare visualization, and swarm coordination without central command.</li>
-                                    <li><span class="font-semibold text-blue-100">Quantum Computing:</span> Geometric error syndrome decoding, 10-100× speedups over algebraic methods, and real-time quantum correction.</li>
-                                    <li><span class="font-semibold text-blue-100">Manufacturing &amp; Industrial:</span> Real-time pattern analysis, process optimization, predictive maintenance, and spatially aware supply coordination.</li>
-                                    <li><span class="font-semibold text-blue-100">Scientific Computing:</span> Climate modeling, drug discovery, crystal analytics, and cellular visualization through high-dimensional reasoning.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="section-divider" aria-hidden="true"></div>
-                </div>
-            </section>
-
-            <section id="usage" class="scroll-mt-24">
-                <div class="section-shell p-8 md:p-12 space-y-10" data-aurora="true">
-                    <div class="section-beacon">
-                        <span class="section-beacon-dot" aria-hidden="true"></span>
-                        <span>Capability Ledger</span>
-                    </div>
-                    <div class="flex flex-wrap items-baseline justify-between gap-4">
-                        <span class="section-title">Section 07 · Capability Ledger</span>
-                        <h2 class="text-3xl font-bold">Technical Specifications &amp; Sonic Fabric</h2>
-                    </div>
-                    <div class="space-y-6 text-blue-100">
-                        <div class="manifest-badges">
-                            <span class="manifest-badge">60&nbsp;fps Visual Core</span>
-                            <span class="manifest-badge">Spinor Bridge Telemetry</span>
-                            <span class="manifest-badge">Deterministic Recorder</span>
-                        </div>
-                        <div class="frost-card border border-blue-700 p-6 space-y-3">
-                            <h3 class="text-xl font-semibold">Performance Validated</h3>
-                            <ul class="list-grid list-grid--dense text-blue-200">
-                                <li>60 fps real-time 4D visualization on standard GPU hardware with &lt;4&nbsp;GB residency.</li>
-                                <li>64-channel simultaneous data streaming with recorder exports for deterministic playback.</li>
-                                <li>Cross-platform WebGPU/WebGL2 implementation with AES-GCM sealed distribution.</li>
-                                <li>Integrated recording playback suite with loop, speed, uniform snapshots, timeline scrubbing, and keyboard shortcuts.</li>
-                            </ul>
-                        </div>
-                        <details class="frost-card p-6 space-y-3 text-blue-200" open>
-                            <summary class="flex items-center justify-between">
-                                <span class="text-xl font-semibold text-blue-100">Sonic Geometry Engine Highlights</span>
-                                <span class="summary-arrow" aria-hidden="true">⌄</span>
-                            </summary>
-                            <p>PPP’s sonic geometry engine binds quaternion spinor dynamics to harmonics, enabling robotics-grade telemetry even when audio is muted.</p>
-                            <ul class="list-grid list-grid--dense">
-                                <li>Emergent Sonic Geometry engine streams carrier matrices, resonance atlases, and telemetry snapshots per frame.</li>
-                                <li>Quaternion spinor bridge decomposes rotations into double-quaternion telemetry with Hopf fiber projections.</li>
-                                <li>Spinor harmonic coupler aligns carrier ratios, pan lattices, and phase orbits with the 4D rotation manifold.</li>
-                                <li>Spinor resonance atlas, signal fabric, transduction grid, metric manifold, topology weave, flux continuum, and continuum lattice provide serialization-ready analytics.</li>
-                            </ul>
-                        </details>
-                        <details class="frost-card p-6 space-y-3 text-blue-200">
-                            <summary class="flex items-center justify-between">
-                                <span class="text-xl font-semibold text-blue-100">Transmission Matrix Telemetry</span>
-                                <span class="summary-arrow" aria-hidden="true">⌄</span>
-                            </summary>
-                            <p>Each analysis frame distributes transmission payloads tuned for specialty receivers, robotics stacks, and multimodal transformers.</p>
-                            <ul class="list-grid list-grid--dense">
-                                <li><span class="font-semibold text-blue-100">Gate analytics:</span> gate density, continuity, and duty-cycle telemetry.</li>
-                                <li><span class="font-semibold text-blue-100">Spectral metrics:</span> centroids, averages, AM/FM rates, and harmonic sequences.</li>
-                                <li><span class="font-semibold text-blue-100">Carrier payloads:</span> sub/prime/hyper bands with frequency, amplitude, and energy values.</li>
-                                <li><span class="font-semibold text-blue-100">Spinor overlays:</span> coherence, braid density, phase orbits, and resonance atlas vectors.</li>
-                                <li><span class="font-semibold text-blue-100">Signal fabric:</span> carrier matrices, bitstreams, quaternion bridges, and resonance envelopes.</li>
-                                <li><span class="font-semibold text-blue-100">Transduction grid:</span> normalized rotation matrices, invariants, Hopf alignments, and per-voice projections.</li>
-                                <li><span class="font-semibold text-blue-100">Metric manifold &amp; topology weave:</span> aggregated flux, energy, coherence, and braid analytics.</li>
-                                <li><span class="font-semibold text-blue-100">Flux continuum &amp; lattice:</span> orientation vectors, continuum health scores, and carrier synergy summaries.</li>
-                            </ul>
-                        </details>
-                        <details class="frost-card p-6 space-y-3 text-blue-200">
-                            <summary class="flex items-center justify-between">
-                                <span class="text-xl font-semibold text-blue-100">Spinor Signal Fabric</span>
-                                <span class="summary-arrow" aria-hidden="true">⌄</span>
-                            </summary>
-                            <p>The signal fabric mirrors the resonance atlas and quaternion bridge so specialty demodulators can rebuild the sonic field without touching audio graphs.</p>
-                            <ul class="list-grid list-grid--dense">
-                                <li>Voices stream carrier amplitudes, gate duty, spinor ratios, quaternion weights, and resonance vectors.</li>
-                                <li>Carrier matrices present sub/prime/hyper bands as relative frequency cells with gate intensity and energy.</li>
-                                <li>Bitstreams encode hexadecimal phase slots and duty-cycle bits for synchronized sequencing.</li>
-                                <li>Quantum, spinor, and resonance aggregates stay phase-locked with the 4D rotation tensor.</li>
-                                <li>Envelopes summarize carrier centroids, spectral spread, resonance magnitude, and timeline progress.</li>
-                            </ul>
-                        </details>
-                        <details class="frost-card p-6 space-y-3 text-blue-200">
-                            <summary class="flex items-center justify-between">
-                                <span class="text-xl font-semibold text-blue-100">Spinor Transduction Grid</span>
-                                <span class="summary-arrow" aria-hidden="true">⌄</span>
-                            </summary>
-                            <p>The transduction grid binds the rotation matrix directly to the sonic manifold for robotics-grade demodulation.</p>
-                            <ul class="list-grid list-grid--dense">
-                                <li>Invariants expose determinant, trace, Frobenius norm, Hopf alignment, and bridge magnitude in real time.</li>
-                                <li>Normalized 4×4 rotation matrices accompany every frame for deterministic reconstruction.</li>
-                                <li>Topology frames preserve bridge and Hopf fibers alongside spinor coherence and braid density.</li>
-                                <li>Per-voice projections include gate duty, quaternion weights, resonance vectors, and carrier ratios.</li>
-                                <li>Grid cells flatten carrier fields into matrix-aligned energy, projection, and gate-bit data.</li>
-                            </ul>
-                        </details>
-                        <details class="frost-card p-6 space-y-3 text-blue-200">
-                            <summary class="flex items-center justify-between">
-                                <span class="text-xl font-semibold text-blue-100">Spinor Metric Manifold</span>
-                                <span class="summary-arrow" aria-hidden="true">⌄</span>
-                            </summary>
-                            <p>The manifold fuses quaternion bridges, spinor couplers, resonance atlases, signal fabrics, and transduction grids into unified analytics.</p>
-                            <ul class="list-grid list-grid--dense">
-                                <li>Quaternion metrics capture bridge magnitude, Hopf alignment, trace, determinant, and energy.</li>
-                                <li>Spinor aggregates report coherence, braid density, ratio entropy, and orbit variance.</li>
-                                <li>Resonance summaries track centroids, carrier centroids, bridge projections, and gate statistics.</li>
-                                <li>Signal fabric metrics condense bitstream density, spectral centroid/spread, and resonance envelope strength.</li>
-                                <li>Transduction data highlights grid energy, gate coherence, projection variance, and shared invariants.</li>
-                                <li>Voice-level breakdowns align gate, spinor, quaternion, resonance, signal, and transduction metrics.</li>
-                            </ul>
-                        </details>
-                        <details class="frost-card p-6 space-y-3 text-blue-200">
-                            <summary class="flex items-center justify-between">
-                                <span class="text-xl font-semibold text-blue-100">Spinor Topology Weave</span>
-                                <span class="summary-arrow" aria-hidden="true">⌄</span>
-                            </summary>
-                            <p>The topology weave correlates quaternion axes with sonic transport fields to reveal how rotations redistribute energy.</p>
-                            <ul class="list-grid list-grid--dense">
-                                <li>Maintains resonance atlas bases so axis analytics remain tethered to 4D tensors.</li>
-                                <li>Enumerates per-axis bridge/Hopf coupling, magnitude, gate flux, ratio variance, and carrier energy.</li>
-                                <li>Spectrum snapshots summarize spinor ratios, gate statistics, and carrier magnitude.</li>
-                                <li>Braiding analytics correlate bridge, Hopf, gate, grid, and bit flux vectors.</li>
-                                <li>Bridge frames capture normalized bridge and Hopf fibers with live magnitudes.</li>
-                            </ul>
-                        </details>
-                        <details class="frost-card p-6 space-y-3 text-blue-200">
-                            <summary class="flex items-center justify-between">
-                                <span class="text-xl font-semibold text-blue-100">Spinor Flux Continuum</span>
-                                <span class="summary-arrow" aria-hidden="true">⌄</span>
-                            </summary>
-                            <p>The flux continuum condenses topology braids, manifold aggregates, spinor weights, and signal fabrics into orientation vectors.</p>
-                            <ul class="list-grid list-grid--dense">
-                                <li>Flux payloads report density, variance, and alignment scores for bridge, Hopf, and voices.</li>
-                                <li>Continuum vectors capture quaternion-locked orientations with concatenated sequencing strings.</li>
-                                <li>Axis views replay topology intensities, correlations, and couplings.</li>
-                                <li>Voice analytics align manifold metrics with continuum energy distribution.</li>
-                                <li>Braiding mirrors topology correlations for multimodal transformers.</li>
-                            </ul>
-                        </details>
-                        <details class="frost-card p-6 space-y-3 text-blue-200">
-                            <summary class="flex items-center justify-between">
-                                <span class="text-xl font-semibold text-blue-100">Spinor Continuum Lattice</span>
-                                <span class="summary-arrow" aria-hidden="true">⌄</span>
-                            </summary>
-                            <p>The continuum lattice merges flux continua with topology axes, manifold voices, and carrier matrices into weighted orientation lattices.</p>
-                            <ul class="list-grid list-grid--dense">
-                                <li>Orientation payloads align continuum, voice, bridge, and Hopf vectors with residual components.</li>
-                                <li>Synergy frames track coherence, braid, carrier weights, gate averages, ratio variance, and sequence density.</li>
-                                <li>Axis summaries attribute lattice changes to individual rotational planes.</li>
-                                <li>Voice and carrier breakdowns correlate spinor motion with energy, entropy, and dominant frequencies.</li>
-                                <li>Spectral and timeline aggregates capture carrier span, energy, bit density, and per-voice weights.</li>
-                            </ul>
-                        </details>
-                        <details class="frost-card p-6 space-y-3 text-blue-200">
-                            <summary class="flex items-center justify-between">
-                                <span class="text-xl font-semibold text-blue-100">Quaternion Spinor Telemetry</span>
-                                <span class="summary-arrow" aria-hidden="true">⌄</span>
-                            </summary>
-                            <p>PPP exposes double-quaternion factors and spinor couplers so downstream systems can mirror the same 4D harmonic choreography.</p>
-                            <ul class="list-grid list-grid--dense">
-                                <li>Left/right unit quaternions with isoclinic rotation magnitudes and Hopf fiber sampling.</li>
-                                <li>Spinor ratios, pan/phase orbits, and pitch lattices mapped to quaternion bridges.</li>
-                                <li>Resonance atlases, signal fabrics, transduction grids, manifolds, topologies, flux continua, and lattices linked to the spinor field.</li>
-                            </ul>
-                        </details>
-                    </div>
-                    <div class="section-divider" aria-hidden="true"></div>
-                </div>
-            </section>
-
-            <section id="roadmap" class="scroll-mt-24">
-                <div class="section-shell p-8 md:p-12 space-y-10" data-aurora="true">
-                    <div class="section-beacon">
-                        <span class="section-beacon-dot" aria-hidden="true"></span>
-                        <span>Multimodal Handoff</span>
-                    </div>
-                    <div class="flex flex-wrap items-baseline justify-between gap-4">
-                        <span class="section-title">Section 08 · Multimodal Handoff</span>
-                        <h2 class="text-3xl font-bold">PPP System Architecture</h2>
-                    </div>
-                    <div class="space-y-6 text-blue-100">
-                        <div class="manifest-badges">
-                            <span class="manifest-badge">Hypercube Visual Core</span>
-                            <span class="manifest-badge">Quaternion Sonic Bridge</span>
-                            <span class="manifest-badge">Constellation Telemetry</span>
-                        </div>
-                        <div class="frost-card border border-blue-700 p-6 space-y-3">
-                            <h3 class="text-xl font-semibold">Mission Overview</h3>
-                            <p class="text-blue-200 leading-relaxed">PPP pairs WebGL hypercube visualization with quaternion-derived sonic geometry to deliver synchronized datasets for multimodal transformers, robotics perception, and calibration pipelines.</p>
-                        </div>
-                        <div class="grid md:grid-cols-2 gap-6 text-blue-100">
-                            <div class="frost-card border border-blue-700 p-6 space-y-3">
-                                <h3 class="text-xl font-semibold">System Architecture</h3>
-                                <ul class="list-grid list-grid--dense text-blue-200">
-                                    <li><span class="font-semibold text-blue-100">Visualization core:</span> <code>scripts/app.js</code> drives the WebGL renderer, randomization, API hooks, and auto-stream synthesis.</li>
-                                    <li><span class="font-semibold text-blue-100">Recorder &amp; player loop:</span> <code>DataRecorder</code> and <code>DataPlayer</code> capture synchronized uniforms and sonic telemetry with deterministic replay.</li>
-                                    <li><span class="font-semibold text-blue-100">Sonic geometry engine:</span> <code>SonicGeometryEngine</code> builds quaternion bridges, carrier lattices, and telemetry snapshots for every downstream consumer.</li>
-                                    <li><span class="font-semibold text-blue-100">Telemetry builders:</span> Dedicated modules translate quaternion structures into harmonics, resonance, signal, transduction, manifold, topology, continuum, lattice, and constellation payloads.</li>
-                                </ul>
-                            </div>
-                            <div class="frost-card border border-blue-700 p-6 space-y-3">
-                                <h3 class="text-xl font-semibold">Data &amp; Playback Conduit</h3>
-                                <ol class="list-decimal list-inside space-y-2 text-blue-200">
-                                    <li><span class="font-semibold text-blue-100">Ingestion:</span> Sanitized uniforms feed both renderer and sonic engine for parity.</li>
-                                    <li><span class="font-semibold text-blue-100">Capture:</span> <code>DataRecorder</code> tags frames with elapsed transport time and sonic snapshots.</li>
-                                    <li><span class="font-semibold text-blue-100">Replay:</span> <code>DataPlayer</code> manages tempo, looping, scrubbing, and keyboard control.</li>
-                                    <li><span class="font-semibold text-blue-100">Broadcast:</span> Transport events synchronize UI, visuals, sonic telemetry, and external callbacks.</li>
-                                </ol>
-                            </div>
-                        </div>
-                        <details class="frost-card p-6 space-y-3 text-blue-200" open>
-                            <summary class="flex items-center justify-between">
-                                <span class="text-xl font-semibold text-blue-100">Sonic Geometry Telemetry Map</span>
-                                <span class="summary-arrow" aria-hidden="true">⌄</span>
-                            </summary>
-                            <p>Each frame traverses quaternion bridges through continuum constellations, yielding immutable payloads for robotics and multimodal analytics.</p>
-                            <ul class="list-grid list-grid--dense">
-                                <li>Quaternion bridge → Spinor harmonics → Resonance atlas.</li>
-                                <li>Signal fabric → Transduction grid → Metric manifold.</li>
-                                <li>Topology weave → Flux continuum → Continuum lattice → Continuum constellation.</li>
-                                <li>Continuum constellations distill lattice and flux data into centroid-rich telemetry for navigation and training sets.</li>
-                                <li>Audio carriers mirror spinor weights to maintain parity between audible and telemetry outputs.</li>
-                            </ul>
-                        </details>
-                    </div>
-                    <div class="section-divider" aria-hidden="true"></div>
-                </div>
-            </section>
-
-            <section id="geometric-cognition" class="scroll-mt-24">
-                <div class="section-shell p-8 md:p-12 space-y-10" data-aurora="true">
-                    <div class="section-beacon">
-                        <span class="section-beacon-dot" aria-hidden="true"></span>
-                        <span>Engagement Pathways</span>
-                    </div>
-                    <div class="flex flex-wrap items-baseline justify-between gap-4">
-                        <span class="section-title">Section 09 · Partnership Tracks</span>
-                        <h2 class="text-3xl font-bold">Bring PPP Into Your Command</h2>
-                    </div>
-                    <p class="text-blue-200 text-sm md:text-base leading-relaxed max-w-4xl">
-                        PPP is licensed with Paul Phillips at the helm. Engagements stay boutique, decisive, and accountable—partners receive the system, the telemetry, and the steward who built it.
-                    </p>
-                    <div class="manifest-badges">
-                        <span class="manifest-badge">Custodied Deployment</span>
-                        <span class="manifest-badge">Joint Research</span>
-                        <span class="manifest-badge">Strategic Licensing</span>
-                    </div>
-                    <div class="grid md:grid-cols-3 gap-6 text-blue-100">
-                        <div class="frost-card border border-blue-700 p-6 space-y-4">
-                            <h3 class="text-xl font-semibold">Operator Cohort</h3>
-                            <p class="text-blue-200 leading-relaxed">For mission teams that need PPP in the field. Includes console deployment, recorder calibration, and on-call stewardship throughout the operational window.</p>
-                            <ul class="list-disc list-inside text-blue-300 text-sm space-y-1">
-                                <li>Signed access keys &amp; ledgered support</li>
-                                <li>24/5 mission bridge with Paul Phillips</li>
-                                <li>Telemetry governance &amp; export audits</li>
-                            </ul>
-                        </div>
-                        <div class="frost-card border border-blue-700 p-6 space-y-4">
-                            <h3 class="text-xl font-semibold">Lab Charter</h3>
-                            <p class="text-blue-200 leading-relaxed">For research units pairing PPP with quantum, robotics, or multimodal pipelines. Delivered with schema libraries, dataset templates, and collaborative experimentation cadence.</p>
-                            <ul class="list-disc list-inside text-blue-300 text-sm space-y-1">
-                                <li>Weekly constellation reviews</li>
-                                <li>Custom adapters &amp; automation APIs</li>
-                                <li>Joint publication &amp; IP guardrails</li>
-                            </ul>
-                        </div>
-                        <div class="frost-card border border-blue-700 p-6 space-y-4">
-                            <h3 class="text-xl font-semibold">Strategic License</h3>
-                            <p class="text-blue-200 leading-relaxed">For enterprises integrating PPP into broader product lines. Structured as restricted-use licenses with executive workshops and continuous readiness audits.</p>
-                            <ul class="list-disc list-inside text-blue-300 text-sm space-y-1">
-                                <li>Executive immersion briefings</li>
-                                <li>Quarterly telemetry certification</li>
-                                <li>Revenue-sharing and royalty lanes</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="grid md:grid-cols-2 gap-6 text-blue-100">
-                        <div class="frost-card border border-blue-700 p-6 space-y-4">
-                            <h3 class="text-xl font-semibold">Integration Runway</h3>
-                            <ul class="list-grid list-grid--dense text-blue-200">
-                                <li>Week 01 — Discovery sprint: align mission objectives, classify sensor topology, confirm security posture.</li>
-                                <li>Week 02 — Console installation: deliver sealed bundle, provision access tokens, rehearse recorder exports.</li>
-                                <li>Week 03 — Parity validation: run dual-stream rehearsals, lock telemetry parity, document governance trail.</li>
-                                <li>Week 04 — Execution &amp; review: commission mission operators, deliver executive readout, schedule sustainment.</li>
-                            </ul>
-                        </div>
-                        <div class="frost-card border border-blue-700 p-6 space-y-4">
-                            <h3 class="text-xl font-semibold">Assurance &amp; Stewardship</h3>
-                            <p class="text-blue-200 leading-relaxed">Every engagement routes through Paul Phillips directly—no handoffs, no anonymized support. Stewardship includes encrypted comms, after-action briefs, and board-level reporting packages.</p>
-                            <ul class="list-grid list-grid--dense text-blue-200">
-                                <li>Dedicated escalation line revealed post-email handshake via Get in Touch.</li>
-                                <li>Immutable mission logs co-signed by Clear Seas Solutions custodians.</li>
-                                <li>Quarterly governance dossier summarizing telemetry integrity, access history, and roadmap deltas.</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <p class="text-sm text-blue-300">Ready to start? Tap “Get in touch” in the lower-right tag, send the introduction email, and the direct line unlocks immediately.</p>
-                </div>
-            </section>
-
         </main>
 
-        <aside id="contactOverlay" class="contact-overlay" aria-live="polite">
-            <button
-                id="contactToggle"
-                class="contact-toggle"
-                type="button"
-                aria-expanded="false"
-                aria-controls="contactPanel"
-            >
-                <span class="contact-toggle-icon" aria-hidden="true">
-                    <span class="contact-toggle-diamond"></span>
-                </span>
-                <span class="contact-toggle-label">Get in touch</span>
-            </button>
-            <div
-                id="contactPanel"
-                class="contact-panel"
-                role="dialog"
-                aria-modal="false"
-                aria-labelledby="contactHeading"
-                tabindex="-1"
-                hidden
-            >
-                <h3 id="contactHeading">Coordinate with Clear Seas</h3>
-                <p>
-                    Explore PPP licensing, mission build-outs, or senior engineering leadership with Paul Phillips and Clear Seas Solutions.
-                    Share your details below and I’ll follow up with scope, commercials, and availability.
-                </p>
-                <form id="contactForm" class="contact-form" novalidate>
-                    <label for="contactName">Your Name</label>
-                    <input id="contactName" name="contactName" type="text" autocomplete="name" required placeholder="Jordan Reyes" />
-                    <label for="contactEmail">Work Email</label>
-                    <input id="contactEmail" name="contactEmail" type="email" autocomplete="email" required placeholder="you@company.com" />
-                    <label for="contactOrg">Organisation</label>
-                    <input id="contactOrg" name="contactOrg" type="text" autocomplete="organization" placeholder="Mission Systems Group" />
-                    <label for="contactNote">Focus</label>
-                    <textarea id="contactNote" name="contactNote" placeholder="Deployment goals, timelines, decision makers…"></textarea>
-                    <p id="contactError" class="contact-error" hidden></p>
-                    <button type="submit" class="contact-submit">
-                        Draft Email to Paul
-                    </button>
-                    <p class="contact-footnote">
-                        Launches your mail client with a prefilled brief for <a class="underline" href="mailto:paul@clearseassolutions.com">paul@clearseassolutions.com</a> so you can confirm the outreach.
-                    </p>
-                </form>
-                <div id="contactSuccess" class="contact-success" hidden>
-                    <p>
-                        Thanks for the introduction—I’ll look for your note at <strong>paul@clearseassolutions.com</strong> and circle back with tailored next steps.
-                    </p>
-                    <p>
-                        In the meantime you can reach me directly at <strong id="contactPhoneReveal"></strong> for priority conversations.
-                    </p>
-                    <p class="contact-footnote">
-                        Please include your preferred call window so I can return with a prepared brief.
-                    </p>
-                </div>
-            </div>
-        </aside>
+        <footer class="text-sm text-blue-100/50 border-t border-blue-900/60 pt-8">
+            Maintained by PPP Engineering • Status v2025.10 • Contact: Paul Phillips · Clear Seas Solutions
+        </footer>
     </div>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        PPPBlue: '#0A192F'
-                    }
-                }
-            }
-        };
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const expandButton = document.getElementById('expandConsole');
-            const consoleWrapper = document.getElementById('embeddedConsole');
-            const consoleFrame = consoleWrapper ? consoleWrapper.querySelector('iframe') : null;
-            const consoleFallback = document.getElementById('consoleFallback');
-            const consoleFallbackStatus = document.getElementById('consoleFallbackStatus');
-            const consoleFallbackAction = document.getElementById('consoleFallbackAction');
-            const openConsoleLink = document.getElementById('openConsoleLink');
-            let consoleReady = false;
-            let consoleFallbackTimer = null;
-            let consoleDocumentPollHandle = null;
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('polytopeCanvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        let width, height;
 
-            const setConsoleFallbackState = (state, message) => {
-                if (!consoleFallback) return;
-                if (state) {
-                    consoleFallback.dataset.state = state;
-                }
-                if (consoleFallbackStatus && typeof message === 'string') {
-                    consoleFallbackStatus.textContent = message;
-                }
-                if (consoleFallbackAction) {
-                    consoleFallbackAction.hidden = state !== 'warn';
-                }
-            };
+        const vertices = [
+            [-1, -1, -1, -1], [-1, -1, -1, 1], [-1, -1, 1, -1], [-1, -1, 1, 1],
+            [-1, 1, -1, -1], [-1, 1, -1, 1], [-1, 1, 1, -1], [-1, 1, 1, 1],
+            [1, -1, -1, -1], [1, -1, -1, 1], [1, -1, 1, -1], [1, -1, 1, 1],
+            [1, 1, -1, -1], [1, 1, -1, 1], [1, 1, 1, -1], [1, 1, 1, 1]
+        ];
 
-            const stopConsoleFallbackTimer = () => {
-                if (consoleFallbackTimer) {
-                    clearTimeout(consoleFallbackTimer);
-                    consoleFallbackTimer = null;
-                }
-            };
+        const edges = [
+            [0, 1], [0, 2], [0, 4], [0, 8], [1, 3], [1, 5], [1, 9], [2, 3], [2, 6],
+            [2, 10], [3, 7], [3, 11], [4, 5], [4, 6], [4, 12], [5, 7], [5, 13],
+            [6, 7], [6, 14], [7, 15], [8, 9], [8, 10], [8, 12], [9, 11], [9, 13],
+            [10, 11], [10, 14], [11, 15], [12, 13], [12, 14], [13, 15], [14, 15]
+        ];
 
-            const scheduleConsoleFallbackWarning = () => {
-                stopConsoleFallbackTimer();
-                consoleFallbackTimer = window.setTimeout(() => {
-                    if (!consoleReady) {
-                        setConsoleFallbackState(
-                            'warn',
-                            'The embedded console is taking longer to initialize. Launch it in a dedicated window or reload from a served host to view the PPP visuals.'
-                        );
-                    }
-                }, 6500);
-            };
+        let angleXY = 0, angleZW = 0, angleXW = 0, angleYZ = 0;
 
-            const stopConsoleDocumentPolling = () => {
-                if (consoleDocumentPollHandle) {
-                    window.clearInterval(consoleDocumentPollHandle);
-                    consoleDocumentPollHandle = null;
-                }
-            };
+        function resizeCanvas() {
+            width = canvas.clientWidth;
+            height = canvas.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-            const evaluateConsoleDocumentState = () => {
-                if (!consoleFrame) {
-                    return false;
-                }
-                try {
-                    const frameDocument = consoleFrame.contentDocument;
-                    const docElement = frameDocument ? frameDocument.documentElement : null;
-                    if (!docElement || !docElement.dataset) {
-                        return false;
-                    }
-                    const { pppConsole: state, pppConsoleMessage: stateMessage } = docElement.dataset;
-                    if (state === 'ready') {
-                        markConsoleReady();
-                        return true;
-                    }
-                    if (state === 'error') {
-                        stopConsoleFallbackTimer();
-                        setConsoleFallbackState(
-                            'warn',
-                            stateMessage || 'The embedded console reported an initialization error. Open the full console in a new window to continue.'
-                        );
-                        stopConsoleDocumentPolling();
-                        return true;
-                    }
-                } catch (error) {
-                    // Access can fail with cross-origin restrictions; ignore and wait for postMessage.
-                }
-                return false;
-            };
+        function rotate4D(vertex, angles) {
+            let [x, y, z, w] = vertex;
+            let d;
+            d = Math.cos(angles.xy) * y - Math.sin(angles.xy) * x;
+            x = Math.cos(angles.xy) * x + Math.sin(angles.xy) * y;
+            y = d;
+            d = Math.cos(angles.zw) * w - Math.sin(angles.zw) * z;
+            z = Math.cos(angles.zw) * z + Math.sin(angles.zw) * w;
+            w = d;
+            d = Math.cos(angles.xw) * w - Math.sin(angles.xw) * x;
+            x = Math.cos(angles.xw) * x + Math.sin(angles.xw) * w;
+            w = d;
+            d = Math.cos(angles.yz) * z - Math.sin(angles.yz) * y;
+            y = Math.cos(angles.yz) * y + Math.sin(angles.yz) * z;
+            z = d;
+            return [x, y, z, w];
+        }
 
-            const startConsoleDocumentPolling = () => {
-                stopConsoleDocumentPolling();
-                let attempts = 0;
-                const maxAttempts = 40;
-                const poll = () => {
-                    if (evaluateConsoleDocumentState()) {
-                        return;
-                    }
-                    attempts += 1;
-                    if (attempts >= maxAttempts) {
-                        stopConsoleDocumentPolling();
-                        if (!consoleReady) {
-                            stopConsoleFallbackTimer();
-                            setConsoleFallbackState(
-                                'warn',
-                                'The embedded console did not finish drawing. Open it in a dedicated window to continue.'
-                            );
-                        }
-                    }
-                };
-                poll();
-                consoleDocumentPollHandle = window.setInterval(poll, 200);
-            };
+        function projectTo3D(vertex) {
+            const distance = 4;
+            const wProj = 1 / (distance - vertex[3]);
+            return [vertex[0] * wProj, vertex[1] * wProj, vertex[2] * wProj];
+        }
 
-            if (consoleFallbackAction && openConsoleLink) {
-                consoleFallbackAction.addEventListener('click', () => {
-                    openConsoleLink.click();
-                });
-            }
+        function projectTo2D(vertex) {
+            const angle = Math.PI / 4;
+            const x = vertex[0] * Math.cos(angle) - vertex[2] * Math.sin(angle);
+            const y = vertex[1];
+            return [x, y];
+        }
 
-            const markConsoleReady = () => {
-                if (consoleReady) {
-                    return;
-                }
-                consoleReady = true;
-                stopConsoleFallbackTimer();
-                stopConsoleDocumentPolling();
-                setConsoleFallbackState('ready', 'PPP console ready.');
-            };
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.save();
+            ctx.translate(width / 2, height / 2);
+            const scale = Math.min(width, height) * 0.8;
 
-            window.addEventListener('message', (event) => {
-                const payload = event && typeof event.data === 'object' ? event.data : null;
-                if (!payload) {
-                    return;
-                }
-                if (consoleFrame && event.source !== consoleFrame.contentWindow) {
-                    return;
-                }
-                const { type, message } = payload;
-                if (type === 'ppp-console-ready') {
-                    markConsoleReady();
-                } else if (type === 'ppp-console-error') {
-                    stopConsoleFallbackTimer();
-                    stopConsoleDocumentPolling();
-                    setConsoleFallbackState(
-                        'warn',
-                        message || 'The embedded console could not initialize. Open the full console in a new window to continue.'
-                    );
-                }
+            const projectedPoints2D = vertices.map((vertex) => {
+                const rotated = rotate4D(vertex, { xy: angleXY, zw: angleZW, xw: angleXW, yz: angleYZ });
+                const p3d = projectTo3D(rotated);
+                return projectTo2D(p3d);
             });
 
-            if (consoleFrame) {
-                consoleFrame.addEventListener('load', () => {
-                    scheduleConsoleFallbackWarning();
-                    startConsoleDocumentPolling();
-                });
-                consoleFrame.addEventListener('error', () => {
-                    stopConsoleFallbackTimer();
-                    stopConsoleDocumentPolling();
-                    setConsoleFallbackState(
-                        'warn',
-                        'The console frame could not be reached. Open the full console in a new window to continue.'
-                    );
-                });
-            }
+            ctx.strokeStyle = '#7ccfff';
+            ctx.lineWidth = 1.2;
 
-            scheduleConsoleFallbackWarning();
-
-            if (expandButton && consoleWrapper) {
-                expandButton.addEventListener('click', () => {
-                    const isExpanded = consoleWrapper.classList.toggle('expanded');
-                    expandButton.setAttribute('aria-pressed', String(isExpanded));
-                    expandButton.textContent = isExpanded ? 'Collapse Console' : 'Expand Console';
-                });
-            }
-
-            const legacyCanvas = document.getElementById('legacyPipeline');
-            const fabricCanvas = document.getElementById('pppFabric');
-            const demoBowCanvas = document.getElementById('demoBowCanvas');
-            const demoBowPhase = document.getElementById('demoBowPhase');
-            const demoBowStatus = document.getElementById('demoBowStatus');
-            const demoBowOverlay = document.getElementById('demoBowOverlay');
-            const demoBowOverlayToggle = document.getElementById('demoBowOverlayToggle');
-            const demoBowControls = document.getElementById('demoBowControls');
-            const demoBowViewportQuery = window.matchMedia('(max-width: 900px)');
-            let demoBowViewportWasMobile = demoBowViewportQuery.matches;
-            const demoBowStageItems = Array.from(document.querySelectorAll('[data-demo-bow-stage]'));
-
-            const demoBowStages = [
-                {
-                    title: 'Sensor Acquisition',
-                    summary: 'Sealed ingress verifies mission channels before projection.'
-                },
-                {
-                    title: 'Spinor Lift',
-                    summary: 'Spinor harmonics lift telemetry into Spin(4), locking orientation with PPP flight libraries.'
-                },
-                {
-                    title: 'Hypercube Resonance',
-                    summary: 'Hypercube resonance threads sonic metrics through the lattice to validate each update.'
-                },
-                {
-                    title: 'Action Orchestration',
-                    summary: 'Action tokens exit ready for HAOS orchestration without exposing mission payloads.'
-                }
-            ];
-
-            let demoBowProgress = 0;
-            let demoBowStageIndex = 0;
-            let demoBowOverlayExpanded = false;
-
-            const drawLegacy = (ctx) => {
-                if (!ctx) return;
-                const width = ctx.canvas.width;
-                const height = ctx.canvas.height;
-                ctx.clearRect(0, 0, width, height);
-                const steps = 5;
-                ctx.strokeStyle = 'rgba(137, 207, 240, 0.25)';
-                ctx.lineWidth = 2;
-                for (let i = 0; i < steps; i++) {
-                    const y = (height / (steps + 1)) * (i + 1);
-                    ctx.beginPath();
-                    ctx.moveTo(40, y);
-                    ctx.lineTo(width - 40, y - 18);
-                    ctx.stroke();
-                }
-                ctx.fillStyle = 'rgba(137, 207, 240, 0.6)';
-                ctx.font = '14px Inter, sans-serif';
-                ctx.fillText('Linear Drift', 40, height - 24);
-            };
-
-            const drawFabric = (ctx) => {
-                if (!ctx) return;
-                const width = ctx.canvas.width;
-                const height = ctx.canvas.height;
-                ctx.clearRect(0, 0, width, height);
-                const centerX = width / 2;
-                const centerY = height / 2;
-                const radius = Math.min(width, height) / 3;
-                for (let i = 0; i < 6; i++) {
-                    ctx.beginPath();
-                    ctx.strokeStyle = `rgba(137, 207, 240, ${0.25 + i * 0.1})`;
-                    ctx.lineWidth = 2;
-                    ctx.ellipse(centerX, centerY, radius + i * 12, radius / 1.3 + i * 10, (Math.PI / 6) * i, 0, Math.PI * 2);
-                    ctx.stroke();
-                }
-                ctx.fillStyle = 'rgba(192, 132, 252, 0.8)';
-                ctx.font = '14px Inter, sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('Holistic State', centerX, centerY + radius + 20);
-            };
-
-            const renderDemoBow = (normalized = 0, stageIndex = 0) => {
-                if (!demoBowCanvas) {
-                    return;
-                }
-                const rect = demoBowCanvas.getBoundingClientRect();
-                if (!rect.width || !rect.height) {
-                    return;
-                }
-                const ratio = window.devicePixelRatio || 1;
-                const width = rect.width;
-                const height = rect.height;
-                demoBowCanvas.width = width * ratio;
-                demoBowCanvas.height = height * ratio;
-                const ctx = demoBowCanvas.getContext('2d');
-                if (!ctx) {
-                    return;
-                }
-                ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-                ctx.clearRect(0, 0, width, height);
-
-                const stageCount = demoBowStages.length || 1;
-                const centerX = width / 2;
-                const centerY = height * 0.85;
-                const maxRadius = Math.min(width * 0.45, height * 0.55);
-                const baseLineWidth = Math.max(8, maxRadius * 0.08);
-
-                for (let i = 0; i < stageCount; i++) {
-                    const radius = Math.max(12, maxRadius - i * (baseLineWidth * 0.9));
-                    const startAngle = Math.PI + (i / stageCount) * Math.PI;
-                    const endAngle = Math.PI + ((i + 1) / stageCount) * Math.PI;
-                    const active = i <= stageIndex;
-                    const alpha = active ? 0.85 : 0.25;
-                    const gradient = ctx.createLinearGradient(centerX - radius, centerY, centerX + radius, centerY);
-                    gradient.addColorStop(0, `rgba(59, 130, 246, ${alpha})`);
-                    gradient.addColorStop(0.5, `rgba(192, 132, 252, ${Math.min(alpha + 0.05, 0.95)})`);
-                    gradient.addColorStop(1, `rgba(56, 189, 248, ${alpha})`);
-                    ctx.beginPath();
-                    ctx.lineWidth = Math.max(6, baseLineWidth - i * 1.6);
-                    ctx.lineCap = 'round';
-                    ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
-                    ctx.strokeStyle = gradient;
-                    ctx.stroke();
-
-                    if (active) {
-                        const anchorAngle = endAngle;
-                        const anchorX = centerX + Math.cos(anchorAngle) * radius;
-                        const anchorY = centerY + Math.sin(anchorAngle) * radius;
-                        ctx.beginPath();
-                        ctx.fillStyle = `rgba(137, 207, 240, ${0.35 + i * 0.08})`;
-                        ctx.arc(anchorX, anchorY, 6, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                }
-
-                const anchorRadius = 8;
-                const anchorOffset = maxRadius + anchorRadius + 6;
-                [Math.PI, Math.PI * 2].forEach((angle) => {
-                    const anchorX = centerX + Math.cos(angle) * anchorOffset;
-                    const anchorY = centerY + Math.sin(angle) * anchorOffset;
-                    ctx.beginPath();
-                    ctx.fillStyle = 'rgba(137, 207, 240, 0.35)';
-                    ctx.arc(anchorX, anchorY, anchorRadius, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-
-                const pointerAngle = Math.PI + normalized * Math.PI;
-                const pointerRadius = maxRadius + baseLineWidth * 0.9;
-                const pointerX = centerX + Math.cos(pointerAngle) * pointerRadius;
-                const pointerY = centerY + Math.sin(pointerAngle) * pointerRadius;
-
+            edges.forEach((edge) => {
+                const p1 = projectedPoints2D[edge[0]];
+                const p2 = projectedPoints2D[edge[1]];
                 ctx.beginPath();
-                ctx.strokeStyle = 'rgba(192, 132, 252, 0.45)';
-                ctx.lineWidth = 2;
-                ctx.moveTo(centerX, centerY);
-                ctx.lineTo(pointerX, pointerY);
+                ctx.moveTo(p1[0] * scale, p1[1] * scale);
+                ctx.lineTo(p2[0] * scale, p2[1] * scale);
                 ctx.stroke();
-
-                ctx.beginPath();
-                ctx.fillStyle = 'rgba(192, 132, 252, 0.85)';
-                ctx.arc(pointerX, pointerY, 5.5, 0, Math.PI * 2);
-                ctx.fill();
-            };
-
-            const updateDemoBow = (value = 0) => {
-                const numeric = Number(value);
-                const clamped = Number.isFinite(numeric) ? numeric : 0;
-                const normalized = Math.min(Math.max(clamped, 0), 100) / 100;
-                const stageCount = demoBowStages.length || 1;
-                const stageIndex = Math.min(stageCount - 1, Math.round(normalized * (stageCount - 1)));
-                demoBowProgress = normalized;
-                demoBowStageIndex = stageIndex;
-                const stage = demoBowStages[stageIndex];
-                if (demoBowStatus && stage) {
-                    const label = String(stageIndex + 1).padStart(2, '0');
-                    demoBowStatus.textContent = `Stage ${label} · ${stage.title} — ${stage.summary}`;
-                }
-                if (demoBowStageItems.length) {
-                    demoBowStageItems.forEach((item, idx) => {
-                        const isActive = idx === stageIndex;
-                        item.classList.toggle('demo-bow-stage-active', isActive);
-                        if (item.hasAttribute('aria-pressed')) {
-                            item.setAttribute('aria-pressed', String(isActive));
-                        }
-                    });
-                }
-                renderDemoBow(normalized, stageIndex);
-            };
-
-            const resizeCanvases = () => {
-                const canvases = [legacyCanvas, fabricCanvas];
-                canvases.forEach((canvas, index) => {
-                    if (!canvas) return;
-                    const rect = canvas.getBoundingClientRect();
-                    canvas.width = rect.width * window.devicePixelRatio;
-                    canvas.height = rect.height * window.devicePixelRatio;
-                    const ctx = canvas.getContext('2d');
-                    ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
-                    if (index === 0) {
-                        drawLegacy(ctx);
-                    } else {
-                        drawFabric(ctx);
-                    }
-                });
-                renderDemoBow(demoBowProgress, demoBowStageIndex);
-            };
-
-            resizeCanvases();
-            window.addEventListener('resize', resizeCanvases);
-
-            if (demoBowPhase) {
-                updateDemoBow(demoBowPhase.value);
-                demoBowPhase.addEventListener('input', (event) => {
-                    updateDemoBow(event.target.value);
-                });
-            } else if (demoBowCanvas) {
-                updateDemoBow(0);
-            }
-
-            const setDemoBowOverlayState = (expanded) => {
-                demoBowOverlayExpanded = expanded === true;
-                applyDemoBowControlsState();
-            };
-
-            const applyDemoBowControlsState = () => {
-                const isMobile = demoBowViewportQuery.matches;
-                if (isMobile && !demoBowViewportWasMobile && demoBowOverlayExpanded) {
-                    demoBowOverlayExpanded = false;
-                }
-                const shouldCollapse = !demoBowOverlayExpanded;
-                if (demoBowOverlay) {
-                    demoBowOverlay.dataset.state = shouldCollapse ? 'collapsed' : 'expanded';
-                    demoBowOverlay.dataset.mobile = isMobile ? 'true' : 'false';
-                }
-                if (demoBowControls) {
-                    demoBowControls.classList.toggle('is-collapsed', shouldCollapse);
-                    if (shouldCollapse) {
-                        demoBowControls.setAttribute('hidden', '');
-                    } else {
-                        demoBowControls.removeAttribute('hidden');
-                    }
-                    demoBowControls.setAttribute('aria-hidden', shouldCollapse ? 'true' : 'false');
-                }
-                if (demoBowOverlayToggle) {
-                    demoBowOverlayToggle.setAttribute('aria-expanded', demoBowOverlayExpanded ? 'true' : 'false');
-                    demoBowOverlayToggle.dataset.mobile = isMobile ? 'true' : 'false';
-                }
-                demoBowViewportWasMobile = isMobile;
-            };
-            applyDemoBowControlsState();
-            if (demoBowViewportQuery) {
-                if (typeof demoBowViewportQuery.addEventListener === 'function') {
-                    demoBowViewportQuery.addEventListener('change', applyDemoBowControlsState);
-                } else if (typeof demoBowViewportQuery.addListener === 'function') {
-                    demoBowViewportQuery.addListener(applyDemoBowControlsState);
-                }
-            }
-
-            if (demoBowOverlayToggle) {
-                demoBowOverlayToggle.addEventListener('click', () => {
-                    setDemoBowOverlayState(!demoBowOverlayExpanded);
-                });
-            }
-
-            if (demoBowStageItems.length) {
-                demoBowStageItems.forEach((item, idx) => {
-                    const activateStage = () => {
-                        const stageCount = demoBowStages.length || 1;
-                        const normalized = stageCount > 1 ? (idx / (stageCount - 1)) * 100 : 0;
-                        if (demoBowPhase) {
-                            demoBowPhase.value = normalized;
-                        }
-                        updateDemoBow(normalized);
-                        if (!demoBowViewportQuery.matches && demoBowOverlayExpanded) {
-                            setDemoBowOverlayState(false);
-                        }
-                    };
-                    item.addEventListener('click', activateStage);
-                    item.addEventListener('keydown', (event) => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                            event.preventDefault();
-                            activateStage();
-                        }
-                    });
-                });
-            }
-
-            const contactOverlay = document.getElementById('contactOverlay');
-            const contactToggleButton = document.getElementById('contactToggle');
-            const contactPanel = document.getElementById('contactPanel');
-            const contactForm = document.getElementById('contactForm');
-            const contactError = document.getElementById('contactError');
-            const contactSuccess = document.getElementById('contactSuccess');
-            const contactPhoneReveal = document.getElementById('contactPhoneReveal');
-            const contactEmailAddress = 'paul@clearseassolutions.com';
-
-            const setContactPanelVisibility = (shouldOpen) => {
-                if (!contactPanel || !contactToggleButton) {
-                    return;
-                }
-                if (shouldOpen) {
-                    if (contactError) {
-                        contactError.textContent = '';
-                        contactError.hidden = true;
-                    }
-                    contactPanel.removeAttribute('hidden');
-                    contactToggleButton.setAttribute('aria-expanded', 'true');
-                    if (typeof contactPanel.focus === 'function') {
-                        contactPanel.focus({ preventScroll: true });
-                    }
-                } else {
-                    contactPanel.setAttribute('hidden', '');
-                    contactToggleButton.setAttribute('aria-expanded', 'false');
-                }
-            };
-
-            if (contactToggleButton && contactPanel) {
-                contactToggleButton.addEventListener('click', () => {
-                    const isHidden = contactPanel.hasAttribute('hidden');
-                    setContactPanelVisibility(isHidden);
-                });
-            }
-
-            if (contactOverlay && contactPanel) {
-                contactOverlay.addEventListener('keydown', (event) => {
-                    if (event.key === 'Escape') {
-                        setContactPanelVisibility(false);
-                        if (contactToggleButton) {
-                            contactToggleButton.focus();
-                        }
-                    }
-                });
-            }
-
-            document.addEventListener('click', (event) => {
-                if (!contactPanel || !contactToggleButton) {
-                    return;
-                }
-                if (contactPanel.hasAttribute('hidden')) {
-                    return;
-                }
-                if (contactPanel.contains(event.target) || contactToggleButton.contains(event.target)) {
-                    return;
-                }
-                setContactPanelVisibility(false);
             });
 
-            if (contactForm) {
-                contactForm.addEventListener('submit', (event) => {
-                    event.preventDefault();
-                    if (contactError) {
-                        contactError.textContent = '';
-                        contactError.hidden = true;
-                    }
-                    const formData = new FormData(contactForm);
-                    const contactName = (formData.get('contactName') || '').toString().trim();
-                    const contactEmail = (formData.get('contactEmail') || '').toString().trim();
-                    const contactOrg = (formData.get('contactOrg') || '').toString().trim();
-                    const contactNote = (formData.get('contactNote') || '').toString().trim();
+            ctx.restore();
+            angleXY += 0.0045;
+            angleZW += 0.0065;
+            angleXW += 0.002;
+            angleYZ += 0.0035;
+            requestAnimationFrame(draw);
+        }
+        draw();
+    }
 
-                    if (!contactName || !contactEmail) {
-                        if (contactError) {
-                            contactError.textContent = 'Please share both your name and work email so I know who to follow up with.';
-                            contactError.hidden = false;
-                        }
-                        return;
-                    }
-
-                    const mailLines = [
-                        'Hi Paul,',
-                        '',
-                        'I would like to schedule a PPP / Clear Seas Solutions engagement.',
-                        `Name: ${contactName}`,
-                        `Email: ${contactEmail}`
-                    ];
-                    if (contactOrg) {
-                        mailLines.push(`Organisation: ${contactOrg}`);
-                    }
-                    if (contactNote) {
-                        mailLines.push('', contactNote);
-                    }
-                    mailLines.push('', '— Sent via the PPP overview page');
-
-                    const mailSubject = encodeURIComponent('PPP engagement inquiry');
-                    const mailBody = encodeURIComponent(mailLines.join('\n'));
-                    const mailtoUrl = `mailto:${contactEmailAddress}?subject=${mailSubject}&body=${mailBody}`;
-
-                    window.location.href = mailtoUrl;
-
-                    contactForm.setAttribute('hidden', '');
-                    if (contactSuccess) {
-                        contactSuccess.removeAttribute('hidden');
-                    }
-                    if (contactPhoneReveal) {
-                        contactPhoneReveal.textContent = '609-276-5538';
-                    }
-                });
-            }
-
-            const chartElement = document.getElementById('degreesOfFreedomChart');
-            if (chartElement) {
-                new Chart(chartElement.getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels: ['3D Euler Stack', 'PPP 4D Spinor'],
-                        datasets: [
-                            {
-                                label: 'Rotational Degrees Captured',
-                                data: [9, 27],
-                                backgroundColor: ['rgba(59, 130, 246, 0.65)', 'rgba(192, 132, 252, 0.8)'],
-                                borderColor: ['rgba(59, 130, 246, 1)', 'rgba(192, 132, 252, 1)'],
-                                borderWidth: 1.5,
-                                borderRadius: 12,
-                                maxBarThickness: 72
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    color: 'rgba(224, 255, 255, 0.8)'
-                                },
-                                grid: {
-                                    color: 'rgba(59, 130, 246, 0.2)'
-                                }
-                            },
-                            x: {
-                                ticks: {
-                                    color: 'rgba(224, 255, 255, 0.8)'
-                                },
-                                grid: {
-                                    display: false
-                                }
-                            }
+    const chartCanvas = document.getElementById('dimensionsChart');
+    if (chartCanvas) {
+        const chartContext = chartCanvas.getContext('2d');
+        new Chart(chartContext, {
+            type: 'bar',
+            data: {
+                labels: ['3D Spatial Computation', '4D PPP Kernel'],
+                datasets: [{
+                    label: 'Rotational Degrees of Freedom',
+                    data: [3, 6],
+                    backgroundColor: ['rgba(90, 180, 255, 0.45)', 'rgba(140, 120, 255, 0.5)'],
+                    borderColor: ['rgba(90, 180, 255, 0.9)', 'rgba(140, 120, 255, 0.9)'],
+                    borderWidth: 2,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#d8f5ff',
+                            font: { size: 12 }
                         },
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    color: 'rgba(224, 255, 255, 0.85)'
-                                }
-                            }
+                        grid: {
+                            color: 'rgba(104, 178, 255, 0.15)',
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#d8f5ff',
+                            font: { size: 12 }
+                        },
+                        grid: {
+                            display: false
                         }
                     }
-                });
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#d8f5ff',
+                            font: { size: 12 }
+                        }
+                    }
+                }
             }
         });
-    </script>
+    }
+
+    const activateButton = document.getElementById('activateDemo');
+    const demoFrame = document.getElementById('demoFrame');
+    const demoOverlay = document.getElementById('demoOverlay');
+    if (activateButton && demoFrame && demoOverlay) {
+        activateButton.addEventListener('click', () => {
+            if (!demoFrame.getAttribute('src')) {
+                const src = demoFrame.dataset.src;
+                if (src) {
+                    demoFrame.src = src;
+                    demoFrame.addEventListener('load', () => {
+                        demoFrame.dataset.loaded = 'true';
+                    }, { once: true });
+                }
+            }
+            demoOverlay.style.opacity = '0';
+            demoOverlay.style.pointerEvents = 'none';
+            setTimeout(() => {
+                demoOverlay.style.display = 'none';
+            }, 400);
+        });
+    }
+});
+</script>
 </body>
 </html>

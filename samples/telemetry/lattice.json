@@ -1,0 +1,183 @@
+{
+  "timestamp": 0,
+  "progress": 0.35,
+  "transport": {
+    "playing": true,
+    "mode": "test"
+  },
+  "orientation": {
+    "continuum": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "voice": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "bridge": [
+      0.998966,
+      -0.039561,
+      0.012862,
+      -0.018336
+    ],
+    "hopf": [
+      0.863857,
+      0.303585,
+      0.271218,
+      0.296695
+    ],
+    "residual": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "voiceResidual": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "synergy": {
+    "bridgeContinuum": 0,
+    "hopfContinuum": 0,
+    "voiceContinuum": 0,
+    "bridgeVoice": 0,
+    "continuumResidual": 0,
+    "voiceResidual": 0,
+    "coherence": 0,
+    "braid": 0,
+    "carrier": 0,
+    "gateMean": 0,
+    "ratioMean": 0,
+    "ratioVariance": 0,
+    "sequenceDensity": 0
+  },
+  "flux": {
+    "density": 0,
+    "variance": 0,
+    "bridgeAlignment": 0,
+    "hopfAlignment": 0,
+    "voiceAlignment": 0,
+    "carrierEnergy": 0,
+    "gridEnergy": 0
+  },
+  "axes": [
+    {
+      "index": 0,
+      "intensity": 0,
+      "continuumProjection": 0,
+      "voiceProjection": 0,
+      "bridgeProjection": 0.84409,
+      "hopfProjection": 0.994821,
+      "gateFlux": 0,
+      "ratioFlux": 0,
+      "coherenceFlux": 0,
+      "braidFlux": 0,
+      "bitFlux": 0,
+      "entropyFlux": 0,
+      "gridFlux": 0,
+      "carrierFlux": 0,
+      "bridgeCoupling": 0.84409,
+      "hopfCoupling": 0.994821,
+      "orientation": [
+        0.862383,
+        0.36461,
+        0.189796,
+        0.29552
+      ]
+    },
+    {
+      "index": 1,
+      "intensity": 0,
+      "continuumProjection": 0,
+      "voiceProjection": 0,
+      "bridgeProjection": -0.516635,
+      "hopfProjection": -0.022715,
+      "gateFlux": 0,
+      "ratioFlux": 0,
+      "coherenceFlux": 0,
+      "braidFlux": 0,
+      "bitFlux": 0,
+      "entropyFlux": 0,
+      "gridFlux": 0,
+      "carrierFlux": 0,
+      "bridgeCoupling": -0.516635,
+      "hopfCoupling": -0.022715,
+      "orientation": [
+        -0.485587,
+        0.774859,
+        0.30675,
+        0.264013
+      ]
+    },
+    {
+      "index": 2,
+      "intensity": 0,
+      "continuumProjection": 0,
+      "voiceProjection": 0,
+      "bridgeProjection": -0.055561,
+      "hopfProjection": 0.096588,
+      "gateFlux": 0,
+      "ratioFlux": 0,
+      "coherenceFlux": 0,
+      "braidFlux": 0,
+      "bitFlux": 0,
+      "entropyFlux": 0,
+      "gridFlux": 0,
+      "carrierFlux": 0,
+      "bridgeCoupling": -0.055561,
+      "hopfCoupling": 0.096588,
+      "orientation": [
+        -0.079807,
+        -0.475789,
+        0.826948,
+        0.288813
+      ]
+    },
+    {
+      "index": 3,
+      "intensity": 0,
+      "continuumProjection": 0,
+      "voiceProjection": 0,
+      "bridgeProjection": -0.13234,
+      "hopfProjection": -0.022023,
+      "gateFlux": 0,
+      "ratioFlux": 0,
+      "coherenceFlux": 0,
+      "braidFlux": 0,
+      "bitFlux": 0,
+      "entropyFlux": 0,
+      "gridFlux": 0,
+      "carrierFlux": 0,
+      "bridgeCoupling": -0.13234,
+      "hopfCoupling": -0.022023,
+      "orientation": [
+        -0.118874,
+        -0.200692,
+        -0.431323,
+        0.871523
+      ]
+    }
+  ],
+  "voices": [],
+  "carriers": [],
+  "spectral": {
+    "span": 0,
+    "mean": 0,
+    "variance": 0,
+    "active": 0,
+    "energy": 0,
+    "gridEnergy": 0
+  },
+  "timeline": {
+    "sequence": "",
+    "density": 0,
+    "weights": []
+  }
+}

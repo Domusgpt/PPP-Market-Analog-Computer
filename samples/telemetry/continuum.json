@@ -1,0 +1,170 @@
+{
+  "timestamp": 0,
+  "progress": 0.35,
+  "transport": {
+    "playing": true,
+    "mode": "test"
+  },
+  "flux": {
+    "density": 0,
+    "variance": 0,
+    "bridgeAlignment": 0,
+    "hopfAlignment": 0,
+    "voiceAlignment": 0,
+    "gateMean": 0,
+    "coherenceMean": 0,
+    "braidMean": 0,
+    "bitDensity": 0,
+    "bitEntropy": 0,
+    "gridEnergy": 0,
+    "carrierEnergy": 0
+  },
+  "continuum": {
+    "orientation": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "magnitude": 0,
+    "voiceOrientation": [],
+    "voiceMagnitude": 0,
+    "sequence": ""
+  },
+  "axes": [
+    {
+      "index": 0,
+      "orientation": [
+        0.862383,
+        0.36461,
+        0.189796,
+        0.29552
+      ],
+      "gateFlux": 0,
+      "ratioFlux": 0,
+      "coherenceFlux": 0,
+      "braidFlux": 0,
+      "bitFlux": 0,
+      "entropyFlux": 0,
+      "gridFlux": 0,
+      "carrierFlux": 0,
+      "gateCorrelation": 0,
+      "ratioCorrelation": 0,
+      "coherenceCorrelation": 0,
+      "braidCorrelation": 0,
+      "bitCorrelation": 0,
+      "entropyCorrelation": 0,
+      "gridCorrelation": 0,
+      "carrierCorrelation": 0,
+      "bridgeCoupling": 0.84409,
+      "hopfCoupling": 0.994821,
+      "intensity": 0
+    },
+    {
+      "index": 1,
+      "orientation": [
+        -0.485587,
+        0.774859,
+        0.30675,
+        0.264013
+      ],
+      "gateFlux": 0,
+      "ratioFlux": 0,
+      "coherenceFlux": 0,
+      "braidFlux": 0,
+      "bitFlux": 0,
+      "entropyFlux": 0,
+      "gridFlux": 0,
+      "carrierFlux": 0,
+      "gateCorrelation": 0,
+      "ratioCorrelation": 0,
+      "coherenceCorrelation": 0,
+      "braidCorrelation": 0,
+      "bitCorrelation": 0,
+      "entropyCorrelation": 0,
+      "gridCorrelation": 0,
+      "carrierCorrelation": 0,
+      "bridgeCoupling": -0.516635,
+      "hopfCoupling": -0.022715,
+      "intensity": 0
+    },
+    {
+      "index": 2,
+      "orientation": [
+        -0.079807,
+        -0.475789,
+        0.826948,
+        0.288813
+      ],
+      "gateFlux": 0,
+      "ratioFlux": 0,
+      "coherenceFlux": 0,
+      "braidFlux": 0,
+      "bitFlux": 0,
+      "entropyFlux": 0,
+      "gridFlux": 0,
+      "carrierFlux": 0,
+      "gateCorrelation": 0,
+      "ratioCorrelation": 0,
+      "coherenceCorrelation": 0,
+      "braidCorrelation": 0,
+      "bitCorrelation": 0,
+      "entropyCorrelation": 0,
+      "gridCorrelation": 0,
+      "carrierCorrelation": 0,
+      "bridgeCoupling": -0.055561,
+      "hopfCoupling": 0.096588,
+      "intensity": 0
+    },
+    {
+      "index": 3,
+      "orientation": [
+        -0.118874,
+        -0.200692,
+        -0.431323,
+        0.871523
+      ],
+      "gateFlux": 0,
+      "ratioFlux": 0,
+      "coherenceFlux": 0,
+      "braidFlux": 0,
+      "bitFlux": 0,
+      "entropyFlux": 0,
+      "gridFlux": 0,
+      "carrierFlux": 0,
+      "gateCorrelation": 0,
+      "ratioCorrelation": 0,
+      "coherenceCorrelation": 0,
+      "braidCorrelation": 0,
+      "bitCorrelation": 0,
+      "entropyCorrelation": 0,
+      "gridCorrelation": 0,
+      "carrierCorrelation": 0,
+      "bridgeCoupling": -0.13234,
+      "hopfCoupling": -0.022023,
+      "intensity": 0
+    }
+  ],
+  "voices": [],
+  "braiding": {
+    "bridgeToGateFlux": 0,
+    "bridgeToRatioFlux": 0,
+    "hopfToCarrierFlux": 0,
+    "gateToGridFlux": 0,
+    "ratioToBitFlux": 0
+  },
+  "quaternion": {
+    "bridge": [
+      0.998966,
+      -0.039561,
+      0.012862,
+      -0.018336
+    ],
+    "hopf": [
+      0.863857,
+      0.303585,
+      0.271218,
+      0.296695
+    ]
+  }
+}

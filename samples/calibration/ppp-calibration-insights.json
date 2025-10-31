@@ -1,0 +1,215 @@
+{
+  "generatedAt": "2025-10-19T20:49:00.520Z",
+  "dataset": {
+    "release": "ppp-calibration-reference-1",
+    "artifact": {
+      "path": "dist/calibration/ppp-calibration-dataset.json",
+      "includesSamples": true,
+      "format": "json",
+      "bytes": 137718968,
+      "sha256": "813d3d0ac40bae3a57e66f9186aacfe1cdf1f433c44ba76c16a38427415ecdb7",
+      "contentSha256": "813d3d0ac40bae3a57e66f9186aacfe1cdf1f433c44ba76c16a38427415ecdb7"
+    }
+  },
+  "summary": {
+    "summary": {
+      "datasetScore": 0.6109071152798485,
+      "sampleScore": {
+        "mean": 0.6413275422862198,
+        "min": 0.3965974329355165,
+        "max": 0.8842569627097323,
+        "stdDev": 0.07908341599512508,
+        "count": 584
+      },
+      "totals": {
+        "sequences": 3,
+        "frames": 584
+      }
+    },
+    "parity": {
+      "visualContinuumDelta": {
+        "average": 0.44853827509842625,
+        "min": 0.02330423566338858,
+        "max": 0.8721931459271158,
+        "count": 584
+      },
+      "continuumAlignmentMean": {
+        "average": 0.20854437933822653,
+        "min": -0.9234807983374351,
+        "max": 0.9212948162617267,
+        "count": 584
+      },
+      "carrierGateRatio": {
+        "average": 1,
+        "min": 1,
+        "max": 1,
+        "count": 584
+      },
+      "spinorCoherence": {
+        "average": 0.5752152808049713,
+        "min": 0.0018112459352719323,
+        "max": 0.9999999624246378,
+        "count": 584
+      },
+      "envelopeResonance": {
+        "average": 1.4386283827089417,
+        "min": 1.0254035888938755,
+        "max": 1.5749887752945675,
+        "count": 584
+      }
+    },
+    "sequenceCoverage": [
+      {
+        "id": "hopf-orbit",
+        "label": "Hopf Orbit Sweep",
+        "completed": true,
+        "frames": 240,
+        "sampleRate": 30,
+        "durationSeconds": 8,
+        "status": "complete"
+      },
+      {
+        "id": "flux-ramp",
+        "label": "Flux Continuum Ramp",
+        "completed": true,
+        "frames": 144,
+        "sampleRate": 24,
+        "durationSeconds": 6,
+        "status": "complete"
+      },
+      {
+        "id": "spinor-coherence",
+        "label": "Spinor Coherence Pulse",
+        "completed": true,
+        "frames": 200,
+        "sampleRate": 20,
+        "durationSeconds": 10,
+        "status": "complete"
+      }
+    ],
+    "samples": {
+      "outliers": [
+        {
+          "index": 243,
+          "score": 0.5404651348131243,
+          "delta": 0.5221132094348918,
+          "coherence": 0.0018112459352719323,
+          "severity": 0.9981887540647281,
+          "primaryIssue": "coherence",
+          "messages": [
+            "Spinor coherence 0.002 below threshold.",
+            "Visual/continuum delta 0.522 exceeds threshold."
+          ]
+        },
+        {
+          "index": 252,
+          "score": 0.41842890028399715,
+          "delta": 0.7390560762246446,
+          "coherence": 0.0029324065161591695,
+          "severity": 0.9970675934838409,
+          "primaryIssue": "coherence",
+          "messages": [
+            "Spinor coherence 0.003 below threshold.",
+            "Sample score 41.8% below target.",
+            "Visual/continuum delta 0.739 exceeds threshold."
+          ]
+        },
+        {
+          "index": 253,
+          "score": 0.3965974329355165,
+          "delta": 0.7623425979031851,
+          "coherence": 0.002937558931769446,
+          "severity": 0.9970624410682305,
+          "primaryIssue": "coherence",
+          "messages": [
+            "Spinor coherence 0.003 below threshold.",
+            "Sample score 39.7% below target.",
+            "Visual/continuum delta 0.762 exceeds threshold."
+          ]
+        },
+        {
+          "index": 230,
+          "score": 0.5097743195304967,
+          "delta": 0.7583365798368806,
+          "coherence": 0.003185044780197266,
+          "severity": 0.9968149552198027,
+          "primaryIssue": "coherence",
+          "messages": [
+            "Spinor coherence 0.003 below threshold.",
+            "Visual/continuum delta 0.758 exceeds threshold."
+          ]
+        },
+        {
+          "index": 242,
+          "score": 0.5386242104938225,
+          "delta": 0.49755582536351534,
+          "coherence": 0.0033043465807529593,
+          "severity": 0.996695653419247,
+          "primaryIssue": "coherence",
+          "messages": [
+            "Spinor coherence 0.003 below threshold.",
+            "Visual/continuum delta 0.498 exceeds threshold."
+          ]
+        },
+        {
+          "index": 229,
+          "score": 0.5212058390172614,
+          "delta": 0.7615845038251292,
+          "coherence": 0.0035728700725918827,
+          "severity": 0.9964271299274081,
+          "primaryIssue": "coherence",
+          "messages": [
+            "Spinor coherence 0.004 below threshold.",
+            "Visual/continuum delta 0.762 exceeds threshold."
+          ]
+        },
+        {
+          "index": 251,
+          "score": 0.45442477826394656,
+          "delta": 0.7153133234289774,
+          "coherence": 0.005712162376726226,
+          "severity": 0.9942878376232738,
+          "primaryIssue": "coherence",
+          "messages": [
+            "Spinor coherence 0.006 below threshold.",
+            "Sample score 45.4% below target.",
+            "Visual/continuum delta 0.715 exceeds threshold."
+          ]
+        },
+        {
+          "index": 244,
+          "score": 0.5408470904374071,
+          "delta": 0.5460911568070476,
+          "coherence": 0.00608457024011233,
+          "severity": 0.9939154297598877,
+          "primaryIssue": "coherence",
+          "messages": [
+            "Spinor coherence 0.006 below threshold.",
+            "Visual/continuum delta 0.546 exceeds threshold."
+          ]
+        }
+      ],
+      "scoreStats": {
+        "mean": 0.6413275422862198,
+        "min": 0.3965974329355165,
+        "max": 0.8842569627097323,
+        "stdDev": 0.07908341599512508,
+        "count": 584
+      }
+    },
+    "recommendations": [
+      "Revisit mapping weights – average visual/sonic delta is above the target envelope.",
+      "Tune quaternion bridge modulation – spinor coherence is trending low.",
+      "Average sample fidelity is lagging – consider additional calibration passes."
+    ]
+  },
+  "narrative": [
+    "Dataset fidelity 61.1% across 584 frame(s) and 3 sequence(s).",
+    "Visual↔continuum delta avg 0.449 (min 0.023, max 0.872).",
+    "Spinor coherence avg 57.5% with peak 100.0%.",
+    "Flagged 8 frame(s) for review – worst score 54.0%, delta 0.522.",
+    "Revisit mapping weights – average visual/sonic delta is above the target envelope.",
+    "Tune quaternion bridge modulation – spinor coherence is trending low.",
+    "Average sample fidelity is lagging – consider additional calibration passes."
+  ]
+}

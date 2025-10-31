@@ -14,24 +14,24 @@ import { cloneSpinorTransductionGrid } from './SpinorTransductionGrid.js';
 import { cloneSpinorMetricManifold } from './SpinorMetricManifold.js';
 import { cloneSpinorTopologyWeave } from './SpinorTopologyWeave.js';
 import { cloneSpinorFluxContinuum } from './SpinorFluxContinuum.js';
+import { cloneSpinorContinuumLattice } from './SpinorContinuumLattice.js';
+import { cloneSpinorContinuumConstellation } from './SpinorContinuumConstellation.js';
+import { decodeQuaternionFrame, WebSocketQuaternionAdapter, SerialQuaternionAdapter } from './LiveQuaternionAdapters.js';
+import { CalibrationToolkit, DEFAULT_CALIBRATION_SEQUENCES } from './CalibrationToolkit.js';
+import { CalibrationDatasetBuilder } from './CalibrationDatasetBuilder.js';
+import { CalibrationInsightEngine } from './CalibrationInsightEngine.js';
 import { clampValue, cloneMappingDefinition, formatDataArray, parseDataInput } from './utils.js';
 import { DATA_CHANNEL_COUNT } from './constants.js';
+import {
+    createLiveStreamState,
+    mergeLiveAdapterMetrics,
+    registerLiveFrameMetrics,
+    appendLiveStatusLog,
+    formatLiveTelemetrySummary
+} from './liveTelemetry.js';
 
 const JSON_INDENT = 2;
 const TIMELINE_SLIDER_MAX = 1000;
-
-const debounce = (fn, delay = 150) => {
-    let timer = null;
-    return (...args) => {
-        if (timer) {
-            clearTimeout(timer);
-        }
-        timer = setTimeout(() => {
-            timer = null;
-            fn(...args);
-        }, Math.max(0, delay));
-    };
-};
 
 const updateUniformPreview = (renderer, target) => {
     const state = renderer.getUniformState();
@@ -108,11 +108,6 @@ const createAutoStreamGenerator = (applyDataArray, statusMessage, getChannelCoun
 };
 
 window.addEventListener('DOMContentLoaded', () => {
-    if (document && document.documentElement) {
-        document.documentElement.dataset.pppConsole = 'booting';
-        delete document.documentElement.dataset.pppConsoleMessage;
-    }
-
     const canvas = document.getElementById('visualizerCanvas');
     const dataInput = document.getElementById('dataInput');
     const applyButton = document.getElementById('applyButton');
@@ -162,60 +157,28 @@ window.addEventListener('DOMContentLoaded', () => {
     const developmentTrackContainer = document.getElementById('developmentTrack');
     const developmentSummary = document.getElementById('developmentSummary');
     const developmentNotes = document.getElementById('developmentNotes');
-    const controlPanel = document.getElementById('controlPanel');
-    const controlPanelToggle = document.getElementById('controlPanelToggle');
+    const spinorOverlayCanvas = document.getElementById('spinorOverlay');
+    const liveStreamStatusLabel = document.getElementById('liveStreamStatus');
+    const liveStreamTelemetryLabel = document.getElementById('liveStreamTelemetry');
+    const liveStreamModeLabel = document.getElementById('liveStreamMode');
+    const websocketUrlInput = document.getElementById('websocketUrl');
+    const websocketConnectButton = document.getElementById('websocketConnect');
+    const serialConnectButton = document.getElementById('serialConnect');
+    const serialBaudRateSelect = document.getElementById('serialBaudRate');
+    const calibrationSequenceSelect = document.getElementById('calibrationSequence');
+    const startCalibrationButton = document.getElementById('startCalibration');
+    const stopCalibrationButton = document.getElementById('stopCalibration');
+    const calibrationStatusLabel = document.getElementById('calibrationStatus');
+    const calibrationSampleLabel = document.getElementById('calibrationSamples');
+    const datasetStatusLabel = document.getElementById('datasetStatus');
+    const datasetSummaryOutput = document.getElementById('datasetSummary');
+    const datasetInsightsList = document.getElementById('datasetInsights');
+    const runDatasetPlanButton = document.getElementById('runDatasetPlan');
+    const downloadDatasetButton = document.getElementById('downloadDataset');
     const globalConfig = window.PPP_CONFIG || {};
     const sonicGeometryConfig = typeof globalConfig.sonicGeometry === 'object' && globalConfig.sonicGeometry !== null
         ? globalConfig.sonicGeometry
         : {};
-
-    const setPanelState = (expanded) => {
-        if (!document.body || !controlPanel || !controlPanelToggle) {
-            return;
-        }
-        const state = expanded ? 'expanded' : 'collapsed';
-        document.body.dataset.panelState = state;
-        controlPanelToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-        controlPanelToggle.setAttribute(
-            'aria-label',
-            expanded ? 'Hide Hypercube controls panel' : 'Show Hypercube controls panel'
-        );
-        controlPanel.setAttribute('aria-hidden', expanded ? 'false' : 'true');
-        if (expanded) {
-            requestAnimationFrame(() => {
-                if (typeof controlPanel.focus === 'function') {
-                    controlPanel.focus({ preventScroll: true });
-                }
-            });
-        }
-        controlPanelToggle.textContent = expanded ? 'Hide Controls' : 'Show Controls';
-    };
-
-    let userPanelPreference = false;
-    const evaluateDefaultPanelState = () => {
-        if (!controlPanel || !controlPanelToggle) {
-            return;
-        }
-        if (userPanelPreference) {
-            return;
-        }
-        const shouldExpand = window.matchMedia('(min-width: 1600px)').matches;
-        setPanelState(shouldExpand);
-    };
-
-    if (controlPanel && controlPanelToggle) {
-        setPanelState(false);
-        controlPanelToggle.addEventListener('click', () => {
-            userPanelPreference = true;
-            const expanded = controlPanelToggle.getAttribute('aria-expanded') === 'true';
-            setPanelState(!expanded);
-        });
-        const handleResize = debounce(() => {
-            evaluateDefaultPanelState();
-        }, 200);
-        window.addEventListener('resize', handleResize);
-        evaluateDefaultPanelState();
-    }
 
     if (channelCount) {
         channelCount.textContent = `0 / ${DATA_CHANNEL_COUNT} channels`;
@@ -235,29 +198,14 @@ window.addEventListener('DOMContentLoaded', () => {
     const sonicTopologyListeners = new Set();
     const sonicContinuumListeners = new Set();
     const sonicLatticeListeners = new Set();
+    const sonicConstellationListeners = new Set();
     try {
         renderer = new HypercubeRenderer(canvas);
         statusMessage.textContent = 'Renderer ready. Stream or paste data to drive the visualization.';
-        if (document && document.documentElement) {
-            document.documentElement.dataset.pppConsole = 'ready';
-            delete document.documentElement.dataset.pppConsoleMessage;
-        }
-        if (window.parent && window.parent !== window) {
-            window.requestAnimationFrame(() => {
-                window.parent.postMessage({ type: 'ppp-console-ready' }, '*');
-            });
-        }
     } catch (error) {
         console.error(error);
         statusMessage.textContent = `Renderer initialization failed: ${error.message}`;
         uniformPreview.textContent = 'WebGL unavailable. Try a compatible browser to view the visualization.';
-        if (document && document.documentElement) {
-            document.documentElement.dataset.pppConsole = 'error';
-            document.documentElement.dataset.pppConsoleMessage = error.message || 'Renderer initialization failed.';
-        }
-        if (window.parent && window.parent !== window) {
-            window.parent.postMessage({ type: 'ppp-console-error', message: error.message }, '*');
-        }
         return;
     }
 
@@ -360,13 +308,30 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+    updatePlaybackStatus();
 
     let lastDataValues = [];
     let mappingEditorDirty = false;
     let timelineScrubbing = false;
     let playbackStatusSnapshot = null;
+    const liveFrameListeners = new Set();
+    let liveStreamState = createLiveStreamState();
+    let liveWebSocketAdapter = null;
+    let liveSerialAdapter = null;
 
-    // Recorder status will be initialized after helper definitions.
+    updateRecorderStatus();
+
+    const renderLiveTelemetry = () => {
+        if (!liveStreamState) {
+            return;
+        }
+        const summary = formatLiveTelemetrySummary(liveStreamState);
+        liveStreamState.telemetrySummary = summary;
+        if (liveStreamTelemetryLabel) {
+            liveStreamTelemetryLabel.textContent = summary;
+        }
+    };
+    renderLiveTelemetry();
 
     const stringifyJson = (value) => {
         try {
@@ -395,25 +360,131 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    function setSonicHelperText(text) {
+    const setSonicHelperText = (text) => {
         if (sonicGeometryHelper) {
             sonicGeometryHelper.textContent = text;
         }
-    }
+    };
 
-    function setSonicModeHelperText(mode, { audioSupported = true } = {}) {
+    const setSonicModeHelperText = (mode, { audioSupported = true } = {}) => {
         if (!sonicGeometryModeHelper) {
             return;
         }
         if (!audioSupported && mode !== 'analysis') {
-            sonicGeometryModeHelper.textContent = 'Audio APIs unavailable; operating in silent analysis mode while streaming quaternion bridges, spinor lattices, resonance atlases, transduction grids, metric manifolds, topology weaves, flux continua, continuum lattices, carrier matrices, and gate metrics for multimodal pipelines.';
+            sonicGeometryModeHelper.textContent = 'Audio APIs unavailable; operating in silent analysis mode while streaming quaternion bridges, spinor lattices, resonance atlases, transduction grids, metric manifolds, topology weaves, flux continua, continuum lattices, constellation telemetry, carrier matrices, and gate metrics for multimodal pipelines.';
             return;
         }
         if (mode === 'analysis') {
-            sonicGeometryModeHelper.textContent = 'Silent analysis streams quaternion bridges, spinor lattices, resonance atlases, spinor signal fabric payloads, transduction grids, metric manifolds, topology weaves, flux continua, continuum lattices, carrier matrices, gate density metrics, and harmonic descriptors without engaging the AudioContext—ideal for multimodal transformer training or robotics review.';
+            sonicGeometryModeHelper.textContent = 'Silent analysis streams quaternion bridges, spinor lattices, resonance atlases, spinor signal fabric payloads, transduction grids, metric manifolds, topology weaves, flux continua, continuum lattices, constellation overlays, carrier matrices, gate density metrics, and harmonic descriptors without engaging the AudioContext—ideal for multimodal transformer training or robotics review.';
             return;
         }
-        sonicGeometryModeHelper.textContent = 'Dual-stream mode couples resonance audio with the quaternion bridge, spinor harmonic lattice, resonance atlas, signal fabric, transduction grid, metric manifold, topology weave, flux continuum, continuum lattice, carrier matrix, and gate sequencing telemetry so multimodal systems ingest synchronized sound and data.';
+        sonicGeometryModeHelper.textContent = 'Dual-stream mode couples resonance audio with the quaternion bridge, spinor harmonic lattice, resonance atlas, signal fabric, transduction grid, metric manifold, topology weave, flux continuum, continuum lattice, constellation field, carrier matrix, and gate sequencing telemetry so multimodal systems ingest synchronized sound and data.';
+    };
+
+    let spinorOverlayCtx = null;
+    let spinorOverlayRatio = window.devicePixelRatio || 1;
+    const clearSpinorOverlay = () => {
+        if (!spinorOverlayCtx || !spinorOverlayCanvas) {
+            return;
+        }
+        spinorOverlayCtx.save();
+        spinorOverlayCtx.setTransform(spinorOverlayRatio, 0, 0, spinorOverlayRatio, 0, 0);
+        spinorOverlayCtx.clearRect(0, 0, spinorOverlayCanvas.width / spinorOverlayRatio, spinorOverlayCanvas.height / spinorOverlayRatio);
+        spinorOverlayCtx.restore();
+    };
+
+    const resizeSpinorOverlay = () => {
+        if (!spinorOverlayCanvas || !canvas) {
+            return;
+        }
+        const ratio = window.devicePixelRatio || 1;
+        const width = canvas.clientWidth || canvas.width || 0;
+        const height = canvas.clientHeight || canvas.height || 0;
+        if (!width || !height) {
+            return;
+        }
+        spinorOverlayCanvas.width = Math.max(1, Math.floor(width * ratio));
+        spinorOverlayCanvas.height = Math.max(1, Math.floor(height * ratio));
+        spinorOverlayCanvas.style.width = `${width}px`;
+        spinorOverlayCanvas.style.height = `${height}px`;
+        spinorOverlayRatio = ratio;
+        if (!spinorOverlayCtx && typeof spinorOverlayCanvas.getContext === 'function') {
+            spinorOverlayCtx = spinorOverlayCanvas.getContext('2d');
+        }
+        clearSpinorOverlay();
+    };
+
+    const renderSpinorOverlay = (analysis) => {
+        if (!spinorOverlayCanvas) {
+            return;
+        }
+        if (!spinorOverlayCtx && typeof spinorOverlayCanvas.getContext === 'function') {
+            spinorOverlayCtx = spinorOverlayCanvas.getContext('2d');
+        }
+        if (!spinorOverlayCtx) {
+            return;
+        }
+        const width = spinorOverlayCanvas.width / spinorOverlayRatio;
+        const height = spinorOverlayCanvas.height / spinorOverlayRatio;
+        spinorOverlayCtx.save();
+        spinorOverlayCtx.setTransform(spinorOverlayRatio, 0, 0, spinorOverlayRatio, 0, 0);
+        spinorOverlayCtx.clearRect(0, 0, width, height);
+        if (!analysis) {
+            spinorOverlayCtx.restore();
+            return;
+        }
+        const panelWidth = Math.min(width - 32, 360);
+        spinorOverlayCtx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+        spinorOverlayCtx.fillRect(16, 16, panelWidth, 152);
+        spinorOverlayCtx.fillStyle = '#9ff6ff';
+        spinorOverlayCtx.font = '12px "Fira Mono", monospace';
+        const summary = analysis.summary || 'Spinor telemetry overlay';
+        spinorOverlayCtx.fillText(summary, 24, 36);
+        const lines = [];
+        const spinor = analysis.spinor || null;
+        const continuum = analysis.continuum || null;
+        const resonance = analysis.resonance || (analysis.transmission ? analysis.transmission.resonance : null);
+        if (spinor) {
+            lines.push(`Coherence ${(spinor.coherence * 100).toFixed(1)}%  braid ${(spinor.braidDensity * 100).toFixed(1)}%`);
+            if (Array.isArray(spinor.ratios)) {
+                lines.push(`Ratios ${spinor.ratios.slice(0, 4).map((ratio) => ratio.toFixed(2)).join(' ')}`);
+            }
+        }
+        if (continuum && typeof continuum.density === 'number') {
+            const density = Number.isFinite(continuum.density) ? continuum.density : 0;
+            const coherence = Number.isFinite(continuum.coherence) ? continuum.coherence : 0;
+            lines.push(`Continuum ρ ${density.toFixed(3)}  κ ${coherence.toFixed(3)}`);
+        }
+        if (analysis.timelineProgress !== undefined) {
+            const voiceCount = Array.isArray(analysis.voices) ? analysis.voices.length : analysis.voiceCount || 0;
+            lines.push(`Progress ${(analysis.timelineProgress * 100).toFixed(1)}%  voices ${voiceCount}`);
+        }
+        lines.forEach((line, idx) => {
+            spinorOverlayCtx.fillText(line, 24, 58 + idx * 16);
+        });
+        if (spinor && Array.isArray(spinor.ratios)) {
+            const baseX = 24;
+            const baseY = 150;
+            const barWidth = 18;
+            spinorOverlayCtx.fillStyle = '#ffdd57';
+            spinor.ratios.slice(0, 8).forEach((ratio, idx) => {
+                const normalized = clampValue(Math.log2(Math.max(0.0001, ratio) + 1) * 0.5, 0, 1);
+                const barHeight = normalized * 60;
+                spinorOverlayCtx.fillRect(baseX + idx * (barWidth + 6), baseY - barHeight, barWidth, barHeight);
+            });
+        }
+        if (resonance && resonance.aggregate && Array.isArray(resonance.aggregate.centroid)) {
+            const centroid = resonance.aggregate.centroid;
+            spinorOverlayCtx.fillStyle = '#74f0c0';
+            spinorOverlayCtx.fillText(`Centroid ${centroid.slice(0, 3).map((value) => value.toFixed(2)).join(', ')}`, 24, 140);
+        }
+        spinorOverlayCtx.restore();
+    };
+
+    if (spinorOverlayCanvas && canvas) {
+        resizeSpinorOverlay();
+        const overlayObserver = new ResizeObserver(() => resizeSpinorOverlay());
+        overlayObserver.observe(canvas);
     }
 
     const cloneSonicSignal = (signal) => (signal ? cloneSpinorSignalFabric(signal) : null);
@@ -422,158 +493,378 @@ window.addEventListener('DOMContentLoaded', () => {
     const cloneSonicTopology = (topology) => (topology ? cloneSpinorTopologyWeave(topology) : null);
     const cloneSonicContinuum = (continuum) => (continuum ? cloneSpinorFluxContinuum(continuum) : null);
     const cloneSonicLattice = (lattice) => (lattice ? cloneSpinorContinuumLattice(lattice) : null);
+    const cloneSonicConstellation = (constellation) => (
+        constellation ? cloneSpinorContinuumConstellation(constellation) : null
+    );
 
-    const cloneSonicAnalysis = (analysis) => {
-        if (!analysis || typeof analysis !== 'object') {
-            return {
-                voices: [],
-                transmission: null,
-                quaternion: null,
-                spinor: null,
-                resonance: null,
-                signal: cloneSonicSignal(null),
-                transduction: cloneSonicTransduction(null),
-                manifold: cloneSonicManifold(null),
-                topology: cloneSonicTopology(null),
-                continuum: cloneSonicContinuum(null)
-            };
+    const updateLiveStatus = (status, overrides = {}) => {
+        const timestamp = Date.now();
+        const normalized = status && typeof status === 'object'
+            ? status
+            : { message: typeof status === 'string' ? status : null };
+        let modeValue = overrides.mode;
+        if (typeof normalized.mode === 'string') {
+            modeValue = normalized.mode;
         }
-
-        const transmissionSource =
-            analysis && typeof analysis.transmission === 'object'
-                ? analysis.transmission
-                : null;
-        const quaternionSource =
-            analysis && typeof analysis.quaternion === 'object'
-                ? analysis.quaternion
-                : null;
-        const spinorSource =
-            analysis && typeof analysis.spinor === 'object'
-                ? analysis.spinor
-                : null;
-        const resonanceSource =
-            analysis && typeof analysis.resonance === 'object'
-                ? analysis.resonance
-                : null;
-
-        return {
-            ...analysis,
-            voices: Array.isArray(analysis.voices)
-                ? analysis.voices.map((voice) => ({
-                    ...voice,
-                    carriers: Array.isArray(voice.carriers)
-                        ? voice.carriers.map((carrier) => ({ ...carrier }))
-                        : [],
-                    modulation: voice.modulation ? { ...voice.modulation } : null,
-                    spinor: voice.spinor ? { ...voice.spinor } : null
-                }))
-                : [],
-            transmission: transmissionSource
-                ? {
-                    ...transmissionSource,
-                    carriers: Array.isArray(transmissionSource.carriers)
-                        ? transmissionSource.carriers.map((carrier) => ({
-                            ...carrier,
-                            carriers: Array.isArray(carrier.carriers)
-                                ? carrier.carriers.map((band) => ({ ...band }))
-                                : []
-                        }))
-                        : [],
-                    spinor: transmissionSource.spinor
-                        ? {
-                            ...transmissionSource.spinor,
-                            ratios: Array.isArray(transmissionSource.spinor.ratios)
-                                ? transmissionSource.spinor.ratios.slice()
-                                : [],
-                            panOrbit: Array.isArray(transmissionSource.spinor.panOrbit)
-                                ? transmissionSource.spinor.panOrbit.slice()
-                                : [],
-                            phaseOrbit: Array.isArray(transmissionSource.spinor.phaseOrbit)
-                                ? transmissionSource.spinor.phaseOrbit.slice()
-                                : [],
-                            pitchLattice: Array.isArray(transmissionSource.spinor.pitchLattice)
-                                ? transmissionSource.spinor.pitchLattice.map((entry) => ({ ...entry }))
-                                : []
-                        }
-                        : null,
-                    resonance: transmissionSource.resonance
-                        ? cloneSpinorResonanceAtlas(transmissionSource.resonance)
-                        : null,
-                    signal: cloneSonicSignal(transmissionSource.signal),
-                    transduction: cloneSonicTransduction(transmissionSource.transduction),
-                    manifold: cloneSonicManifold(transmissionSource.manifold),
-                    topology: cloneSonicTopology(transmissionSource.topology),
-                    continuum: cloneSonicContinuum(transmissionSource.continuum)
-                }
-                : null,
-            quaternion: quaternionSource
-                ? {
-                    ...quaternionSource,
-                    left: Array.isArray(quaternionSource.left)
-                        ? quaternionSource.left.slice()
-                        : [],
-                    right: Array.isArray(quaternionSource.right)
-                        ? quaternionSource.right.slice()
-                        : [],
-                    bridgeVector: Array.isArray(quaternionSource.bridgeVector)
-                        ? quaternionSource.bridgeVector.slice()
-                        : [],
-                    normalizedBridge: Array.isArray(quaternionSource.normalizedBridge)
-                        ? quaternionSource.normalizedBridge.slice()
-                        : [],
-                    hopfFiber: Array.isArray(quaternionSource.hopfFiber)
-                        ? quaternionSource.hopfFiber.slice()
-                        : []
-                }
-                : null,
-            spinor: spinorSource
-                ? {
-                    ...spinorSource,
-                    ratios: Array.isArray(spinorSource.ratios)
-                        ? spinorSource.ratios.slice()
-                        : [],
-                    panOrbit: Array.isArray(spinorSource.panOrbit)
-                        ? spinorSource.panOrbit.slice()
-                        : [],
-                    phaseOrbit: Array.isArray(spinorSource.phaseOrbit)
-                        ? spinorSource.phaseOrbit.slice()
-                        : [],
-                    axis: spinorSource.axis
-                        ? {
-                            ...spinorSource.axis,
-                            left: Array.isArray(spinorSource.axis.left)
-                                ? spinorSource.axis.left.slice()
-                                : null,
-                            right: Array.isArray(spinorSource.axis.right)
-                                ? spinorSource.axis.right.slice()
-                                : null,
-                            cross: Array.isArray(spinorSource.axis.cross)
-                                ? spinorSource.axis.cross.slice()
-                                : null
-                        }
-                        : null,
-                    fiber: Array.isArray(spinorSource.fiber)
-                        ? spinorSource.fiber.slice()
-                        : [],
-                    pitchLattice: Array.isArray(spinorSource.pitchLattice)
-                        ? spinorSource.pitchLattice.map((entry) => ({ ...entry }))
-                        : []
-                }
-                : null,
-            resonance: resonanceSource
-                ? cloneSpinorResonanceAtlas(resonanceSource)
-                : null,
-            signal: cloneSonicSignal(analysis.signal),
-            transduction: cloneSonicTransduction(analysis.transduction),
-            manifold: cloneSonicManifold(analysis.manifold),
-            topology: cloneSonicTopology(analysis.topology),
-            continuum: cloneSonicContinuum(analysis.continuum)
-        };
+        if (typeof modeValue === 'string') {
+            liveStreamState.mode = modeValue;
+            if (liveStreamModeLabel) {
+                liveStreamModeLabel.textContent = modeValue;
+            }
+        }
+        let connectedValue = overrides.connected;
+        if (typeof normalized.connected === 'boolean') {
+            connectedValue = normalized.connected;
+        }
+        if (typeof connectedValue === 'boolean') {
+            liveStreamState.connected = connectedValue;
+        }
+        const message = typeof normalized.message === 'string' ? normalized.message : null;
+        if (liveStreamStatusLabel && message) {
+            liveStreamStatusLabel.textContent = message;
+        }
+        if (message) {
+            liveStreamState.lastStatus = message;
+            liveStreamState.lastStatusAt = timestamp;
+        }
+        if (typeof normalized.level === 'string') {
+            liveStreamState.lastStatusLevel = normalized.level;
+        }
+        if (typeof normalized.code === 'string') {
+            liveStreamState.lastErrorCode = normalized.code;
+        }
+        if (normalized.metrics) {
+            mergeLiveAdapterMetrics(liveStreamState, normalized.metrics);
+        }
+        appendLiveStatusLog(liveStreamState, {
+            at: timestamp,
+            message,
+            level: normalized.level || null,
+            code: normalized.code || null,
+            mode: liveStreamState.mode,
+            connected: liveStreamState.connected,
+            metrics: normalized.metrics || null
+        });
+        renderLiveTelemetry();
     };
+
+    const notifyLiveFrameListeners = (frame) => {
+        liveFrameListeners.forEach((listener) => {
+            if (typeof listener !== 'function') {
+                return;
+            }
+            try {
+                listener(frame);
+            } catch (error) {
+                console.error('PPP live frame listener error', error);
+            }
+        });
+    };
+
+    const applyLiveFrame = (frame) => {
+        if (!frame) {
+            return false;
+        }
+        const normalizedValues = frame.dataArray && frame.dataArray.length
+            ? frame.dataArray
+            : lastDataValues;
+        const playbackFrame = Number.isFinite(frame.progress)
+            ? { progress: clampValue(frame.progress, 0, 1) }
+            : null;
+        const transportOverride = frame.transport || {
+            playing: true,
+            loop: false,
+            progress: playbackFrame ? playbackFrame.progress : 0,
+            frameIndex: Number.isFinite(frame.index) ? frame.index : -1,
+            frameCount: Number.isFinite(frame.raw?.frameCount) ? frame.raw.frameCount : 0,
+            mode: frame.source || 'live'
+        };
+        applyDataArray(normalizedValues, {
+            source: frame.source || 'live',
+            uniformOverride: frame.uniforms || null,
+            playbackFrame,
+            transportOverride,
+            analysisMetadata: {
+                live: {
+                    source: frame.source || 'live',
+                    origin: frame.origin || null,
+                    index: Number.isFinite(frame.index) ? frame.index : null,
+                    timestamp: Number.isFinite(frame.timestamp) ? frame.timestamp : Date.now()
+                },
+                raw: frame.raw || null
+            }
+        });
+        registerLiveFrameMetrics(liveStreamState, frame, { channelLimit: DATA_CHANNEL_COUNT });
+        renderLiveTelemetry();
+        notifyLiveFrameListeners(frame);
+        return true;
+    };
+
+    const ingestLivePayload = (payload, { source = 'live-api' } = {}) => {
+        const diagnostics = {
+            onParseError: () => {
+                liveStreamState.parseErrors += 1;
+                liveStreamState.drops += 1;
+                updateLiveStatus({
+                    message: 'Live API frame parse failed. Dropping payload.',
+                    level: 'warning',
+                    code: 'api-parse-error',
+                    mode: source,
+                    connected: liveStreamState.connected,
+                    metrics: {
+                        drops: liveStreamState.drops,
+                        parseErrors: liveStreamState.parseErrors
+                    }
+                });
+            },
+            onInvalidFrame: () => {
+                liveStreamState.drops += 1;
+                updateLiveStatus({
+                    message: 'Live API frame rejected: invalid payload.',
+                    level: 'warning',
+                    code: 'api-invalid-frame',
+                    mode: source,
+                    connected: liveStreamState.connected,
+                    metrics: {
+                        drops: liveStreamState.drops
+                    }
+                });
+            }
+        };
+        const frame = decodeQuaternionFrame(payload, {
+            channelLimit: DATA_CHANNEL_COUNT,
+            diagnostics
+        });
+        if (!frame) {
+            return false;
+        }
+        frame.source = source;
+        updateLiveStatus({
+            message: 'Applying live quaternion frame…',
+            mode: source,
+            connected: true
+        });
+        return applyLiveFrame(frame);
+    };
+
+    const disconnectSerialStream = async () => {
+        if (liveSerialAdapter) {
+            await liveSerialAdapter.disconnect();
+            mergeLiveAdapterMetrics(liveStreamState, liveSerialAdapter.getMetrics());
+            liveSerialAdapter = null;
+        }
+        if (serialConnectButton) {
+            serialConnectButton.textContent = 'Connect Serial';
+        }
+        updateLiveStatus('Serial stream idle.', { mode: 'idle', connected: false });
+    };
+
+    const connectSerialStream = async ({ baudRate } = {}) => {
+        if (typeof navigator === 'undefined' || !navigator.serial) {
+            updateLiveStatus('Web Serial API unavailable in this environment.', { mode: 'idle', connected: false });
+            return false;
+        }
+        await disconnectSerialStream();
+        disconnectWebSocketStream();
+        liveSerialAdapter = new SerialQuaternionAdapter({
+            baudRate,
+            channelLimit: DATA_CHANNEL_COUNT,
+            onStatus: (status) => updateLiveStatus(status, { mode: 'serial' }),
+            onFrame: (frame) => {
+                updateLiveStatus('Streaming live quaternion frames (Serial)…', { mode: 'serial', connected: true });
+                applyLiveFrame(frame);
+            }
+        });
+        try {
+            await liveSerialAdapter.connect({ baudRate });
+            liveStreamState.frames = 0;
+            liveStreamState.mode = 'serial';
+            liveStreamState.connected = true;
+            if (serialConnectButton) {
+                serialConnectButton.textContent = 'Disconnect Serial';
+            }
+            return true;
+        } catch (error) {
+            console.error('Serial live stream connection error', error);
+            updateLiveStatus(`Serial connection failed: ${error.message}`, { mode: 'idle', connected: false });
+            liveSerialAdapter = null;
+            return false;
+        }
+    };
+
+    const disconnectWebSocketStream = () => {
+        if (liveWebSocketAdapter) {
+            liveWebSocketAdapter.disconnect();
+            mergeLiveAdapterMetrics(liveStreamState, liveWebSocketAdapter.getMetrics());
+            liveWebSocketAdapter = null;
+        }
+        if (websocketConnectButton) {
+            websocketConnectButton.textContent = 'Connect WebSocket';
+        }
+        updateLiveStatus('WebSocket stream idle.', { mode: 'idle', connected: false });
+    };
+
+    const connectWebSocketStream = async (url) => {
+        const targetUrl = typeof url === 'string' && url.trim().length
+            ? url.trim()
+            : websocketUrlInput && websocketUrlInput.value
+                ? websocketUrlInput.value.trim()
+                : '';
+        if (!targetUrl) {
+            updateLiveStatus('Provide a WebSocket URL to connect.', { mode: 'idle', connected: false });
+            return false;
+        }
+        await disconnectSerialStream();
+        disconnectWebSocketStream();
+        liveWebSocketAdapter = new WebSocketQuaternionAdapter({
+            url: targetUrl,
+            channelLimit: DATA_CHANNEL_COUNT,
+            onStatus: (status) => updateLiveStatus(status, { mode: 'websocket' }),
+            onFrame: (frame) => {
+                updateLiveStatus('Streaming live quaternion frames (WebSocket)…', { mode: 'websocket', connected: true });
+                applyLiveFrame(frame);
+            }
+        });
+        try {
+            liveWebSocketAdapter.connect();
+            liveStreamState.frames = 0;
+            liveStreamState.mode = 'websocket';
+            if (websocketConnectButton) {
+                websocketConnectButton.textContent = 'Disconnect WebSocket';
+            }
+            updateLiveStatus('Connecting to live WebSocket stream…', { mode: 'websocket', connected: false });
+            return true;
+        } catch (error) {
+            console.error('WebSocket live stream connection error', error);
+            liveWebSocketAdapter = null;
+            updateLiveStatus(`WebSocket connection failed: ${error.message}`, { mode: 'idle', connected: false });
+            return false;
+        }
+    };
+
+    const cloneSonicAnalysis = (analysis) => ({
+        ...analysis,
+        voices: Array.isArray(analysis?.voices)
+            ? analysis.voices.map((voice) => ({
+                ...voice,
+                carriers: Array.isArray(voice.carriers)
+                    ? voice.carriers.map((carrier) => ({ ...carrier }))
+                    : [],
+                modulation: voice.modulation ? { ...voice.modulation } : null,
+                spinor: voice.spinor ? { ...voice.spinor } : null
+            }))
+            : [],
+        transmission: analysis?.transmission
+            ? {
+                ...analysis.transmission,
+                carriers: Array.isArray(analysis.transmission.carriers)
+                    ? analysis.transmission.carriers.map((carrier) => ({
+                        ...carrier,
+                        carriers: Array.isArray(carrier.carriers)
+                            ? carrier.carriers.map((band) => ({ ...band }))
+                            : []
+                    }))
+                    : [],
+                spinor: analysis.transmission.spinor
+                    ? {
+                        ...analysis.transmission.spinor,
+                        ratios: Array.isArray(analysis.transmission.spinor.ratios)
+                            ? analysis.transmission.spinor.ratios.slice()
+                            : [],
+                        panOrbit: Array.isArray(analysis.transmission.spinor.panOrbit)
+                            ? analysis.transmission.spinor.panOrbit.slice()
+                            : [],
+                        phaseOrbit: Array.isArray(analysis.transmission.spinor.phaseOrbit)
+                            ? analysis.transmission.spinor.phaseOrbit.slice()
+                            : [],
+                        pitchLattice: Array.isArray(analysis.transmission.spinor.pitchLattice)
+                            ? analysis.transmission.spinor.pitchLattice.map((entry) => ({ ...entry }))
+                            : []
+                    }
+                    : null,
+                resonance: analysis.transmission.resonance
+                    ? cloneSpinorResonanceAtlas(analysis.transmission.resonance)
+                    : null,
+                signal: cloneSonicSignal(analysis.transmission.signal),
+                transduction: cloneSonicTransduction(analysis.transmission.transduction),
+                manifold: cloneSonicManifold(analysis.transmission.manifold),
+                topology: cloneSonicTopology(analysis.transmission.topology),
+                continuum: cloneSonicContinuum(analysis.transmission.continuum),
+                lattice: cloneSonicLattice(analysis.transmission.lattice),
+                constellation: cloneSonicConstellation(analysis.transmission.constellation)
+            },
+        quaternion: analysis?.quaternion
+            ? {
+                ...analysis.quaternion,
+                left: Array.isArray(analysis.quaternion.left)
+                    ? analysis.quaternion.left.slice()
+                    : [],
+                right: Array.isArray(analysis.quaternion.right)
+                    ? analysis.quaternion.right.slice()
+                    : [],
+                bridgeVector: Array.isArray(analysis.quaternion.bridgeVector)
+                    ? analysis.quaternion.bridgeVector.slice()
+                    : [],
+                normalizedBridge: Array.isArray(analysis.quaternion.normalizedBridge)
+                    ? analysis.quaternion.normalizedBridge.slice()
+                    : [],
+                hopfFiber: Array.isArray(analysis.quaternion.hopfFiber)
+                    ? analysis.quaternion.hopfFiber.slice()
+                    : []
+            }
+            : null,
+        spinor: analysis?.spinor
+            ? {
+                ...analysis.spinor,
+                ratios: Array.isArray(analysis.spinor.ratios)
+                    ? analysis.spinor.ratios.slice()
+                    : [],
+                panOrbit: Array.isArray(analysis.spinor.panOrbit)
+                    ? analysis.spinor.panOrbit.slice()
+                    : [],
+                phaseOrbit: Array.isArray(analysis.spinor.phaseOrbit)
+                    ? analysis.spinor.phaseOrbit.slice()
+                    : [],
+                axis: analysis.spinor.axis
+                    ? {
+                        ...analysis.spinor.axis,
+                        left: Array.isArray(analysis.spinor.axis.left)
+                            ? analysis.spinor.axis.left.slice()
+                            : null,
+                        right: Array.isArray(analysis.spinor.axis.right)
+                            ? analysis.spinor.axis.right.slice()
+                            : null,
+                        cross: Array.isArray(analysis.spinor.axis.cross)
+                            ? analysis.spinor.axis.cross.slice()
+                            : null
+                    }
+                    : null,
+                fiber: Array.isArray(analysis.spinor.fiber)
+                    ? analysis.spinor.fiber.slice()
+                    : [],
+                pitchLattice: Array.isArray(analysis.spinor.pitchLattice)
+                    ? analysis.spinor.pitchLattice.map((entry) => ({ ...entry }))
+                    : []
+            }
+            : null,
+        resonance: analysis?.resonance
+            ? cloneSpinorResonanceAtlas(analysis.resonance)
+            : null,
+        signal: cloneSonicSignal(analysis?.signal),
+        transduction: cloneSonicTransduction(analysis?.transduction),
+        manifold: cloneSonicManifold(analysis?.manifold),
+        topology: cloneSonicTopology(analysis?.topology),
+        continuum: cloneSonicContinuum(analysis?.continuum),
+        lattice: cloneSonicLattice(analysis?.lattice),
+        constellation: cloneSonicConstellation(analysis?.constellation)
+    });
+
     const notifySonicAnalysis = (analysis) => {
         if (!analysis) {
+            clearSpinorOverlay();
             return;
         }
+        renderSpinorOverlay(analysis);
         if (typeof globalConfig.onSonicAnalysis === 'function') {
             try {
                 globalConfig.onSonicAnalysis(cloneSonicAnalysis(analysis));
@@ -731,6 +1022,29 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    const notifySonicConstellation = (constellation) => {
+        if (!constellation) {
+            return;
+        }
+        if (typeof globalConfig.onSonicConstellation === 'function') {
+            try {
+                globalConfig.onSonicConstellation(cloneSonicConstellation(constellation));
+            } catch (error) {
+                console.error('PPP_CONFIG.onSonicConstellation error', error);
+            }
+        }
+        sonicConstellationListeners.forEach((listener) => {
+            if (typeof listener !== 'function') {
+                return;
+            }
+            try {
+                listener(cloneSonicConstellation(constellation));
+            } catch (error) {
+                console.error('PPP sonic constellation listener error', error);
+            }
+        });
+    };
+
     const applySonicOutputMode = async (mode, { updateHelper = true } = {}) => {
         if (!sonicGeometryEngine) {
             return 'analysis';
@@ -855,8 +1169,6 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         }
     };
-
-    updatePlaybackStatus();
 
     const stopAutoStreamIfActive = () => {
         const wasStreaming = Boolean(autoStreamToggle && autoStreamToggle.checked);
@@ -1117,8 +1429,6 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    updateRecorderStatus();
-
     const populateMappingEditor = (mappingDefinition, { force = false } = {}) => {
         if (!mappingInput) {
             return;
@@ -1294,7 +1604,9 @@ window.addEventListener('DOMContentLoaded', () => {
             suppressCallbacks = false,
             uniformOverride = null,
             source = 'manual',
-            playbackFrame = null
+            playbackFrame = null,
+            transportOverride = null,
+            analysisMetadata = null
         } = options;
         const normalizedValues = Array.isArray(values)
             ? values.slice()
@@ -1342,6 +1654,30 @@ window.addEventListener('DOMContentLoaded', () => {
                 ? source
                 : 'manual';
             const baseTransport = (() => {
+                if (transportOverride && typeof transportOverride === 'object') {
+                    return {
+                        playing: Boolean(transportOverride.playing),
+                        loop: Boolean(transportOverride.loop),
+                        progress: Number.isFinite(transportOverride.progress)
+                            ? clampValue(transportOverride.progress, 0, 1)
+                            : playbackStatusSnapshot
+                                ? playbackStatusSnapshot.progress
+                                : 0,
+                        frameIndex: Number.isFinite(transportOverride.frameIndex)
+                            ? transportOverride.frameIndex
+                            : playbackStatusSnapshot
+                                ? playbackStatusSnapshot.currentIndex
+                                : -1,
+                        frameCount: Number.isFinite(transportOverride.frameCount)
+                            ? transportOverride.frameCount
+                            : playbackStatusSnapshot
+                                ? playbackStatusSnapshot.frameCount
+                                : 0,
+                        mode: typeof transportOverride.mode === 'string'
+                            ? transportOverride.mode
+                            : normalizedSource
+                    };
+                }
                 if (normalizedSource === 'playback' && playbackStatusSnapshot) {
                     return {
                         playing: playbackStatusSnapshot.playing,
@@ -1383,6 +1719,9 @@ window.addEventListener('DOMContentLoaded', () => {
                     ? performance.now()
                     : Date.now()
             };
+            if (analysisMetadata && typeof analysisMetadata === 'object') {
+                Object.assign(metadata, analysisMetadata);
+            }
             const analysis = sonicGeometryEngine.updateFromData(normalizedValues, metadata);
             if (analysis) {
                 notifySonicAnalysis(analysis);
@@ -1404,7 +1743,10 @@ window.addEventListener('DOMContentLoaded', () => {
             if (analysis.lattice) {
                 notifySonicLattice(analysis.lattice);
             }
+            if (analysis.constellation) {
+                notifySonicConstellation(analysis.constellation);
             }
+        }
             if (analysis && sonicGeometryToggle && sonicGeometryToggle.checked) {
                 const summary = analysis.summary || sonicGeometryEngine.getLastSummary();
                 if (summary) {
@@ -1418,10 +1760,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const downloadRecording = (filename = recorderFilename) => {
         const payload = dataRecorder.toJSON();
-        const frameCount =
-            payload && payload.meta && typeof payload.meta.frameCount === 'number'
-                ? payload.meta.frameCount
-                : 0;
+        const frameCount = payload?.meta?.frameCount || 0;
         if (!frameCount) {
             setRecorderHelperText('Recorder export skipped: no frames captured yet.');
             return false;
@@ -1803,6 +2142,17 @@ window.addEventListener('DOMContentLoaded', () => {
 
     updateUniformPreview(renderer, uniformPreview);
 
+    if (globalConfig.live && typeof globalConfig.live === 'object') {
+        if (websocketUrlInput && typeof globalConfig.live.websocketUrl === 'string' && !websocketUrlInput.value) {
+            websocketUrlInput.value = globalConfig.live.websocketUrl;
+        }
+        if (serialBaudRateSelect && (globalConfig.live.serialBaudRate || globalConfig.live.serialBaudRate === 0)) {
+            serialBaudRateSelect.value = String(globalConfig.live.serialBaudRate);
+        }
+    }
+
+    updateLiveStatus('Live stream idle.', { mode: 'idle', connected: false });
+
     smoothingSlider.addEventListener('input', (event) => {
         const value = clampValue(parseFloat(event.target.value), 0, 1);
         dataMapper.setSmoothing(value);
@@ -1876,6 +2226,257 @@ window.addEventListener('DOMContentLoaded', () => {
     if (clearRecorderButton) {
         clearRecorderButton.addEventListener('click', () => {
             clearRecording();
+        });
+    }
+
+    if (websocketConnectButton) {
+        websocketConnectButton.addEventListener('click', async () => {
+            if (liveStreamState.mode === 'websocket' && liveStreamState.connected) {
+                disconnectWebSocketStream();
+                return;
+            }
+            const url = websocketUrlInput ? websocketUrlInput.value : undefined;
+            await connectWebSocketStream(url);
+        });
+    }
+
+    if (serialConnectButton) {
+        serialConnectButton.addEventListener('click', async () => {
+            if (liveStreamState.mode === 'serial' && liveStreamState.connected) {
+                await disconnectSerialStream();
+                return;
+            }
+            const baudRate = serialBaudRateSelect ? Number(serialBaudRateSelect.value) : undefined;
+            await connectSerialStream({ baudRate });
+        });
+    }
+
+    if (serialBaudRateSelect) {
+        serialBaudRateSelect.addEventListener('change', () => {
+            if (liveStreamState.mode === 'serial' && liveStreamState.connected) {
+                const baudRate = Number(serialBaudRateSelect.value);
+                connectSerialStream({ baudRate });
+            }
+        });
+    }
+
+    const calibrationSamples = [];
+    const updateCalibrationStatus = (text) => {
+        if (calibrationStatusLabel) {
+            calibrationStatusLabel.textContent = text;
+        }
+    };
+    const updateCalibrationSampleCount = () => {
+        if (calibrationSampleLabel) {
+            calibrationSampleLabel.textContent = `${calibrationSamples.length}`;
+        }
+    };
+
+    const calibrationToolkit = new CalibrationToolkit({
+        applyDataArray: (values, options) => applyDataArray(values, options),
+        captureFrame: () => (renderer && typeof renderer.captureFrame === 'function'
+            ? renderer.captureFrame({ format: 'image/png', quality: 0.92 })
+            : null),
+        getSonicAnalysis: () => (sonicGeometryEngine ? sonicGeometryEngine.getLastAnalysis() : null),
+        onStatus: (text) => updateCalibrationStatus(text),
+        onSample: (sample) => {
+            calibrationSamples.push(sample);
+            updateCalibrationSampleCount();
+        }
+    });
+
+    let datasetManifest = null;
+    let datasetPlanRunning = false;
+    const datasetInsightEngine = new CalibrationInsightEngine();
+    let datasetInsightsSnapshot = null;
+
+    const setDatasetStatus = (text, state = 'idle') => {
+        if (!datasetStatusLabel) {
+            return;
+        }
+        datasetStatusLabel.textContent = text;
+        datasetStatusLabel.classList.remove('idle', 'active', 'success', 'error');
+        datasetStatusLabel.classList.add(state);
+    };
+
+    const renderDatasetInsights = (manifest) => {
+        if (!datasetInsightsList) {
+            datasetInsightsSnapshot = null;
+            return;
+        }
+        datasetInsightsList.innerHTML = '';
+        datasetInsightsSnapshot = null;
+        if (!manifest) {
+            const placeholder = document.createElement('li');
+            placeholder.textContent = 'Run the dataset plan to generate insights.';
+            datasetInsightsList.appendChild(placeholder);
+            return;
+        }
+        const insights = datasetInsightEngine.analyzeManifest(manifest);
+        datasetInsightsSnapshot = datasetInsightEngine.cloneInsights(insights);
+        const narrative = datasetInsightEngine.generateNarrative(insights, { maxItems: 4 });
+        if (!narrative.length) {
+            const placeholder = document.createElement('li');
+            placeholder.textContent = 'Dataset captured. Review manifest for detailed metrics.';
+            datasetInsightsList.appendChild(placeholder);
+            return;
+        }
+        narrative.forEach((line) => {
+            const item = document.createElement('li');
+            item.textContent = line;
+            datasetInsightsList.appendChild(item);
+        });
+    };
+
+    const updateDatasetSummary = (manifest) => {
+        if (!datasetSummaryOutput) {
+            return;
+        }
+        if (!manifest) {
+            datasetSummaryOutput.textContent = 'No dataset captured yet.';
+            renderDatasetInsights(null);
+            return;
+        }
+        const totalSamples = manifest?.totals?.sampleCount || 0;
+        const totalSequences = manifest?.totals?.sequenceCount || 0;
+        const score = Number.isFinite(manifest?.score)
+            ? `${(manifest.score * 100).toFixed(1)}%`
+            : 'n/a';
+        const delta = Number.isFinite(manifest?.parity?.visualContinuumDelta?.average)
+            ? manifest.parity.visualContinuumDelta.average.toFixed(3)
+            : 'n/a';
+        const gate = Number.isFinite(manifest?.parity?.carrierGateRatio?.average)
+            ? `${(manifest.parity.carrierGateRatio.average * 100).toFixed(1)}%`
+            : null;
+        const summaryParts = [
+            `Sequences ${totalSequences}`,
+            `Frames ${totalSamples}`,
+            `Parity Δ≈${delta}`,
+            `Fidelity ${score}`
+        ];
+        if (gate) {
+            summaryParts.push(`Gates ${gate}`);
+        }
+        datasetSummaryOutput.textContent = summaryParts.join(' \u00b7 ');
+        renderDatasetInsights(manifest);
+    };
+
+    const finalizeDatasetManifest = (manifest) => {
+        datasetManifest = manifest;
+        if (manifest) {
+            setDatasetStatus('Dataset capture complete.', 'success');
+            updateDatasetSummary(manifest);
+            if (downloadDatasetButton) {
+                downloadDatasetButton.disabled = false;
+            }
+        } else {
+            setDatasetStatus('Dataset plan returned no samples.', 'error');
+            updateDatasetSummary(null);
+            if (downloadDatasetButton) {
+                downloadDatasetButton.disabled = true;
+            }
+        }
+    };
+
+    const datasetStatusHandler = (text) => {
+        const normalized = (text || '').toLowerCase();
+        const state = normalized.includes('fail')
+            ? 'error'
+            : normalized.includes('complete') || normalized.includes('captured')
+                ? 'success'
+                : 'active';
+        setDatasetStatus(text, state);
+    };
+
+    const calibrationDatasetBuilder = new CalibrationDatasetBuilder({
+        toolkit: calibrationToolkit,
+        onStatus: datasetStatusHandler,
+        metadata: {
+            source: 'PPP Calibration Toolkit',
+            version: 'mvp-dataset-alpha'
+        }
+    });
+
+    if (datasetStatusLabel) {
+        setDatasetStatus('Dataset idle.', 'idle');
+    }
+    updateDatasetSummary(null);
+    if (downloadDatasetButton) {
+        downloadDatasetButton.disabled = true;
+    }
+
+    updateCalibrationStatus('Calibration idle.');
+    updateCalibrationSampleCount();
+
+    if (calibrationSequenceSelect) {
+        calibrationSequenceSelect.innerHTML = '';
+        calibrationToolkit.listSequences().forEach((sequence) => {
+            const option = document.createElement('option');
+            option.value = sequence.id;
+            option.textContent = sequence.label || sequence.id;
+            calibrationSequenceSelect.appendChild(option);
+        });
+    }
+
+    if (startCalibrationButton) {
+        startCalibrationButton.addEventListener('click', () => {
+            calibrationSamples.length = 0;
+            calibrationToolkit.clearResults();
+            updateCalibrationSampleCount();
+            const sequenceId = calibrationSequenceSelect ? calibrationSequenceSelect.value : undefined;
+            const started = calibrationToolkit.runSequence(sequenceId || undefined);
+            if (!started) {
+                updateCalibrationStatus('Calibration sequence unavailable.');
+            }
+        });
+    }
+
+    if (stopCalibrationButton) {
+        stopCalibrationButton.addEventListener('click', () => {
+            calibrationToolkit.stop();
+            updateCalibrationStatus('Calibration paused.');
+        });
+    }
+
+    if (runDatasetPlanButton) {
+        runDatasetPlanButton.addEventListener('click', async () => {
+            if (runDatasetPlanButton.disabled || datasetPlanRunning) {
+                return;
+            }
+            runDatasetPlanButton.disabled = true;
+            if (downloadDatasetButton) {
+                downloadDatasetButton.disabled = true;
+            }
+            datasetManifest = null;
+            datasetPlanRunning = true;
+            setDatasetStatus('Building calibration dataset…', 'active');
+            updateDatasetSummary(null);
+            try {
+                const manifest = await calibrationDatasetBuilder.runPlan();
+                finalizeDatasetManifest(manifest);
+            } catch (error) {
+                console.error('Calibration dataset plan failed', error);
+                setDatasetStatus('Dataset build failed. Check console for details.', 'error');
+            } finally {
+                datasetPlanRunning = false;
+                runDatasetPlanButton.disabled = false;
+            }
+        });
+    }
+
+    if (downloadDatasetButton) {
+        downloadDatasetButton.addEventListener('click', () => {
+            if (!datasetManifest) {
+                return;
+            }
+            const payload = calibrationDatasetBuilder.getLastManifest({ includeSamples: true }) || datasetManifest;
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = `ppp-calibration-dataset-${Date.now()}.json`;
+            anchor.click();
+            setTimeout(() => URL.revokeObjectURL(url), 0);
         });
     }
 
@@ -1966,6 +2567,9 @@ window.addEventListener('DOMContentLoaded', () => {
                     }
                     if (bootAnalysis.lattice) {
                         notifySonicLattice(bootAnalysis.lattice);
+                    }
+                    if (bootAnalysis.constellation) {
+                        notifySonicConstellation(bootAnalysis.constellation);
                     }
                 }
                 const summary = (bootAnalysis && bootAnalysis.summary) || sonicGeometryEngine.getLastSummary();
@@ -2167,6 +2771,7 @@ window.addEventListener('DOMContentLoaded', () => {
             hasAudioSupport: () => (sonicGeometryEngine ? sonicGeometryEngine.hasAudioSupport() : false),
             getOutputMode: () => (sonicGeometryEngine ? sonicGeometryEngine.getOutputMode() : 'analysis'),
             getState: () => (sonicGeometryEngine ? sonicGeometryEngine.getState() : null),
+            getPerformance: () => (sonicGeometryEngine ? sonicGeometryEngine.getPerformanceMetrics() : null),
             enable: async (mode) => {
                 if (!sonicGeometryEngine || !sonicGeometryEngine.isSupported()) {
                     return false;
@@ -2203,15 +2808,18 @@ window.addEventListener('DOMContentLoaded', () => {
                     if (lastAnalysis.topology) {
                         notifySonicTopology(lastAnalysis.topology);
                     }
-                    if (lastAnalysis.continuum) {
-                        notifySonicContinuum(lastAnalysis.continuum);
-                    }
-                    if (lastAnalysis.lattice) {
-                        notifySonicLattice(lastAnalysis.lattice);
-                    }
+                if (lastAnalysis.continuum) {
+                    notifySonicContinuum(lastAnalysis.continuum);
                 }
-                return true;
-            },
+                if (lastAnalysis.lattice) {
+                    notifySonicLattice(lastAnalysis.lattice);
+                }
+                if (lastAnalysis.constellation) {
+                    notifySonicConstellation(lastAnalysis.constellation);
+                }
+            }
+            return true;
+        },
             disable: (options) => {
                 if (!sonicGeometryEngine) {
                     return false;
@@ -2243,12 +2851,15 @@ window.addEventListener('DOMContentLoaded', () => {
                     if (analysis.topology) {
                         notifySonicTopology(analysis.topology);
                     }
-                    if (analysis.continuum) {
-                        notifySonicContinuum(analysis.continuum);
-                    }
-                    if (analysis.lattice) {
-                        notifySonicLattice(analysis.lattice);
-                    }
+                if (analysis.continuum) {
+                    notifySonicContinuum(analysis.continuum);
+                }
+                if (analysis.lattice) {
+                    notifySonicLattice(analysis.lattice);
+                }
+                if (analysis.constellation) {
+                    notifySonicConstellation(analysis.constellation);
+                }
                     if (sonicGeometryToggle && sonicGeometryToggle.checked) {
                         const summary = analysis.summary || sonicGeometryEngine.getLastSummary();
                         if (summary) {
@@ -2265,6 +2876,7 @@ window.addEventListener('DOMContentLoaded', () => {
             getTopology: () => (sonicGeometryEngine ? sonicGeometryEngine.getLastTopology() : null),
             getContinuum: () => (sonicGeometryEngine ? sonicGeometryEngine.getLastContinuum() : null),
             getLattice: () => (sonicGeometryEngine ? sonicGeometryEngine.getLastLattice() : null),
+            getConstellation: () => (sonicGeometryEngine ? sonicGeometryEngine.getLastConstellation() : null),
             getResonance: () => {
                 const latest = sonicGeometryEngine ? sonicGeometryEngine.getLastAnalysis() : null;
                 return latest && latest.resonance ? cloneSpinorResonanceAtlas(latest.resonance) : null;
@@ -2387,6 +2999,113 @@ window.addEventListener('DOMContentLoaded', () => {
                 return () => {
                     sonicLatticeListeners.delete(listener);
                 };
+            },
+            onConstellation: (listener) => {
+                if (typeof listener !== 'function') {
+                    return () => {};
+                }
+                sonicConstellationListeners.add(listener);
+                const latestConstellation = sonicGeometryEngine
+                    ? sonicGeometryEngine.getLastConstellation()
+                    : null;
+                if (latestConstellation) {
+                    try {
+                        listener(cloneSonicConstellation(latestConstellation));
+                    } catch (error) {
+                        console.error('PPP sonic constellation listener error', error);
+                    }
+                }
+                return () => {
+                    sonicConstellationListeners.delete(listener);
+                };
+            }
+        },
+        live: {
+            ingest: (payload, options) => ingestLivePayload(payload, options || {}),
+            connectWebSocket: (url) => connectWebSocketStream(url),
+            disconnectWebSocket: () => disconnectWebSocketStream(),
+            connectSerial: (options) => connectSerialStream(options || {}),
+            disconnectSerial: () => disconnectSerialStream(),
+            getStatus: () => {
+                const {
+                    channelSaturation,
+                    checksum,
+                    statusLog,
+                    telemetrySummary,
+                    latencySum,
+                    ...rest
+                } = liveStreamState;
+                return {
+                    ...rest,
+                    channelSaturation: channelSaturation
+                        ? { ...channelSaturation }
+                        : { latest: 0, peak: 0 },
+                    checksum: checksum
+                        ? { ...checksum }
+                        : { status: 'absent', validated: 0, failures: 0 },
+                    statusLog: Array.isArray(statusLog)
+                        ? statusLog.map((entry) => ({ ...entry }))
+                        : [],
+                    telemetrySummary: telemetrySummary || formatLiveTelemetrySummary(liveStreamState)
+                };
+            },
+            onFrame: (listener) => {
+                if (typeof listener !== 'function') {
+                    return () => {};
+                }
+                liveFrameListeners.add(listener);
+                return () => {
+                    liveFrameListeners.delete(listener);
+                };
+            }
+        },
+        calibration: {
+            listSequences: () => calibrationToolkit.listSequences(),
+            runSequence: (id, options) => calibrationToolkit.runSequence(id, options || {}),
+            stop: () => calibrationToolkit.stop(),
+            getStatus: () => calibrationToolkit.getStatus(),
+            getResults: () => calibrationToolkit.getResults(),
+            clearResults: () => {
+                calibrationToolkit.clearResults();
+                calibrationSamples.length = 0;
+                updateCalibrationSampleCount();
+                return calibrationSamples.length;
+            },
+            dataset: {
+                isRunning: () => datasetPlanRunning,
+                getPlan: () => calibrationDatasetBuilder.getPlan(),
+                planSequence: (sequenceId, options) => {
+                    calibrationDatasetBuilder.planSequence(sequenceId, options || {});
+                    return calibrationDatasetBuilder.getPlan();
+                },
+                clearPlan: () => {
+                    calibrationDatasetBuilder.clearPlan();
+                    return [];
+                },
+                runPlan: async (plan) => {
+                    if (datasetPlanRunning) {
+                        throw new Error('Calibration dataset plan already running.');
+                    }
+                    datasetPlanRunning = true;
+                    datasetManifest = null;
+                    setDatasetStatus('Building calibration dataset…', 'active');
+                    updateDatasetSummary(null);
+                    try {
+                        const manifest = await calibrationDatasetBuilder.runPlan(plan || null);
+                        finalizeDatasetManifest(manifest);
+                        return manifest;
+                    } finally {
+                        datasetPlanRunning = false;
+                    }
+                },
+                getManifest: (options) => calibrationDatasetBuilder.getLastManifest(options || {}),
+                buildManifest: (options) => calibrationDatasetBuilder.buildManifest(options || {}),
+                getInsights: () => datasetInsightEngine.cloneInsights(datasetInsightsSnapshot),
+                getNarrative: (options) => datasetInsightEngine.generateNarrative(
+                    datasetInsightsSnapshot || null,
+                    options || {}
+                ),
+                analyzeManifest: (manifest) => datasetInsightEngine.analyzeManifest(manifest || {})
             }
         },
         applyDataArray: (values, options) => applyDataArray(values, options),

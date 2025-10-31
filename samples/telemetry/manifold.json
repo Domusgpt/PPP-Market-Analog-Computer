@@ -1,0 +1,83 @@
+{
+  "timestamp": 0,
+  "progress": 0.35,
+  "quaternion": {
+    "bridgeMagnitude": 0.834791,
+    "hopfAlignment": 0.849002,
+    "trace": 3.335713,
+    "determinant": 1,
+    "frobenius": 2,
+    "normalizedBridge": [
+      0.998966,
+      -0.039561,
+      0.012862,
+      -0.018336
+    ],
+    "hopfFiber": [
+      0.863857,
+      0.303585,
+      0.271218,
+      0.296695
+    ]
+  },
+  "spinor": {
+    "coherence": 0,
+    "braidDensity": 0,
+    "ratioEntropy": 0,
+    "panVariance": 0,
+    "phaseVariance": 0,
+    "ratios": [],
+    "panOrbit": [],
+    "phaseOrbit": []
+  },
+  "resonance": {
+    "magnitude": 1.468007,
+    "bridgeProjection": 0.942504,
+    "hopfProjection": 1.111076,
+    "gateMean": 1,
+    "gateVariance": 0,
+    "carrierMagnitude": 1.026762,
+    "centroid": [
+      0.969555,
+      0.956517,
+      0.362885,
+      -0.388564
+    ],
+    "carrierCentroid": [
+      0.469435,
+      0.268247,
+      0.821617,
+      -0.142012
+    ]
+  },
+  "signal": {
+    "density": 0,
+    "centroid": 0,
+    "spread": 0,
+    "resonance": 0,
+    "entropy": 0
+  },
+  "transduction": {
+    "energy": 0,
+    "gateCoherence": 0,
+    "projectionMean": 0,
+    "projectionDeviation": 0,
+    "trace": 3.335713,
+    "determinant": 1,
+    "frobenius": 2,
+    "hopfAlignment": 0.849002
+  },
+  "summary": {
+    "voiceGateMean": 0,
+    "voiceCarrierEnergy": 0,
+    "voiceSpinorCoherence": 0
+  },
+  "alignment": {
+    "bridgeToResonance": 0.64464,
+    "bridgeToCarrierCentroid": 0.474473,
+    "hopfToCarrierCentroid": 0.671859,
+    "spinorToSignal": 0,
+    "signalToGrid": 0
+  },
+  "voices": []
+}

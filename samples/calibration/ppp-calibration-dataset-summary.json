@@ -1,0 +1,187 @@
+{
+  "generatedAt": "2025-10-19T20:48:57.766Z",
+  "metadata": {
+    "release": "ppp-calibration-reference-1",
+    "environment": "headless-node",
+    "generator": "buildCalibrationDataset.js",
+    "artifact": {
+      "path": "dist/calibration/ppp-calibration-dataset.json",
+      "includesSamples": true,
+      "format": "json",
+      "bytes": 137718968,
+      "sha256": "813d3d0ac40bae3a57e66f9186aacfe1cdf1f433c44ba76c16a38427415ecdb7",
+      "contentSha256": "813d3d0ac40bae3a57e66f9186aacfe1cdf1f433c44ba76c16a38427415ecdb7"
+    }
+  },
+  "totals": {
+    "sequenceCount": 3,
+    "sampleCount": 584
+  },
+  "sequences": [
+    {
+      "id": "hopf-orbit",
+      "label": "Hopf Orbit Sweep",
+      "completed": true,
+      "frames": 240,
+      "sampleRate": 30,
+      "durationSeconds": 8,
+      "status": "complete"
+    },
+    {
+      "id": "flux-ramp",
+      "label": "Flux Continuum Ramp",
+      "completed": true,
+      "frames": 144,
+      "sampleRate": 24,
+      "durationSeconds": 6,
+      "status": "complete"
+    },
+    {
+      "id": "spinor-coherence",
+      "label": "Spinor Coherence Pulse",
+      "completed": true,
+      "frames": 200,
+      "sampleRate": 20,
+      "durationSeconds": 10,
+      "status": "complete"
+    }
+  ],
+  "parity": {
+    "visualMean": {
+      "average": 0.5028801324546477,
+      "min": 0.05848578843378116,
+      "max": 0.9358459755273978,
+      "count": 584
+    },
+    "visualStd": {
+      "average": 0.17274074434221026,
+      "min": 0,
+      "max": 0.31795359194171874,
+      "count": 584
+    },
+    "continuumGridMean": {
+      "average": 0.05434185735622106,
+      "min": 0.00833693539510361,
+      "max": 0.10738008969356463,
+      "count": 584
+    },
+    "continuumGridStd": {
+      "average": 0.02224228138610352,
+      "min": 0.0018535666861942098,
+      "max": 0.06695877348400088,
+      "count": 584
+    },
+    "continuumCarrierMean": {
+      "average": 0.9228186540526061,
+      "min": 0.36620735317468645,
+      "max": 1.8385353825241328,
+      "count": 584
+    },
+    "visualContinuumDelta": {
+      "average": 0.44853827509842625,
+      "min": 0.02330423566338858,
+      "max": 0.8721931459271158,
+      "count": 584
+    },
+    "carrierEnergyMean": {
+      "average": 0.3076062180175351,
+      "min": 0.12206911772489547,
+      "max": 0.6128451275080443,
+      "count": 584
+    },
+    "carrierEnergyStd": {
+      "average": 0.0855265436711689,
+      "min": 0.018286285369116077,
+      "max": 0.2522238023415807,
+      "count": 584
+    },
+    "carrierGateRatio": {
+      "average": 1,
+      "min": 1,
+      "max": 1,
+      "count": 584
+    },
+    "bitDensity": {
+      "average": 0.4973244863013699,
+      "min": 0.125,
+      "max": 0.875,
+      "count": 584
+    },
+    "envelopeResonance": {
+      "average": 1.4386283827089417,
+      "min": 1.0254035888938755,
+      "max": 1.5749887752945675,
+      "count": 584
+    },
+    "envelopeCentroid": {
+      "average": 461.3856478021967,
+      "min": 199.00941776808682,
+      "max": 2773.2637552530864,
+      "count": 584
+    },
+    "continuumAlignmentMean": {
+      "average": 0.20854437933822653,
+      "min": -0.9234807983374351,
+      "max": 0.9212948162617267,
+      "count": 584
+    },
+    "continuumAlignmentStd": {
+      "average": 0.12256615388712369,
+      "min": 0.004291282946456388,
+      "max": 0.44253707693612615,
+      "count": 584
+    },
+    "bitEntropyMean": {
+      "average": 0.7011986301369864,
+      "min": 0,
+      "max": 1,
+      "count": 584
+    },
+    "uniformVectorMagnitude": {
+      "average": 5.561362064790916,
+      "min": 3.077742828662868,
+      "max": 8.667313555702174,
+      "count": 584
+    },
+    "resonanceAggregateEnergy": {
+      "average": 1.4386283827089417,
+      "min": 1.0254035888938755,
+      "max": 1.5749887752945675,
+      "count": 584
+    },
+    "spinorCoherence": {
+      "average": 0.5752152808049713,
+      "min": 0.0018112459352719323,
+      "max": 0.9999999624246378,
+      "count": 584
+    }
+  },
+  "sampleScoreAverage": 0.6413275422862198,
+  "score": 0.6109071152798485,
+  "outputs": {
+    "manifest": {
+      "path": "dist/calibration/ppp-calibration-dataset.json",
+      "includesSamples": true,
+      "format": "json",
+      "bytes": 137718968,
+      "sha256": "813d3d0ac40bae3a57e66f9186aacfe1cdf1f433c44ba76c16a38427415ecdb7",
+      "contentSha256": "813d3d0ac40bae3a57e66f9186aacfe1cdf1f433c44ba76c16a38427415ecdb7"
+    },
+    "summary": {
+      "path": "samples/calibration/ppp-calibration-dataset-summary.json",
+      "format": "json"
+    },
+    "insights": {
+      "path": "samples/calibration/ppp-calibration-insights.json",
+      "format": "json"
+    }
+  },
+  "statusLog": [
+    "Running Hopf Orbit Sweep (240 frames @ 30.0 Hz)…",
+    "Hopf Orbit Sweep calibration complete. Captured 240 frames.",
+    "Running Flux Continuum Ramp (144 frames @ 24.0 Hz)…",
+    "Flux Continuum Ramp calibration complete. Captured 144 frames.",
+    "Running Spinor Coherence Pulse (200 frames @ 20.0 Hz)…",
+    "Spinor Coherence Pulse calibration complete. Captured 200 frames."
+  ]
+}

@@ -1,0 +1,7319 @@
+{
+  "timestamp": 0,
+  "outputMode": "analysis",
+  "audioActive": false,
+  "audioSupported": false,
+  "voiceCount": 4,
+  "voices": [
+    {
+      "index": 0,
+      "channelEnergy": 0.38,
+      "geometryEnergy": 0.119366,
+      "quaternionEnergy": 0.999483,
+      "quaternionComponent": 0.998966,
+      "harmonicCoordinate": 0.498481,
+      "frequency": 688.010247,
+      "gain": 0.084818,
+      "filterFrequency": 2083.553607,
+      "filterQ": 8.479866,
+      "pan": -0.158247,
+      "drift": 0.136661,
+      "carriers": [
+        {
+          "band": "sub",
+          "multiple": 0.386286,
+          "frequency": 265.768682,
+          "energy": 0.232447,
+          "amplitude": 0.019716,
+          "active": 1
+        },
+        {
+          "band": "prime",
+          "multiple": 0.809683,
+          "frequency": 557.070272,
+          "energy": 0.218407,
+          "amplitude": 0.018525,
+          "active": 1
+        },
+        {
+          "band": "hyper",
+          "multiple": 2.50467,
+          "frequency": 1723.238369,
+          "energy": 0.204367,
+          "amplitude": 0.017334,
+          "active": 1
+        }
+      ],
+      "modulation": {
+        "gate": 0.249683,
+        "binary": 1,
+        "amRate": 13.162958,
+        "amDepth": 0.029238,
+        "fmRate": 44.704379,
+        "fmDepth": 25.474465,
+        "pulseRate": 37.858004,
+        "dutyCycle": 0.338677,
+        "phase": 0.517771,
+        "sequence": "10"
+      },
+      "quaternion": {
+        "hopf": 0.863857,
+        "bridge": 0.998966,
+        "weight": 0.32
+      },
+      "spinor": {
+        "rawRatio": 2.271497,
+        "ratio": 1.570261,
+        "pan": 0.393163,
+        "phase": 0.03111,
+        "coherence": 0.348003,
+        "braid": 0.25
+      }
+    },
+    {
+      "index": 1,
+      "channelEnergy": 0.41,
+      "geometryEnergy": 0.105042,
+      "quaternionEnergy": 0.48022,
+      "quaternionComponent": -0.039561,
+      "harmonicCoordinate": 0.339153,
+      "frequency": 321.234722,
+      "gain": 0.065698,
+      "filterFrequency": 617.1329,
+      "filterQ": 6.614966,
+      "pan": -0.434999,
+      "drift": -0.193804,
+      "carriers": [
+        {
+          "band": "sub",
+          "multiple": 0.459997,
+          "frequency": 147.766979,
+          "energy": 0.284486,
+          "amplitude": 0.01869,
+          "active": 1
+        },
+        {
+          "band": "prime",
+          "multiple": 0.802521,
+          "frequency": 257.797652,
+          "energy": 0.220926,
+          "amplitude": 0.014514,
+          "active": 1
+        },
+        {
+          "band": "hyper",
+          "multiple": 1.969685,
+          "frequency": 632.731186,
+          "energy": 0.157367,
+          "amplitude": 0.011826,
+          "active": 1
+        }
+      ],
+      "modulation": {
+        "gate": 0.257521,
+        "binary": 1,
+        "amRate": 13.460803,
+        "amDepth": 0.023111,
+        "fmRate": 34.062862,
+        "fmDepth": 12.165719,
+        "pulseRate": 33.930112,
+        "dutyCycle": 0.226902,
+        "phase": 0.474517,
+        "sequence": "F"
+      },
+      "quaternion": {
+        "hopf": 0.303585,
+        "bridge": -0.039561,
+        "weight": 0.32
+      },
+      "spinor": {
+        "rawRatio": 1.269769,
+        "ratio": 1.140377,
+        "pan": 0.060346,
+        "phase": 0.068321,
+        "coherence": 0.348003,
+        "braid": 0.25
+      }
+    },
+    {
+      "index": 2,
+      "channelEnergy": 0.44,
+      "geometryEnergy": 0.063662,
+      "quaternionEnergy": 0.506431,
+      "quaternionComponent": 0.012862,
+      "harmonicCoordinate": 0.346099,
+      "frequency": 281.910554,
+      "gain": 0.066532,
+      "filterFrequency": 514.133036,
+      "filterQ": 6.664168,
+      "pan": 0.126781,
+      "drift": -0.205042,
+      "carriers": [
+        {
+          "band": "sub",
+          "multiple": 0.456912,
+          "frequency": 128.808337,
+          "energy": 0.286563,
+          "amplitude": 0.019066,
+          "active": 1
+        },
+        {
+          "band": "prime",
+          "multiple": 0.781831,
+          "frequency": 220.406407,
+          "energy": 0.20667,
+          "amplitude": 0.01375,
+          "active": 1
+        },
+        {
+          "band": "hyper",
+          "multiple": 1.828353,
+          "frequency": 515.432066,
+          "energy": 0.126777,
+          "amplitude": 0.011976,
+          "active": 1
+        }
+      ],
+      "modulation": {
+        "gate": 0.251831,
+        "binary": 1,
+        "amRate": 13.244578,
+        "amDepth": 0.023063,
+        "fmRate": 32.280591,
+        "fmDepth": 10.503396,
+        "pulseRate": 32.365391,
+        "dutyCycle": 0.192297,
+        "phase": 0.676068,
+        "sequence": "15"
+      },
+      "quaternion": {
+        "hopf": 0.271218,
+        "bridge": 0.012862,
+        "weight": 0.32
+      },
+      "spinor": {
+        "rawRatio": 0.966959,
+        "ratio": 0.98169,
+        "pan": -0.017119,
+        "phase": 0.03111,
+        "coherence": 0.348003,
+        "braid": 0.25
+      }
+    },
+    {
+      "index": 3,
+      "channelEnergy": 0.47,
+      "geometryEnergy": 0.127324,
+      "quaternionEnergy": 0.490832,
+      "quaternionComponent": -0.018336,
+      "harmonicCoordinate": 0.371807,
+      "frequency": 322.873549,
+      "gain": 0.069617,
+      "filterFrequency": 626.917816,
+      "filterQ": 7.25366,
+      "pan": 0.949426,
+      "drift": -0.188492,
+      "carriers": [
+        {
+          "band": "sub",
+          "multiple": 0.467887,
+          "frequency": 151.068254,
+          "energy": 0.333143,
+          "amplitude": 0.023192,
+          "active": 1
+        },
+        {
+          "band": "prime",
+          "multiple": 0.813662,
+          "frequency": 262.70993,
+          "energy": 0.257541,
+          "amplitude": 0.017929,
+          "active": 1
+        },
+        {
+          "band": "hyper",
+          "multiple": 2.0053,
+          "frequency": 647.458189,
+          "energy": 0.181939,
+          "amplitude": 0.012666,
+          "active": 1
+        }
+      ],
+      "modulation": {
+        "gate": 0.298662,
+        "binary": 1,
+        "amRate": 15.024155,
+        "amDepth": 0.027067,
+        "fmRate": 38.11622,
+        "fmDepth": 13.66425,
+        "pulseRate": 36.497673,
+        "dutyCycle": 0.236665,
+        "phase": 0.979829,
+        "sequence": "1F"
+      },
+      "quaternion": {
+        "hopf": 0.296695,
+        "bridge": -0.018336,
+        "weight": 0.32
+      },
+      "spinor": {
+        "rawRatio": 1.087059,
+        "ratio": 1.046982,
+        "pan": 0.109571,
+        "phase": 0.068321,
+        "coherence": 0.348003,
+        "braid": 0.25
+      }
+    }
+  ],
+  "transport": {
+    "playing": true,
+    "progress": 0.35,
+    "mode": "test",
+    "frameIndex": 12,
+    "frameCount": 48,
+    "loop": false
+  },
+  "timelineProgress": 0.35,
+  "summary": "Silent geometry telemetry field · Φ1:179°▣10↻ · Φ2:122°▣F↺ · Φ3:125°▣15↻ · Φ4:134°▣1F↺ · 35% orbit · 100% gates · 404Hz centroid · SpinΔ28°∥61° · ζ35%",
+  "transmission": {
+    "gateDensity": 1,
+    "gateContinuity": 1,
+    "spectralCentroid": 403.507268,
+    "averageFrequency": 403.507268,
+    "averageFmRate": 37.291013,
+    "averageAmRate": 13.723123,
+    "sequence": "10F151F",
+    "carriers": [
+      {
+        "index": 0,
+        "sequence": "10",
+        "carriers": [
+          {
+            "band": "sub",
+            "multiple": 0.386286,
+            "frequency": 265.768682,
+            "energy": 0.232447,
+            "amplitude": 0.019716,
+            "active": 1
+          },
+          {
+            "band": "prime",
+            "multiple": 0.809683,
+            "frequency": 557.070272,
+            "energy": 0.218407,
+            "amplitude": 0.018525,
+            "active": 1
+          },
+          {
+            "band": "hyper",
+            "multiple": 2.50467,
+            "frequency": 1723.238369,
+            "energy": 0.204367,
+            "amplitude": 0.017334,
+            "active": 1
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "sequence": "F",
+        "carriers": [
+          {
+            "band": "sub",
+            "multiple": 0.459997,
+            "frequency": 147.766979,
+            "energy": 0.284486,
+            "amplitude": 0.01869,
+            "active": 1
+          },
+          {
+            "band": "prime",
+            "multiple": 0.802521,
+            "frequency": 257.797652,
+            "energy": 0.220926,
+            "amplitude": 0.014514,
+            "active": 1
+          },
+          {
+            "band": "hyper",
+            "multiple": 1.969685,
+            "frequency": 632.731186,
+            "energy": 0.157367,
+            "amplitude": 0.011826,
+            "active": 1
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "sequence": "15",
+        "carriers": [
+          {
+            "band": "sub",
+            "multiple": 0.456912,
+            "frequency": 128.808337,
+            "energy": 0.286563,
+            "amplitude": 0.019066,
+            "active": 1
+          },
+          {
+            "band": "prime",
+            "multiple": 0.781831,
+            "frequency": 220.406407,
+            "energy": 0.20667,
+            "amplitude": 0.01375,
+            "active": 1
+          },
+          {
+            "band": "hyper",
+            "multiple": 1.828353,
+            "frequency": 515.432066,
+            "energy": 0.126777,
+            "amplitude": 0.011976,
+            "active": 1
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "sequence": "1F",
+        "carriers": [
+          {
+            "band": "sub",
+            "multiple": 0.467887,
+            "frequency": 151.068254,
+            "energy": 0.333143,
+            "amplitude": 0.023192,
+            "active": 1
+          },
+          {
+            "band": "prime",
+            "multiple": 0.813662,
+            "frequency": 262.70993,
+            "energy": 0.257541,
+            "amplitude": 0.017929,
+            "active": 1
+          },
+          {
+            "band": "hyper",
+            "multiple": 2.0053,
+            "frequency": 647.458189,
+            "energy": 0.181939,
+            "amplitude": 0.012666,
+            "active": 1
+          }
+        ]
+      }
+    ],
+    "spinor": {
+      "coherence": 0.348003,
+      "braidDensity": 0.25,
+      "ratios": [
+        2.271497,
+        1.269769,
+        0.966959,
+        1.087059
+      ],
+      "panOrbit": [
+        0.462545,
+        0.070995,
+        -0.02014,
+        0.128907
+      ],
+      "phaseOrbit": [
+        0.077775,
+        0.170802
+      ],
+      "pitchLattice": [
+        {
+          "index": 0,
+          "ratio": 2.271497,
+          "cents": 1420.372306,
+          "pan": 0.462545
+        },
+        {
+          "index": 1,
+          "ratio": 1.269769,
+          "cents": 413.479254,
+          "pan": 0.070995
+        },
+        {
+          "index": 2,
+          "ratio": 0.966959,
+          "cents": -58.167405,
+          "pan": -0.02014
+        },
+        {
+          "index": 3,
+          "ratio": 1.087059,
+          "cents": 144.515804,
+          "pan": 0.128907
+        }
+      ]
+    },
+    "resonance": {
+      "timeline": 0.35,
+      "matrix": [
+        [
+          0.862383,
+          0.36461,
+          0.189796,
+          0.29552
+        ],
+        [
+          -0.485587,
+          0.774859,
+          0.30675,
+          0.264013
+        ],
+        [
+          -0.079807,
+          -0.475789,
+          0.826948,
+          0.288813
+        ],
+        [
+          -0.118874,
+          -0.200692,
+          -0.431323,
+          0.871523
+        ]
+      ],
+      "axes": [
+        [
+          0.862383,
+          0.36461,
+          0.189796,
+          0.29552
+        ],
+        [
+          -0.485587,
+          0.774859,
+          0.30675,
+          0.264013
+        ],
+        [
+          -0.079807,
+          -0.475789,
+          0.826948,
+          0.288813
+        ],
+        [
+          -0.118874,
+          -0.200692,
+          -0.431323,
+          0.871523
+        ]
+      ],
+      "bridge": {
+        "vector": [
+          0.833928,
+          -0.033025,
+          0.010737,
+          -0.015307
+        ],
+        "normalized": [
+          0.998966,
+          -0.039561,
+          0.012862,
+          -0.018336
+        ],
+        "magnitude": 0.834791,
+        "coherence": 0.348003,
+        "braidDensity": 0.25
+      },
+      "hopf": [
+        0.863857,
+        0.303585,
+        0.271218,
+        0.296695
+      ],
+      "voices": [
+        {
+          "index": 0,
+          "frequency": 688.010247,
+          "pan": -0.158247,
+          "gate": 1,
+          "harmonic": 0.498481,
+          "ratio": 1.570261,
+          "phase": 0.03111,
+          "source": [
+            0.498481,
+            1,
+            0.980956,
+            0.194228
+          ],
+          "rotated": [
+            1.038071,
+            0.88499,
+            0.351724,
+            -0.513784
+          ],
+          "normalized": [
+            0.692281,
+            0.590193,
+            0.234562,
+            -0.342638
+          ],
+          "magnitude": 1.499494,
+          "projection": 1.015932,
+          "hopfProjection": 1.108371,
+          "carriers": [
+            {
+              "band": "sub",
+              "multiple": 0.386286,
+              "frequency": 265.768682,
+              "energy": 0.232447,
+              "amplitude": 0.019716,
+              "source": [
+                0.232447,
+                0.019716,
+                0.997151,
+                0.075436
+              ],
+              "rotated": [
+                0.419195,
+                0.228195,
+                0.818447,
+                -0.395939
+              ],
+              "magnitude": 1.02685
+            },
+            {
+              "band": "prime",
+              "multiple": 0.809683,
+              "frequency": 557.070272,
+              "energy": 0.218407,
+              "amplitude": 0.018525,
+              "source": [
+                0.218407,
+                0.018525,
+                0.987502,
+                0.157609
+              ],
+              "rotated": [
+                0.429105,
+                0.252825,
+                0.835887,
+                -0.318253
+              ],
+              "magnitude": 1.023741
+            },
+            {
+              "band": "hyper",
+              "multiple": 2.50467,
+              "frequency": 1723.238369,
+              "energy": 0.204367,
+              "amplitude": 0.017334,
+              "source": [
+                0.204367,
+                0.017334,
+                0.882526,
+                0.470263
+              ],
+              "rotated": [
+                0.489035,
+                0.309063,
+                0.841064,
+                0.001418
+              ],
+              "magnitude": 1.020817
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "frequency": 321.234722,
+          "pan": -0.434999,
+          "gate": 1,
+          "harmonic": 0.339153,
+          "ratio": 1.140377,
+          "phase": 0.068321,
+          "source": [
+            0.339153,
+            1,
+            0.909268,
+            0.41621
+          ],
+          "rotated": [
+            0.952664,
+            0.998974,
+            0.369268,
+            -0.270461
+          ],
+          "normalized": [
+            0.655061,
+            0.686904,
+            0.253913,
+            -0.185972
+          ],
+          "magnitude": 1.454313,
+          "projection": 0.921868,
+          "hopfProjection": 1.146147,
+          "carriers": [
+            {
+              "band": "sub",
+              "multiple": 0.459997,
+              "frequency": 147.766979,
+              "energy": 0.284486,
+              "amplitude": 0.01869,
+              "source": [
+                0.284486,
+                0.01869,
+                0.980567,
+                0.196184
+              ],
+              "rotated": [
+                0.496235,
+                0.228923,
+                0.835942,
+                -0.289532
+              ],
+              "magnitude": 1.039847
+            },
+            {
+              "band": "prime",
+              "multiple": 0.802521,
+              "frequency": 257.797652,
+              "energy": 0.220926,
+              "amplitude": 0.014514,
+              "source": [
+                0.220926,
+                0.014514,
+                0.941244,
+                0.337727
+              ],
+              "rotated": [
+                0.474265,
+                0.281858,
+                0.851362,
+                -0.140819
+              ],
+              "magnitude": 1.024216
+            },
+            {
+              "band": "hyper",
+              "multiple": 1.969685,
+              "frequency": 632.731186,
+              "energy": 0.157367,
+              "amplitude": 0.011826,
+              "source": [
+                0.157367,
+                0.011826,
+                0.663332,
+                0.748325
+              ],
+              "rotated": [
+                0.487065,
+                0.333792,
+                0.746482,
+                0.344991
+              ],
+              "magnitude": 1.012375
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "frequency": 281.910554,
+          "pan": 0.126781,
+          "gate": 1,
+          "harmonic": 0.346099,
+          "ratio": 0.98169,
+          "phase": 0.03111,
+          "source": [
+            0.346099,
+            1,
+            0.980956,
+            0.194228
+          ],
+          "rotated": [
+            0.906659,
+            0.958985,
+            0.363885,
+            -0.495669
+          ],
+          "normalized": [
+            0.622728,
+            0.658667,
+            0.24993,
+            -0.340445
+          ],
+          "magnitude": 1.455948,
+          "projection": 0.881553,
+          "hopfProjection": 1.025987,
+          "carriers": [
+            {
+              "band": "sub",
+              "multiple": 0.456912,
+              "frequency": 128.808337,
+              "energy": 0.286563,
+              "amplitude": 0.019066,
+              "source": [
+                0.286563,
+                0.019066,
+                0.996014,
+                0.089194
+              ],
+              "rotated": [
+                0.469477,
+                0.204697,
+                0.817471,
+                -0.389761
+              ],
+              "magnitude": 1.040424
+            },
+            {
+              "band": "prime",
+              "multiple": 0.781831,
+              "frequency": 220.406407,
+              "energy": 0.20667,
+              "amplitude": 0.01375,
+              "source": [
+                0.20667,
+                0.01375,
+                0.988345,
+                0.152231
+              ],
+              "rotated": [
+                0.415814,
+                0.253663,
+                0.83824,
+                -0.320951
+              ],
+              "magnitude": 1.021226
+            },
+            {
+              "band": "hyper",
+              "multiple": 1.828353,
+              "frequency": 515.432066,
+              "energy": 0.126777,
+              "amplitude": 0.011976,
+              "source": [
+                0.126777,
+                0.011976,
+                0.936813,
+                0.349829
+              ],
+              "rotated": [
+                0.394882,
+                0.327445,
+                0.859915,
+                -0.116659
+              ],
+              "magnitude": 1.008075
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "frequency": 322.873549,
+          "pan": 0.949426,
+          "gate": 1,
+          "harmonic": 0.371807,
+          "ratio": 1.046982,
+          "phase": 0.068321,
+          "source": [
+            0.371807,
+            1,
+            0.909268,
+            0.41621
+          ],
+          "rotated": [
+            0.980824,
+            0.983117,
+            0.366662,
+            -0.274342
+          ],
+          "normalized": [
+            0.670753,
+            0.672321,
+            0.250748,
+            -0.187614
+          ],
+          "magnitude": 1.462272,
+          "projection": 0.950664,
+          "hopfProjection": 1.163801,
+          "carriers": [
+            {
+              "band": "sub",
+              "multiple": 0.467887,
+              "frequency": 151.068254,
+              "energy": 0.333143,
+              "amplitude": 0.023192,
+              "source": [
+                0.333143,
+                0.023192,
+                0.979897,
+                0.199504
+              ],
+              "rotated": [
+                0.540691,
+                0.209456,
+                0.830321,
+                -0.293037
+              ],
+              "magnitude": 1.054288
+            },
+            {
+              "band": "prime",
+              "multiple": 0.813662,
+              "frequency": 262.70993,
+              "energy": 0.257541,
+              "amplitude": 0.017929,
+              "source": [
+                0.257541,
+                0.017929,
+                0.939618,
+                0.342225
+              ],
+              "rotated": [
+                0.508106,
+                0.267413,
+                0.84677,
+                -0.141236
+              ],
+              "magnitude": 1.032787
+            },
+            {
+              "band": "hyper",
+              "multiple": 2.0053,
+              "frequency": 647.458189,
+              "energy": 0.181939,
+              "amplitude": 0.012666,
+              "source": [
+                0.181939,
+                0.012666,
+                0.651815,
+                0.758378
+              ],
+              "rotated": [
+                0.509347,
+                0.321633,
+                0.7375,
+                0.355632
+              ],
+              "magnitude": 1.016495
+            }
+          ]
+        }
+      ],
+      "aggregate": {
+        "centroid": [
+          0.969555,
+          0.956517,
+          0.362885,
+          -0.388564
+        ],
+        "magnitude": 1.468007,
+        "bridgeProjection": 0.942504,
+        "hopfProjection": 1.111076,
+        "spinorRatio": 1.184828,
+        "gateMean": 1,
+        "gateVariance": 0,
+        "panMean": 0.12074,
+        "panVariance": 0.268359,
+        "phaseVector": [
+          0.945112,
+          0.305219
+        ],
+        "carrierCentroid": [
+          0.469435,
+          0.268247,
+          0.821617,
+          -0.142012
+        ],
+        "carrierMagnitude": 1.026762,
+        "spinorCoherence": 0.348003,
+        "braidDensity": 0.25
+      }
+    },
+    "signal": {
+      "progress": 0.35,
+      "transport": {
+        "playing": true,
+        "mode": "test"
+      },
+      "quantum": {
+        "left": [
+          0.970298,
+          -0.107087,
+          0.213597,
+          -0.037832
+        ],
+        "right": [
+          0.859456,
+          0.308393,
+          0.050269,
+          0.404601
+        ],
+        "dot": 0.796334,
+        "bridgeMagnitude": 0.834791,
+        "hopf": [
+          0.863857,
+          0.303585,
+          0.271218,
+          0.296695
+        ]
+      },
+      "spinor": {
+        "coherence": 0.348003,
+        "braidDensity": 0.25,
+        "ratios": [
+          2.271497,
+          1.269769,
+          0.966959,
+          1.087059
+        ],
+        "panOrbit": [
+          0.462545,
+          0.070995,
+          -0.02014,
+          0.128907
+        ],
+        "phaseOrbit": [
+          0.077775,
+          0.170802
+        ]
+      },
+      "resonance": {
+        "aggregate": {
+          "centroid": [
+            0.969555,
+            0.956517,
+            0.362885,
+            -0.388564
+          ],
+          "magnitude": 1.468007,
+          "bridgeProjection": 0.942504,
+          "hopfProjection": 1.111076,
+          "spinorRatio": 1.184828,
+          "gateMean": 1,
+          "gateVariance": 0,
+          "panMean": 0.12074,
+          "panVariance": 0.268359,
+          "phaseVector": [
+            0.945112,
+            0.305219
+          ],
+          "carrierCentroid": [
+            0.469435,
+            0.268247,
+            0.821617,
+            -0.142012
+          ],
+          "carrierMagnitude": 1.026762,
+          "spinorCoherence": 0.348003,
+          "braidDensity": 0.25
+        },
+        "axes": [
+          [
+            0.862383,
+            0.36461,
+            0.189796,
+            0.29552
+          ],
+          [
+            -0.485587,
+            0.774859,
+            0.30675,
+            0.264013
+          ],
+          [
+            -0.079807,
+            -0.475789,
+            0.826948,
+            0.288813
+          ],
+          [
+            -0.118874,
+            -0.200692,
+            -0.431323,
+            0.871523
+          ]
+        ],
+        "bridge": {
+          "magnitude": 0.834791,
+          "coherence": 0.348003,
+          "braidDensity": 0.25
+        }
+      },
+      "voices": [
+        {
+          "index": 0,
+          "gate": 1,
+          "sequence": "10",
+          "bits": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "phase": 0.517771,
+          "baseFrequency": 688.010247,
+          "pan": -0.158247,
+          "drift": 0.136661,
+          "quaternion": {
+            "weight": 0.32,
+            "bridge": 0.998966,
+            "hopf": 0.863857
+          },
+          "spinor": {
+            "ratio": 1.570261,
+            "pan": 0.393163,
+            "phase": 0.03111,
+            "coherence": 0.348003,
+            "braid": 0.25
+          },
+          "carriers": [
+            {
+              "label": "sub",
+              "frequency": 265.768682,
+              "amplitude": 0.019716,
+              "energy": 0.232447,
+              "active": 1
+            },
+            {
+              "label": "prime",
+              "frequency": 557.070272,
+              "amplitude": 0.018525,
+              "energy": 0.218407,
+              "active": 1
+            },
+            {
+              "label": "hyper",
+              "frequency": 1723.238369,
+              "amplitude": 0.017334,
+              "energy": 0.204367,
+              "active": 1
+            }
+          ],
+          "dominant": {
+            "label": "sub",
+            "frequency": 265.768682,
+            "amplitude": 0.019716,
+            "energy": 0.232447,
+            "active": 1
+          },
+          "resonance": {
+            "vector": [
+              1.038071,
+              0.88499,
+              0.351724,
+              -0.513784
+            ],
+            "normalized": [
+              0.692281,
+              0.590193,
+              0.234562,
+              -0.342638
+            ],
+            "carriers": [
+              {
+                "label": null,
+                "magnitude": 1.02685,
+                "phase": 0,
+                "orientation": [
+                  0.419195,
+                  0.228195,
+                  0.818447,
+                  -0.395939
+                ]
+              },
+              {
+                "label": null,
+                "magnitude": 1.023741,
+                "phase": 0,
+                "orientation": [
+                  0.429105,
+                  0.252825,
+                  0.835887,
+                  -0.318253
+                ]
+              },
+              {
+                "label": null,
+                "magnitude": 1.020817,
+                "phase": 0,
+                "orientation": [
+                  0.489035,
+                  0.309063,
+                  0.841064,
+                  0.001418
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "index": 1,
+          "gate": 1,
+          "sequence": "F",
+          "bits": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "phase": 0.474517,
+          "baseFrequency": 321.234722,
+          "pan": -0.434999,
+          "drift": -0.193804,
+          "quaternion": {
+            "weight": 0.32,
+            "bridge": -0.039561,
+            "hopf": 0.303585
+          },
+          "spinor": {
+            "ratio": 1.140377,
+            "pan": 0.060346,
+            "phase": 0.068321,
+            "coherence": 0.348003,
+            "braid": 0.25
+          },
+          "carriers": [
+            {
+              "label": "sub",
+              "frequency": 147.766979,
+              "amplitude": 0.01869,
+              "energy": 0.284486,
+              "active": 1
+            },
+            {
+              "label": "prime",
+              "frequency": 257.797652,
+              "amplitude": 0.014514,
+              "energy": 0.220926,
+              "active": 1
+            },
+            {
+              "label": "hyper",
+              "frequency": 632.731186,
+              "amplitude": 0.011826,
+              "energy": 0.157367,
+              "active": 1
+            }
+          ],
+          "dominant": {
+            "label": "sub",
+            "frequency": 147.766979,
+            "amplitude": 0.01869,
+            "energy": 0.284486,
+            "active": 1
+          },
+          "resonance": {
+            "vector": [
+              0.952664,
+              0.998974,
+              0.369268,
+              -0.270461
+            ],
+            "normalized": [
+              0.655061,
+              0.686904,
+              0.253913,
+              -0.185972
+            ],
+            "carriers": [
+              {
+                "label": null,
+                "magnitude": 1.039847,
+                "phase": 0,
+                "orientation": [
+                  0.496235,
+                  0.228923,
+                  0.835942,
+                  -0.289532
+                ]
+              },
+              {
+                "label": null,
+                "magnitude": 1.024216,
+                "phase": 0,
+                "orientation": [
+                  0.474265,
+                  0.281858,
+                  0.851362,
+                  -0.140819
+                ]
+              },
+              {
+                "label": null,
+                "magnitude": 1.012375,
+                "phase": 0,
+                "orientation": [
+                  0.487065,
+                  0.333792,
+                  0.746482,
+                  0.344991
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "index": 2,
+          "gate": 1,
+          "sequence": "15",
+          "bits": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "phase": 0.676068,
+          "baseFrequency": 281.910554,
+          "pan": 0.126781,
+          "drift": -0.205042,
+          "quaternion": {
+            "weight": 0.32,
+            "bridge": 0.012862,
+            "hopf": 0.271218
+          },
+          "spinor": {
+            "ratio": 0.98169,
+            "pan": -0.017119,
+            "phase": 0.03111,
+            "coherence": 0.348003,
+            "braid": 0.25
+          },
+          "carriers": [
+            {
+              "label": "sub",
+              "frequency": 128.808337,
+              "amplitude": 0.019066,
+              "energy": 0.286563,
+              "active": 1
+            },
+            {
+              "label": "prime",
+              "frequency": 220.406407,
+              "amplitude": 0.01375,
+              "energy": 0.20667,
+              "active": 1
+            },
+            {
+              "label": "hyper",
+              "frequency": 515.432066,
+              "amplitude": 0.011976,
+              "energy": 0.126777,
+              "active": 1
+            }
+          ],
+          "dominant": {
+            "label": "sub",
+            "frequency": 128.808337,
+            "amplitude": 0.019066,
+            "energy": 0.286563,
+            "active": 1
+          },
+          "resonance": {
+            "vector": [
+              0.906659,
+              0.958985,
+              0.363885,
+              -0.495669
+            ],
+            "normalized": [
+              0.622728,
+              0.658667,
+              0.24993,
+              -0.340445
+            ],
+            "carriers": [
+              {
+                "label": null,
+                "magnitude": 1.040424,
+                "phase": 0,
+                "orientation": [
+                  0.469477,
+                  0.204697,
+                  0.817471,
+                  -0.389761
+                ]
+              },
+              {
+                "label": null,
+                "magnitude": 1.021226,
+                "phase": 0,
+                "orientation": [
+                  0.415814,
+                  0.253663,
+                  0.83824,
+                  -0.320951
+                ]
+              },
+              {
+                "label": null,
+                "magnitude": 1.008075,
+                "phase": 0,
+                "orientation": [
+                  0.394882,
+                  0.327445,
+                  0.859915,
+                  -0.116659
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "index": 3,
+          "gate": 1,
+          "sequence": "1F",
+          "bits": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "phase": 0.979829,
+          "baseFrequency": 322.873549,
+          "pan": 0.949426,
+          "drift": -0.188492,
+          "quaternion": {
+            "weight": 0.32,
+            "bridge": -0.018336,
+            "hopf": 0.296695
+          },
+          "spinor": {
+            "ratio": 1.046982,
+            "pan": 0.109571,
+            "phase": 0.068321,
+            "coherence": 0.348003,
+            "braid": 0.25
+          },
+          "carriers": [
+            {
+              "label": "sub",
+              "frequency": 151.068254,
+              "amplitude": 0.023192,
+              "energy": 0.333143,
+              "active": 1
+            },
+            {
+              "label": "prime",
+              "frequency": 262.70993,
+              "amplitude": 0.017929,
+              "energy": 0.257541,
+              "active": 1
+            },
+            {
+              "label": "hyper",
+              "frequency": 647.458189,
+              "amplitude": 0.012666,
+              "energy": 0.181939,
+              "active": 1
+            }
+          ],
+          "dominant": {
+            "label": "sub",
+            "frequency": 151.068254,
+            "amplitude": 0.023192,
+            "energy": 0.333143,
+            "active": 1
+          },
+          "resonance": {
+            "vector": [
+              0.980824,
+              0.983117,
+              0.366662,
+              -0.274342
+            ],
+            "normalized": [
+              0.670753,
+              0.672321,
+              0.250748,
+              -0.187614
+            ],
+            "carriers": [
+              {
+                "label": null,
+                "magnitude": 1.054288,
+                "phase": 0,
+                "orientation": [
+                  0.540691,
+                  0.209456,
+                  0.830321,
+                  -0.293037
+                ]
+              },
+              {
+                "label": null,
+                "magnitude": 1.032787,
+                "phase": 0,
+                "orientation": [
+                  0.508106,
+                  0.267413,
+                  0.84677,
+                  -0.141236
+                ]
+              },
+              {
+                "label": null,
+                "magnitude": 1.016495,
+                "phase": 0,
+                "orientation": [
+                  0.509347,
+                  0.321633,
+                  0.7375,
+                  0.355632
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "carrierMatrix": [
+        [
+          {
+            "frequency": 265.768682,
+            "relative": 0.644497,
+            "gate": 1,
+            "energy": 0.232447
+          },
+          {
+            "frequency": 557.070272,
+            "relative": 1.350912,
+            "gate": 1,
+            "energy": 0.218407
+          },
+          {
+            "frequency": 1723.238369,
+            "relative": 4.178905,
+            "gate": 1,
+            "energy": 0.204367
+          }
+        ],
+        [
+          {
+            "frequency": 147.766979,
+            "relative": 0.358339,
+            "gate": 1,
+            "energy": 0.284486
+          },
+          {
+            "frequency": 257.797652,
+            "relative": 0.625167,
+            "gate": 1,
+            "energy": 0.220926
+          },
+          {
+            "frequency": 632.731186,
+            "relative": 1.534392,
+            "gate": 1,
+            "energy": 0.157367
+          }
+        ],
+        [
+          {
+            "frequency": 128.808337,
+            "relative": 0.312364,
+            "gate": 1,
+            "energy": 0.286563
+          },
+          {
+            "frequency": 220.406407,
+            "relative": 0.534492,
+            "gate": 1,
+            "energy": 0.20667
+          },
+          {
+            "frequency": 515.432066,
+            "relative": 1.249938,
+            "gate": 1,
+            "energy": 0.126777
+          }
+        ],
+        [
+          {
+            "frequency": 151.068254,
+            "relative": 0.366345,
+            "gate": 1,
+            "energy": 0.333143
+          },
+          {
+            "frequency": 262.70993,
+            "relative": 0.63708,
+            "gate": 1,
+            "energy": 0.257541
+          },
+          {
+            "frequency": 647.458189,
+            "relative": 1.570106,
+            "gate": 1,
+            "energy": 0.181939
+          }
+        ]
+      ],
+      "bitstream": {
+        "sequence": "10F151F",
+        "density": 0.625,
+        "segments": [
+          {
+            "voice": 0,
+            "hex": "10",
+            "bits": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "gate": 1
+          },
+          {
+            "voice": 1,
+            "hex": "F",
+            "bits": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "gate": 1
+          },
+          {
+            "voice": 2,
+            "hex": "15",
+            "bits": [
+              0,
+              1,
+              0,
+              1
+            ],
+            "gate": 1
+          },
+          {
+            "voice": 3,
+            "hex": "1F",
+            "bits": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "gate": 1
+          }
+        ]
+      },
+      "envelope": {
+        "centroid": 412.366001,
+        "spread": 413.808048,
+        "resonance": 1.468007,
+        "progress": 0.35
+      }
+    },
+    "transduction": {
+      "progress": 0.35,
+      "invariants": {
+        "determinant": 1,
+        "trace": 3.335713,
+        "frobenius": 2,
+        "hopfAlignment": 0.849002,
+        "bridgeMagnitude": 0.834791
+      },
+      "topology": {
+        "bridge": [
+          0.998966,
+          -0.039561,
+          0.012862,
+          -0.018336
+        ],
+        "hopf": [
+          0.863857,
+          0.303585,
+          0.271218,
+          0.296695
+        ],
+        "spinorCoherence": 0.348003,
+        "braidDensity": 0.25
+      },
+      "matrix": [
+        [
+          0.862383,
+          0.36461,
+          0.189796,
+          0.29552
+        ],
+        [
+          -0.485587,
+          0.774859,
+          0.30675,
+          0.264013
+        ],
+        [
+          -0.079807,
+          -0.475789,
+          0.826948,
+          0.288813
+        ],
+        [
+          -0.118874,
+          -0.200692,
+          -0.431323,
+          0.871523
+        ]
+      ],
+      "signal": {
+        "density": 0.625,
+        "centroid": 412.366001,
+        "spread": 413.808048
+      },
+      "resonance": {
+        "centroid": [
+          0.969555,
+          0.956517,
+          0.362885,
+          -0.388564
+        ],
+        "magnitude": 1.468007,
+        "bridgeProjection": 0.942504,
+        "hopfProjection": 1.111076,
+        "spinorRatio": 1.184828,
+        "gateMean": 1,
+        "gateVariance": 0,
+        "panMean": 0.12074,
+        "panVariance": 0.268359,
+        "phaseVector": [
+          0.945112,
+          0.305219
+        ],
+        "carrierCentroid": [
+          0.469435,
+          0.268247,
+          0.821617,
+          -0.142012
+        ],
+        "carrierMagnitude": 1.026762,
+        "spinorCoherence": 0.348003,
+        "braidDensity": 0.25
+      },
+      "voices": [
+        {
+          "index": 0,
+          "gate": 1,
+          "quaternionWeight": 0.32,
+          "bridge": 0.998966,
+          "hopf": 0.863857,
+          "spinor": {
+            "ratio": 1.570261,
+            "pan": 0.393163,
+            "phase": 0.03111,
+            "coherence": 0.348003
+          },
+          "bits": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bitSequence": "10",
+          "bitDensity": 0,
+          "rowProjection": 0.84409,
+          "matrixRow": [
+            0.862383,
+            0.36461,
+            0.189796,
+            0.29552
+          ],
+          "resonanceVector": [
+            0.692281,
+            0.590193,
+            0.234562,
+            -0.342638
+          ],
+          "carriers": [
+            {
+              "index": 0,
+              "label": "band-1",
+              "frequency": 265.768682,
+              "amplitude": 0.019716,
+              "energy": 0.232447,
+              "active": 1,
+              "ratio": 2.271497,
+              "cents": 1420.372306,
+              "pan": 0.462545,
+              "phase": 0.077775,
+              "projection": 0.597011,
+              "hopf": 0.863857,
+              "gateBit": 0
+            },
+            {
+              "index": 1,
+              "label": "band-2",
+              "frequency": 557.070272,
+              "amplitude": 0.018525,
+              "energy": 0.218407,
+              "active": 1,
+              "ratio": 1.269769,
+              "cents": 413.479254,
+              "pan": 0.070995,
+              "phase": 0.170802,
+              "projection": 0.21519,
+              "hopf": 0.303585,
+              "gateBit": 0
+            },
+            {
+              "index": 2,
+              "label": "band-3",
+              "frequency": 1723.238369,
+              "amplitude": 0.017334,
+              "energy": 0.204367,
+              "active": 1,
+              "ratio": 0.966959,
+              "cents": -58.167405,
+              "pan": -0.02014,
+              "phase": 0.077775,
+              "projection": 0.044519,
+              "hopf": 0.271218,
+              "gateBit": 0
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "gate": 1,
+          "quaternionWeight": 0.32,
+          "bridge": -0.039561,
+          "hopf": 0.303585,
+          "spinor": {
+            "ratio": 1.140377,
+            "pan": 0.060346,
+            "phase": 0.068321,
+            "coherence": 0.348003
+          },
+          "bits": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "bitSequence": "F",
+          "bitDensity": 1,
+          "rowProjection": -0.516635,
+          "matrixRow": [
+            -0.485587,
+            0.774859,
+            0.30675,
+            0.264013
+          ],
+          "resonanceVector": [
+            0.655061,
+            0.686904,
+            0.253913,
+            -0.185972
+          ],
+          "carriers": [
+            {
+              "index": 0,
+              "label": "band-1",
+              "frequency": 147.766979,
+              "amplitude": 0.01869,
+              "energy": 0.284486,
+              "active": 1,
+              "ratio": 2.271497,
+              "cents": 1420.372306,
+              "pan": 0.462545,
+              "phase": 0.077775,
+              "projection": -0.318089,
+              "hopf": 0.863857,
+              "gateBit": 1
+            },
+            {
+              "index": 1,
+              "label": "band-2",
+              "frequency": 257.797652,
+              "amplitude": 0.014514,
+              "energy": 0.220926,
+              "active": 1,
+              "ratio": 1.269769,
+              "cents": 413.479254,
+              "pan": 0.070995,
+              "phase": 0.170802,
+              "projection": 0.532254,
+              "hopf": 0.303585,
+              "gateBit": 1
+            },
+            {
+              "index": 2,
+              "label": "band-3",
+              "frequency": 632.731186,
+              "amplitude": 0.011826,
+              "energy": 0.157367,
+              "active": 1,
+              "ratio": 0.966959,
+              "cents": -58.167405,
+              "pan": -0.02014,
+              "phase": 0.077775,
+              "projection": 0.077888,
+              "hopf": 0.271218,
+              "gateBit": 1
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "gate": 1,
+          "quaternionWeight": 0.32,
+          "bridge": 0.012862,
+          "hopf": 0.271218,
+          "spinor": {
+            "ratio": 0.98169,
+            "pan": -0.017119,
+            "phase": 0.03111,
+            "coherence": 0.348003
+          },
+          "bits": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "bitSequence": "15",
+          "bitDensity": 0.5,
+          "rowProjection": -0.055561,
+          "matrixRow": [
+            -0.079807,
+            -0.475789,
+            0.826948,
+            0.288813
+          ],
+          "resonanceVector": [
+            0.622728,
+            0.658667,
+            0.24993,
+            -0.340445
+          ],
+          "carriers": [
+            {
+              "index": 0,
+              "label": "band-1",
+              "frequency": 128.808337,
+              "amplitude": 0.019066,
+              "energy": 0.286563,
+              "active": 1,
+              "ratio": 2.271497,
+              "cents": 1420.372306,
+              "pan": 0.462545,
+              "phase": 0.077775,
+              "projection": -0.049698,
+              "hopf": 0.863857,
+              "gateBit": 0
+            },
+            {
+              "index": 1,
+              "label": "band-2",
+              "frequency": 220.406407,
+              "amplitude": 0.01375,
+              "energy": 0.20667,
+              "active": 1,
+              "ratio": 1.269769,
+              "cents": 413.479254,
+              "pan": 0.070995,
+              "phase": 0.170802,
+              "projection": -0.313387,
+              "hopf": 0.303585,
+              "gateBit": 1
+            },
+            {
+              "index": 2,
+              "label": "band-3",
+              "frequency": 515.432066,
+              "amplitude": 0.011976,
+              "energy": 0.126777,
+              "active": 1,
+              "ratio": 0.966959,
+              "cents": -58.167405,
+              "pan": -0.02014,
+              "phase": 0.077775,
+              "projection": 0.206679,
+              "hopf": 0.271218,
+              "gateBit": 0
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "gate": 1,
+          "quaternionWeight": 0.32,
+          "bridge": -0.018336,
+          "hopf": 0.296695,
+          "spinor": {
+            "ratio": 1.046982,
+            "pan": 0.109571,
+            "phase": 0.068321,
+            "coherence": 0.348003
+          },
+          "bits": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "bitSequence": "1F",
+          "bitDensity": 1,
+          "rowProjection": -0.13234,
+          "matrixRow": [
+            -0.118874,
+            -0.200692,
+            -0.431323,
+            0.871523
+          ],
+          "resonanceVector": [
+            0.670753,
+            0.672321,
+            0.250748,
+            -0.187614
+          ],
+          "carriers": [
+            {
+              "index": 0,
+              "label": "band-1",
+              "frequency": 151.068254,
+              "amplitude": 0.023192,
+              "energy": 0.333143,
+              "active": 1,
+              "ratio": 2.271497,
+              "cents": 1420.372306,
+              "pan": 0.462545,
+              "phase": 0.077775,
+              "projection": -0.079735,
+              "hopf": 0.863857,
+              "gateBit": 1
+            },
+            {
+              "index": 1,
+              "label": "band-2",
+              "frequency": 262.70993,
+              "amplitude": 0.017929,
+              "energy": 0.257541,
+              "active": 1,
+              "ratio": 1.269769,
+              "cents": 413.479254,
+              "pan": 0.070995,
+              "phase": 0.170802,
+              "projection": -0.13493,
+              "hopf": 0.303585,
+              "gateBit": 1
+            },
+            {
+              "index": 2,
+              "label": "band-3",
+              "frequency": 647.458189,
+              "amplitude": 0.012666,
+              "energy": 0.181939,
+              "active": 1,
+              "ratio": 0.966959,
+              "cents": -58.167405,
+              "pan": -0.02014,
+              "phase": 0.077775,
+              "projection": -0.108154,
+              "hopf": 0.271218,
+              "gateBit": 1
+            }
+          ]
+        }
+      ],
+      "grid": [
+        {
+          "voice": 0,
+          "carrier": 0,
+          "ratio": 2.271497,
+          "frequency": 265.768682,
+          "projection": 0.597011,
+          "gateBit": 0,
+          "energy": 0.232447
+        },
+        {
+          "voice": 0,
+          "carrier": 1,
+          "ratio": 1.269769,
+          "frequency": 557.070272,
+          "projection": 0.21519,
+          "gateBit": 0,
+          "energy": 0.218407
+        },
+        {
+          "voice": 0,
+          "carrier": 2,
+          "ratio": 0.966959,
+          "frequency": 1723.238369,
+          "projection": 0.044519,
+          "gateBit": 0,
+          "energy": 0.204367
+        },
+        {
+          "voice": 1,
+          "carrier": 0,
+          "ratio": 2.271497,
+          "frequency": 147.766979,
+          "projection": -0.318089,
+          "gateBit": 1,
+          "energy": 0.284486
+        },
+        {
+          "voice": 1,
+          "carrier": 1,
+          "ratio": 1.269769,
+          "frequency": 257.797652,
+          "projection": 0.532254,
+          "gateBit": 1,
+          "energy": 0.220926
+        },
+        {
+          "voice": 1,
+          "carrier": 2,
+          "ratio": 0.966959,
+          "frequency": 632.731186,
+          "projection": 0.077888,
+          "gateBit": 1,
+          "energy": 0.157367
+        },
+        {
+          "voice": 2,
+          "carrier": 0,
+          "ratio": 2.271497,
+          "frequency": 128.808337,
+          "projection": -0.049698,
+          "gateBit": 0,
+          "energy": 0.286563
+        },
+        {
+          "voice": 2,
+          "carrier": 1,
+          "ratio": 1.269769,
+          "frequency": 220.406407,
+          "projection": -0.313387,
+          "gateBit": 1,
+          "energy": 0.20667
+        },
+        {
+          "voice": 2,
+          "carrier": 2,
+          "ratio": 0.966959,
+          "frequency": 515.432066,
+          "projection": 0.206679,
+          "gateBit": 0,
+          "energy": 0.126777
+        },
+        {
+          "voice": 3,
+          "carrier": 0,
+          "ratio": 2.271497,
+          "frequency": 151.068254,
+          "projection": -0.079735,
+          "gateBit": 1,
+          "energy": 0.333143
+        },
+        {
+          "voice": 3,
+          "carrier": 1,
+          "ratio": 1.269769,
+          "frequency": 262.70993,
+          "projection": -0.13493,
+          "gateBit": 1,
+          "energy": 0.257541
+        },
+        {
+          "voice": 3,
+          "carrier": 2,
+          "ratio": 0.966959,
+          "frequency": 647.458189,
+          "projection": -0.108154,
+          "gateBit": 1,
+          "energy": 0.181939
+        }
+      ]
+    },
+    "manifold": {
+      "timestamp": 0,
+      "progress": 0.35,
+      "quaternion": {
+        "bridgeMagnitude": 0.834791,
+        "hopfAlignment": 0.849002,
+        "trace": 3.335713,
+        "determinant": 1,
+        "frobenius": 2,
+        "normalizedBridge": [
+          0.998966,
+          -0.039561,
+          0.012862,
+          -0.018336
+        ],
+        "hopfFiber": [
+          0.863857,
+          0.303585,
+          0.271218,
+          0.296695
+        ]
+      },
+      "spinor": {
+        "coherence": 0.348003,
+        "braidDensity": 0.25,
+        "ratioEntropy": 0.955239,
+        "panVariance": 0.033218,
+        "phaseVariance": 0.002164,
+        "ratios": [
+          2.271497,
+          1.269769,
+          0.966959,
+          1.087059
+        ],
+        "panOrbit": [
+          0.462545,
+          0.070995,
+          -0.02014,
+          0.128907
+        ],
+        "phaseOrbit": [
+          0.077775,
+          0.170802
+        ]
+      },
+      "resonance": {
+        "magnitude": 1.468007,
+        "bridgeProjection": 0.942504,
+        "hopfProjection": 1.111076,
+        "gateMean": 1,
+        "gateVariance": 0,
+        "carrierMagnitude": 1.026762,
+        "centroid": [
+          0.969555,
+          0.956517,
+          0.362885,
+          -0.388564
+        ],
+        "carrierCentroid": [
+          0.469435,
+          0.268247,
+          0.821617,
+          -0.142012
+        ]
+      },
+      "signal": {
+        "density": 0.625,
+        "centroid": 412.366001,
+        "spread": 413.808048,
+        "resonance": 1.468007,
+        "entropy": 1
+      },
+      "transduction": {
+        "energy": 0.050118,
+        "gateCoherence": 0.583333,
+        "projectionMean": 0.055796,
+        "projectionDeviation": 0.279516,
+        "trace": 3.335713,
+        "determinant": 1,
+        "frobenius": 2,
+        "hopfAlignment": 0.849002
+      },
+      "summary": {
+        "voiceGateMean": 1,
+        "voiceCarrierEnergy": 0.677658,
+        "voiceSpinorCoherence": 0.348003
+      },
+      "alignment": {
+        "bridgeToResonance": 0.64464,
+        "bridgeToCarrierCentroid": 0.474473,
+        "hopfToCarrierCentroid": 0.671859,
+        "spinorToSignal": 0.030484,
+        "signalToGrid": 0.731134
+      },
+      "voices": [
+        {
+          "index": 0,
+          "gate": 1,
+          "frequency": 688.010247,
+          "pan": -0.158247,
+          "drift": 0.136661,
+          "spinor": {
+            "ratio": 1.570261,
+            "coherence": 0.348003,
+            "braid": 0.25,
+            "pan": 0.393163,
+            "phase": 0.03111
+          },
+          "quaternion": {
+            "weight": 0.32,
+            "bridge": 0.998966,
+            "hopf": 0.863857
+          },
+          "resonance": {
+            "magnitude": 1.499494,
+            "projection": 1.015932,
+            "hopfProjection": 1.108371
+          },
+          "signal": {
+            "dominantFrequency": 265.768682,
+            "bitDensity": 0,
+            "bitEntropy": 0,
+            "bits": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          "transduction": {
+            "gridEnergy": 0.064957,
+            "projectionMean": 0.285573,
+            "projectionDeviation": 0.23098
+          },
+          "carrierEnergy": 0.655221
+        },
+        {
+          "index": 1,
+          "gate": 1,
+          "frequency": 321.234722,
+          "pan": -0.434999,
+          "drift": -0.193804,
+          "spinor": {
+            "ratio": 1.140377,
+            "coherence": 0.348003,
+            "braid": 0.25,
+            "pan": 0.060346,
+            "phase": 0.068321
+          },
+          "quaternion": {
+            "weight": 0.32,
+            "bridge": -0.039561,
+            "hopf": 0.303585
+          },
+          "resonance": {
+            "magnitude": 1.454313,
+            "projection": 0.921868,
+            "hopfProjection": 1.146147
+          },
+          "signal": {
+            "dominantFrequency": 147.766979,
+            "bitDensity": 1,
+            "bitEntropy": 1,
+            "bits": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          "transduction": {
+            "gridEnergy": 0.073446,
+            "projectionMean": 0.097351,
+            "projectionDeviation": 0.347424
+          },
+          "carrierEnergy": 0.662779
+        },
+        {
+          "index": 2,
+          "gate": 1,
+          "frequency": 281.910554,
+          "pan": 0.126781,
+          "drift": -0.205042,
+          "spinor": {
+            "ratio": 0.98169,
+            "coherence": 0.348003,
+            "braid": 0.25,
+            "pan": -0.017119,
+            "phase": 0.03111
+          },
+          "quaternion": {
+            "weight": 0.32,
+            "bridge": 0.012862,
+            "hopf": 0.271218
+          },
+          "resonance": {
+            "magnitude": 1.455948,
+            "projection": 0.881553,
+            "hopfProjection": 1.025987
+          },
+          "signal": {
+            "dominantFrequency": 128.808337,
+            "bitDensity": 0.5,
+            "bitEntropy": 1,
+            "bits": [
+              0,
+              1,
+              0,
+              1
+            ]
+          },
+          "transduction": {
+            "gridEnergy": 0.035071,
+            "projectionMean": -0.052135,
+            "projectionDeviation": 0.212323
+          },
+          "carrierEnergy": 0.620011
+        },
+        {
+          "index": 3,
+          "gate": 1,
+          "frequency": 322.873549,
+          "pan": 0.949426,
+          "drift": -0.188492,
+          "spinor": {
+            "ratio": 1.046982,
+            "coherence": 0.348003,
+            "braid": 0.25,
+            "pan": 0.109571,
+            "phase": 0.068321
+          },
+          "quaternion": {
+            "weight": 0.32,
+            "bridge": -0.018336,
+            "hopf": 0.296695
+          },
+          "resonance": {
+            "magnitude": 1.462272,
+            "projection": 0.950664,
+            "hopfProjection": 1.163801
+          },
+          "signal": {
+            "dominantFrequency": 151.068254,
+            "bitDensity": 1,
+            "bitEntropy": 1,
+            "bits": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          "transduction": {
+            "gridEnergy": 0.026997,
+            "projectionMean": -0.107606,
+            "projectionDeviation": 0.022536
+          },
+          "carrierEnergy": 0.772623
+        }
+      ]
+    },
+    "topology": {
+      "timestamp": 0,
+      "progress": 0.35,
+      "transport": {
+        "playing": true,
+        "mode": "test"
+      },
+      "matrix": [
+        [
+          0.862383,
+          0.36461,
+          0.189796,
+          0.29552
+        ],
+        [
+          -0.485587,
+          0.774859,
+          0.30675,
+          0.264013
+        ],
+        [
+          -0.079807,
+          -0.475789,
+          0.826948,
+          0.288813
+        ],
+        [
+          -0.118874,
+          -0.200692,
+          -0.431323,
+          0.871523
+        ]
+      ],
+      "bridge": {
+        "normalized": [
+          0.998966,
+          -0.039561,
+          0.012862,
+          -0.018336
+        ],
+        "hopf": [
+          0.863857,
+          0.303585,
+          0.271218,
+          0.296695
+        ],
+        "magnitude": 0.834791
+      },
+      "spectrum": {
+        "ratioMean": 1.398821,
+        "ratioVariance": 0.26548,
+        "ratioEntropy": 0.955239,
+        "gateMean": 1,
+        "gateVariance": 0,
+        "carrierMagnitude": 1.026762
+      },
+      "axes": [
+        {
+          "index": 0,
+          "orientation": [
+            0.862383,
+            0.36461,
+            0.189796,
+            0.29552
+          ],
+          "magnitude": 0.969555,
+          "bridgeCoupling": 0.84409,
+          "hopfCoupling": 0.994821,
+          "gateFlux": 0.969555,
+          "ratioFlux": 1.158351,
+          "coherenceFlux": 0.337408,
+          "braidFlux": 0.242389,
+          "bitFlux": 0.596704,
+          "entropyFlux": 0.710037,
+          "gridFlux": 0.048919,
+          "carrierFlux": 0.657879,
+          "gateCorrelation": 0,
+          "ratioCorrelation": 0.878146,
+          "coherenceCorrelation": 0,
+          "braidCorrelation": 0,
+          "bitCorrelation": -0.469618,
+          "entropyCorrelation": -0.831069,
+          "gridCorrelation": 0.351937,
+          "carrierCorrelation": 0.313362
+        },
+        {
+          "index": 1,
+          "orientation": [
+            -0.485587,
+            0.774859,
+            0.30675,
+            0.264013
+          ],
+          "magnitude": 0.956517,
+          "bridgeCoupling": -0.516635,
+          "hopfCoupling": -0.022715,
+          "gateFlux": 0.956517,
+          "ratioFlux": 1.124901,
+          "coherenceFlux": 0.332871,
+          "braidFlux": 0.239129,
+          "bitFlux": 0.615396,
+          "entropyFlux": 0.735269,
+          "gridFlux": 0.047757,
+          "carrierFlux": 0.649031,
+          "gateCorrelation": 0,
+          "ratioCorrelation": -0.838275,
+          "coherenceCorrelation": 0,
+          "braidCorrelation": 0,
+          "bitCorrelation": 0.97038,
+          "entropyCorrelation": 0.945382,
+          "gridCorrelation": -0.211929,
+          "carrierCorrelation": 0.336152
+        },
+        {
+          "index": 2,
+          "orientation": [
+            -0.079807,
+            -0.475789,
+            0.826948,
+            0.288813
+          ],
+          "magnitude": 0.362885,
+          "bridgeCoupling": -0.055561,
+          "hopfCoupling": 0.096588,
+          "gateFlux": 0.362885,
+          "ratioFlux": 0.428629,
+          "coherenceFlux": 0.126285,
+          "braidFlux": 0.090721,
+          "bitFlux": 0.229468,
+          "entropyFlux": 0.274954,
+          "gridFlux": 0.018157,
+          "carrierFlux": 0.246026,
+          "gateCorrelation": 0,
+          "ratioCorrelation": -0.860535,
+          "coherenceCorrelation": 0,
+          "braidCorrelation": 0,
+          "bitCorrelation": 0.956795,
+          "entropyCorrelation": 0.959025,
+          "gridCorrelation": -0.226906,
+          "carrierCorrelation": 0.297192
+        },
+        {
+          "index": 3,
+          "orientation": [
+            -0.118874,
+            -0.200692,
+            -0.431323,
+            0.871523
+          ],
+          "magnitude": 0.388564,
+          "bridgeCoupling": -0.13234,
+          "hopfCoupling": -0.022023,
+          "gateFlux": -0.388564,
+          "ratioFlux": -0.472257,
+          "coherenceFlux": -0.135222,
+          "braidFlux": -0.097141,
+          "bitFlux": -0.198159,
+          "entropyFlux": -0.260118,
+          "gridFlux": -0.019507,
+          "carrierFlux": -0.258795,
+          "gateCorrelation": 0,
+          "ratioCorrelation": -0.444616,
+          "coherenceCorrelation": 0,
+          "braidCorrelation": 0,
+          "bitCorrelation": 0.926571,
+          "entropyCorrelation": 0.621379,
+          "gridCorrelation": -0.014556,
+          "carrierCorrelation": 0.679489
+        }
+      ],
+      "braiding": {
+        "bridgeToGateFlux": 0.260878,
+        "bridgeToRatioFlux": 0.269862,
+        "hopfToCarrierFlux": 0.517066,
+        "gateToGridFlux": 0.999979,
+        "ratioToBitFlux": 0.998906
+      }
+    },
+    "continuum": {
+      "timestamp": 0,
+      "progress": 0.35,
+      "transport": {
+        "playing": true,
+        "mode": "test"
+      },
+      "flux": {
+        "density": 1.33594,
+        "variance": 0.351689,
+        "bridgeAlignment": 0.332499,
+        "hopfAlignment": 0.776503,
+        "voiceAlignment": 0.615108,
+        "gateMean": 1,
+        "coherenceMean": 0.348003,
+        "braidMean": 0.25,
+        "bitDensity": 0.625,
+        "bitEntropy": 0.75,
+        "gridEnergy": 0.050118,
+        "carrierEnergy": 0.677658
+      },
+      "continuum": {
+        "orientation": [
+          0.364159,
+          0.655977,
+          0.368188,
+          0.549108
+        ],
+        "magnitude": 3.314035,
+        "voiceOrientation": [
+          0.664486,
+          0.652711,
+          0.247874,
+          -0.26643
+        ],
+        "voiceMagnitude": 13.985006,
+        "sequence": "10F151F"
+      },
+      "axes": [
+        {
+          "index": 0,
+          "orientation": [
+            0.862383,
+            0.36461,
+            0.189796,
+            0.29552
+          ],
+          "intensity": 1.936444,
+          "gateFlux": 0.969555,
+          "ratioFlux": 1.158351,
+          "coherenceFlux": 0.337408,
+          "braidFlux": 0.242389,
+          "bitFlux": 0.596704,
+          "entropyFlux": 0.710037,
+          "gridFlux": 0.048919,
+          "carrierFlux": 0.657879,
+          "gateCorrelation": 0,
+          "ratioCorrelation": 0.878146,
+          "coherenceCorrelation": 0,
+          "braidCorrelation": 0,
+          "bitCorrelation": -0.469618,
+          "entropyCorrelation": -0.831069,
+          "gridCorrelation": 0.351937,
+          "carrierCorrelation": 0.313362,
+          "bridgeCoupling": 0.84409,
+          "hopfCoupling": 0.994821
+        },
+        {
+          "index": 1,
+          "orientation": [
+            -0.485587,
+            0.774859,
+            0.30675,
+            0.264013
+          ],
+          "intensity": 1.921241,
+          "gateFlux": 0.956517,
+          "ratioFlux": 1.124901,
+          "coherenceFlux": 0.332871,
+          "braidFlux": 0.239129,
+          "bitFlux": 0.615396,
+          "entropyFlux": 0.735269,
+          "gridFlux": 0.047757,
+          "carrierFlux": 0.649031,
+          "gateCorrelation": 0,
+          "ratioCorrelation": -0.838275,
+          "coherenceCorrelation": 0,
+          "braidCorrelation": 0,
+          "bitCorrelation": 0.97038,
+          "entropyCorrelation": 0.945382,
+          "gridCorrelation": -0.211929,
+          "carrierCorrelation": 0.336152,
+          "bridgeCoupling": -0.516635,
+          "hopfCoupling": -0.022715
+        },
+        {
+          "index": 2,
+          "orientation": [
+            -0.079807,
+            -0.475789,
+            0.826948,
+            0.288813
+          ],
+          "intensity": 0.727118,
+          "gateFlux": 0.362885,
+          "ratioFlux": 0.428629,
+          "coherenceFlux": 0.126285,
+          "braidFlux": 0.090721,
+          "bitFlux": 0.229468,
+          "entropyFlux": 0.274954,
+          "gridFlux": 0.018157,
+          "carrierFlux": 0.246026,
+          "gateCorrelation": 0,
+          "ratioCorrelation": -0.860535,
+          "coherenceCorrelation": 0,
+          "braidCorrelation": 0,
+          "bitCorrelation": 0.956795,
+          "entropyCorrelation": 0.959025,
+          "gridCorrelation": -0.226906,
+          "carrierCorrelation": 0.297192,
+          "bridgeCoupling": -0.055561,
+          "hopfCoupling": 0.096588
+        },
+        {
+          "index": 3,
+          "orientation": [
+            -0.118874,
+            -0.200692,
+            -0.431323,
+            0.871523
+          ],
+          "intensity": 0.758956,
+          "gateFlux": -0.388564,
+          "ratioFlux": -0.472257,
+          "coherenceFlux": -0.135222,
+          "braidFlux": -0.097141,
+          "bitFlux": -0.198159,
+          "entropyFlux": -0.260118,
+          "gridFlux": -0.019507,
+          "carrierFlux": -0.258795,
+          "gateCorrelation": 0,
+          "ratioCorrelation": -0.444616,
+          "coherenceCorrelation": 0,
+          "braidCorrelation": 0,
+          "bitCorrelation": 0.926571,
+          "entropyCorrelation": 0.621379,
+          "gridCorrelation": -0.014556,
+          "carrierCorrelation": 0.679489,
+          "bridgeCoupling": -0.13234,
+          "hopfCoupling": -0.022023
+        }
+      ],
+      "voices": [
+        {
+          "index": 0,
+          "gate": 1,
+          "ratio": 1.570261,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "bitDensity": 0,
+          "bitEntropy": 0,
+          "gridEnergy": 0.064957,
+          "carrierEnergy": 0.655221,
+          "dominantFrequency": 265.768682,
+          "continuumAlignment": 0.53747,
+          "orientation": [
+            0.692281,
+            0.590193,
+            0.234562,
+            -0.342638
+          ]
+        },
+        {
+          "index": 1,
+          "gate": 1,
+          "ratio": 1.140377,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "bitDensity": 1,
+          "bitEntropy": 1,
+          "gridEnergy": 0.073446,
+          "carrierEnergy": 0.662779,
+          "dominantFrequency": 147.766979,
+          "continuumAlignment": 0.680509,
+          "orientation": [
+            0.655061,
+            0.686904,
+            0.253913,
+            -0.185972
+          ]
+        },
+        {
+          "index": 2,
+          "gate": 1,
+          "ratio": 0.98169,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "bitDensity": 0.5,
+          "bitEntropy": 1,
+          "gridEnergy": 0.035071,
+          "carrierEnergy": 0.620011,
+          "dominantFrequency": 128.808337,
+          "continuumAlignment": 0.563923,
+          "orientation": [
+            0.622728,
+            0.658667,
+            0.24993,
+            -0.340445
+          ]
+        },
+        {
+          "index": 3,
+          "gate": 1,
+          "ratio": 1.046982,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "bitDensity": 1,
+          "bitEntropy": 1,
+          "gridEnergy": 0.026997,
+          "carrierEnergy": 0.772623,
+          "dominantFrequency": 151.068254,
+          "continuumAlignment": 0.674591,
+          "orientation": [
+            0.670753,
+            0.672321,
+            0.250748,
+            -0.187614
+          ]
+        }
+      ],
+      "braiding": {
+        "bridgeToGateFlux": 0.260878,
+        "bridgeToRatioFlux": 0.269862,
+        "hopfToCarrierFlux": 0.517066,
+        "gateToGridFlux": 0.999979,
+        "ratioToBitFlux": 0.998906
+      },
+      "quaternion": {
+        "bridge": [
+          0.998966,
+          -0.039561,
+          0.012862,
+          -0.018336
+        ],
+        "hopf": [
+          0.863857,
+          0.303585,
+          0.271218,
+          0.296695
+        ]
+      }
+    },
+    "lattice": {
+      "timestamp": 0,
+      "progress": 0.35,
+      "transport": {
+        "playing": true,
+        "mode": "test"
+      },
+      "orientation": {
+        "continuum": [
+          0.364159,
+          0.655977,
+          0.368188,
+          0.549108
+        ],
+        "voice": [
+          0.664486,
+          0.652711,
+          0.247874,
+          -0.26643
+        ],
+        "bridge": [
+          0.998966,
+          -0.039561,
+          0.012862,
+          -0.018336
+        ],
+        "hopf": [
+          0.863857,
+          0.303585,
+          0.271218,
+          0.296695
+        ],
+        "residual": [
+          0.033935,
+          0.709499,
+          0.385866,
+          0.5887
+        ],
+        "voiceResidual": [
+          0.025027,
+          0.888608,
+          0.313856,
+          -0.333533
+        ]
+      },
+      "synergy": {
+        "bridgeContinuum": 0.332499,
+        "hopfContinuum": 0.776503,
+        "voiceContinuum": 0.615108,
+        "bridgeVoice": 0.646051,
+        "continuumResidual": 0.943104,
+        "voiceResidual": 0.763294,
+        "coherence": 0.348003,
+        "braid": 0.25,
+        "carrier": 0.642565,
+        "gateMean": 1,
+        "ratioMean": 1.184828,
+        "ratioVariance": 0.0527,
+        "sequenceDensity": 0.625
+      },
+      "flux": {
+        "density": 1.33594,
+        "variance": 0.351689,
+        "bridgeAlignment": 0.332499,
+        "hopfAlignment": 0.776503,
+        "voiceAlignment": 0.615108,
+        "carrierEnergy": 0.677658,
+        "gridEnergy": 0.050118
+      },
+      "axes": [
+        {
+          "index": 0,
+          "intensity": 0,
+          "continuumProjection": 0.785374,
+          "voiceProjection": 0.779337,
+          "bridgeProjection": 0.84409,
+          "hopfProjection": 0.994821,
+          "gateFlux": 0.969555,
+          "ratioFlux": 1.158351,
+          "coherenceFlux": 0.337408,
+          "braidFlux": 0.242389,
+          "bitFlux": 0.596704,
+          "entropyFlux": 0.710037,
+          "gridFlux": 0.048919,
+          "carrierFlux": 0.657879,
+          "bridgeCoupling": 0.84409,
+          "hopfCoupling": 0.994821,
+          "orientation": [
+            0.862383,
+            0.36461,
+            0.189796,
+            0.29552
+          ]
+        },
+        {
+          "index": 1,
+          "intensity": 0,
+          "continuumProjection": 0.589372,
+          "voiceProjection": 0.188788,
+          "bridgeProjection": -0.516635,
+          "hopfProjection": -0.022715,
+          "gateFlux": 0.956517,
+          "ratioFlux": 1.124901,
+          "coherenceFlux": 0.332871,
+          "braidFlux": 0.239129,
+          "bitFlux": 0.615396,
+          "entropyFlux": 0.735269,
+          "gridFlux": 0.047757,
+          "carrierFlux": 0.649031,
+          "bridgeCoupling": -0.516635,
+          "hopfCoupling": -0.022715,
+          "orientation": [
+            -0.485587,
+            0.774859,
+            0.30675,
+            0.264013
+          ]
+        },
+        {
+          "index": 2,
+          "intensity": 0,
+          "continuumProjection": 0.121893,
+          "voiceProjection": -0.235553,
+          "bridgeProjection": -0.055561,
+          "hopfProjection": 0.096588,
+          "gateFlux": 0.362885,
+          "ratioFlux": 0.428629,
+          "coherenceFlux": 0.126285,
+          "braidFlux": 0.090721,
+          "bitFlux": 0.229468,
+          "entropyFlux": 0.274954,
+          "gridFlux": 0.018157,
+          "carrierFlux": 0.246026,
+          "bridgeCoupling": -0.055561,
+          "hopfCoupling": 0.096588,
+          "orientation": [
+            -0.079807,
+            -0.475789,
+            0.826948,
+            0.288813
+          ]
+        },
+        {
+          "index": 3,
+          "intensity": 0,
+          "continuumProjection": 0.144814,
+          "voiceProjection": -0.549098,
+          "bridgeProjection": -0.13234,
+          "hopfProjection": -0.022023,
+          "gateFlux": -0.388564,
+          "ratioFlux": -0.472257,
+          "coherenceFlux": -0.135222,
+          "braidFlux": -0.097141,
+          "bitFlux": -0.198159,
+          "entropyFlux": -0.260118,
+          "gridFlux": -0.019507,
+          "carrierFlux": -0.258795,
+          "bridgeCoupling": -0.13234,
+          "hopfCoupling": -0.022023,
+          "orientation": [
+            -0.118874,
+            -0.200692,
+            -0.431323,
+            0.871523
+          ]
+        }
+      ],
+      "voices": [
+        {
+          "index": 0,
+          "gate": 1,
+          "ratio": 1.570261,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "continuumAlignment": 0.53747,
+          "bridgeProjection": 0.677516,
+          "hopfProjection": 0.739164,
+          "bitDensity": 0,
+          "bitEntropy": 0,
+          "gridEnergy": 0.064957,
+          "carrierEnergy": 0.655221,
+          "dominantFrequency": 265.768682,
+          "sequence": "10",
+          "sequenceBits": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "spinorPhase": 0.517771,
+          "spinorPan": -0.158247,
+          "voiceWeight": 3.888442,
+          "orientation": [
+            0.692281,
+            0.590193,
+            0.234562,
+            -0.342638
+          ],
+          "carriers": [
+            {
+              "label": "sub",
+              "frequency": 265.768682,
+              "amplitude": 0.019716,
+              "energy": 0.232447,
+              "active": 1
+            },
+            {
+              "label": "prime",
+              "frequency": 557.070272,
+              "amplitude": 0.018525,
+              "energy": 0.218407,
+              "active": 1
+            },
+            {
+              "label": "hyper",
+              "frequency": 1723.238369,
+              "amplitude": 0.017334,
+              "energy": 0.204367,
+              "active": 1
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "gate": 1,
+          "ratio": 1.140377,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "continuumAlignment": 0.680509,
+          "bridgeProjection": 0.633886,
+          "hopfProjection": 0.788102,
+          "bitDensity": 1,
+          "bitEntropy": 1,
+          "gridEnergy": 0.073446,
+          "carrierEnergy": 0.662779,
+          "dominantFrequency": 147.766979,
+          "sequence": "F",
+          "sequenceBits": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "spinorPhase": 0.474517,
+          "spinorPan": -0.434999,
+          "voiceWeight": 3.474605,
+          "orientation": [
+            0.655061,
+            0.686904,
+            0.253913,
+            -0.185972
+          ],
+          "carriers": [
+            {
+              "label": "sub",
+              "frequency": 147.766979,
+              "amplitude": 0.01869,
+              "energy": 0.284486,
+              "active": 1
+            },
+            {
+              "label": "prime",
+              "frequency": 257.797652,
+              "amplitude": 0.014514,
+              "energy": 0.220926,
+              "active": 1
+            },
+            {
+              "label": "hyper",
+              "frequency": 632.731186,
+              "amplitude": 0.011826,
+              "energy": 0.157367,
+              "active": 1
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "gate": 1,
+          "ratio": 0.98169,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "continuumAlignment": 0.563923,
+          "bridgeProjection": 0.605484,
+          "hopfProjection": 0.704687,
+          "bitDensity": 0.5,
+          "bitEntropy": 1,
+          "gridEnergy": 0.035071,
+          "carrierEnergy": 0.620011,
+          "dominantFrequency": 128.808337,
+          "sequence": "15",
+          "sequenceBits": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "spinorPhase": 0.676068,
+          "spinorPan": 0.126781,
+          "voiceWeight": 3.234775,
+          "orientation": [
+            0.622728,
+            0.658667,
+            0.24993,
+            -0.340445
+          ],
+          "carriers": [
+            {
+              "label": "sub",
+              "frequency": 128.808337,
+              "amplitude": 0.019066,
+              "energy": 0.286563,
+              "active": 1
+            },
+            {
+              "label": "prime",
+              "frequency": 220.406407,
+              "amplitude": 0.01375,
+              "energy": 0.20667,
+              "active": 1
+            },
+            {
+              "label": "hyper",
+              "frequency": 515.432066,
+              "amplitude": 0.011976,
+              "energy": 0.126777,
+              "active": 1
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "gate": 1,
+          "ratio": 1.046982,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "continuumAlignment": 0.674591,
+          "bridgeProjection": 0.650128,
+          "hopfProjection": 0.795885,
+          "bitDensity": 1,
+          "bitEntropy": 1,
+          "gridEnergy": 0.026997,
+          "carrierEnergy": 0.772623,
+          "dominantFrequency": 151.068254,
+          "sequence": "1F",
+          "sequenceBits": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "spinorPhase": 0.979829,
+          "spinorPan": 0.949426,
+          "voiceWeight": 3.444604,
+          "orientation": [
+            0.670753,
+            0.672321,
+            0.250748,
+            -0.187614
+          ],
+          "carriers": [
+            {
+              "label": "sub",
+              "frequency": 151.068254,
+              "amplitude": 0.023192,
+              "energy": 0.333143,
+              "active": 1
+            },
+            {
+              "label": "prime",
+              "frequency": 262.70993,
+              "amplitude": 0.017929,
+              "energy": 0.257541,
+              "active": 1
+            },
+            {
+              "label": "hyper",
+              "frequency": 647.458189,
+              "amplitude": 0.012666,
+              "energy": 0.181939,
+              "active": 1
+            }
+          ]
+        }
+      ],
+      "carriers": [
+        {
+          "voice": 0,
+          "label": "sub",
+          "frequency": 265.768682,
+          "amplitude": 0.019716,
+          "energy": 0.232447,
+          "active": 1,
+          "alignment": 0.53747,
+          "bridgeProjection": 0.677516,
+          "hopfProjection": 0.739164
+        },
+        {
+          "voice": 0,
+          "label": "prime",
+          "frequency": 557.070272,
+          "amplitude": 0.018525,
+          "energy": 0.218407,
+          "active": 1,
+          "alignment": 0.53747,
+          "bridgeProjection": 0.677516,
+          "hopfProjection": 0.739164
+        },
+        {
+          "voice": 0,
+          "label": "hyper",
+          "frequency": 1723.238369,
+          "amplitude": 0.017334,
+          "energy": 0.204367,
+          "active": 1,
+          "alignment": 0.53747,
+          "bridgeProjection": 0.677516,
+          "hopfProjection": 0.739164
+        },
+        {
+          "voice": 1,
+          "label": "sub",
+          "frequency": 147.766979,
+          "amplitude": 0.01869,
+          "energy": 0.284486,
+          "active": 1,
+          "alignment": 0.680509,
+          "bridgeProjection": 0.633886,
+          "hopfProjection": 0.788102
+        },
+        {
+          "voice": 1,
+          "label": "prime",
+          "frequency": 257.797652,
+          "amplitude": 0.014514,
+          "energy": 0.220926,
+          "active": 1,
+          "alignment": 0.680509,
+          "bridgeProjection": 0.633886,
+          "hopfProjection": 0.788102
+        },
+        {
+          "voice": 1,
+          "label": "hyper",
+          "frequency": 632.731186,
+          "amplitude": 0.011826,
+          "energy": 0.157367,
+          "active": 1,
+          "alignment": 0.680509,
+          "bridgeProjection": 0.633886,
+          "hopfProjection": 0.788102
+        },
+        {
+          "voice": 2,
+          "label": "sub",
+          "frequency": 128.808337,
+          "amplitude": 0.019066,
+          "energy": 0.286563,
+          "active": 1,
+          "alignment": 0.563923,
+          "bridgeProjection": 0.605484,
+          "hopfProjection": 0.704687
+        },
+        {
+          "voice": 2,
+          "label": "prime",
+          "frequency": 220.406407,
+          "amplitude": 0.01375,
+          "energy": 0.20667,
+          "active": 1,
+          "alignment": 0.563923,
+          "bridgeProjection": 0.605484,
+          "hopfProjection": 0.704687
+        },
+        {
+          "voice": 2,
+          "label": "hyper",
+          "frequency": 515.432066,
+          "amplitude": 0.011976,
+          "energy": 0.126777,
+          "active": 1,
+          "alignment": 0.563923,
+          "bridgeProjection": 0.605484,
+          "hopfProjection": 0.704687
+        },
+        {
+          "voice": 3,
+          "label": "sub",
+          "frequency": 151.068254,
+          "amplitude": 0.023192,
+          "energy": 0.333143,
+          "active": 1,
+          "alignment": 0.674591,
+          "bridgeProjection": 0.650128,
+          "hopfProjection": 0.795885
+        },
+        {
+          "voice": 3,
+          "label": "prime",
+          "frequency": 262.70993,
+          "amplitude": 0.017929,
+          "energy": 0.257541,
+          "active": 1,
+          "alignment": 0.674591,
+          "bridgeProjection": 0.650128,
+          "hopfProjection": 0.795885
+        },
+        {
+          "voice": 3,
+          "label": "hyper",
+          "frequency": 647.458189,
+          "amplitude": 0.012666,
+          "energy": 0.181939,
+          "active": 1,
+          "alignment": 0.674591,
+          "bridgeProjection": 0.650128,
+          "hopfProjection": 0.795885
+        }
+      ],
+      "spectral": {
+        "span": 1594.430031,
+        "mean": 459.188027,
+        "variance": 179232.625577,
+        "active": 12,
+        "energy": 2.710634,
+        "gridEnergy": 0.20047
+      },
+      "timeline": {
+        "sequence": "10F151F",
+        "density": 0.625,
+        "weights": [
+          3.888442,
+          3.474605,
+          3.234775,
+          3.444604
+        ]
+      }
+    },
+    "constellation": {
+      "timestamp": 0,
+      "progress": 0.35,
+      "transport": {
+        "playing": true,
+        "mode": "test"
+      },
+      "orientation": {
+        "continuum": [
+          0.364159,
+          0.655977,
+          0.368188,
+          0.549108
+        ],
+        "voice": [
+          0.664486,
+          0.652711,
+          0.247874,
+          -0.26643
+        ],
+        "residual": [
+          0.033935,
+          0.709499,
+          0.385866,
+          0.5887
+        ],
+        "bridge": [
+          0.998966,
+          -0.039561,
+          0.012862,
+          -0.018336
+        ],
+        "hopf": [
+          0.863857,
+          0.303585,
+          0.271218,
+          0.296695
+        ],
+        "centroid": [
+          0.664486,
+          0.652711,
+          0.247874,
+          -0.26643
+        ]
+      },
+      "centroid": {
+        "bridgeProjection": 0.646051,
+        "hopfProjection": 0.760354,
+        "dispersion": {
+          "mean": 0.008085,
+          "max": 0.010666
+        }
+      },
+      "nodes": [
+        {
+          "index": 0,
+          "orientation": [
+            0.692281,
+            0.590193,
+            0.234562,
+            -0.342638
+          ],
+          "gate": 1,
+          "ratio": 1.570261,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "continuumAlignment": 0.53747,
+          "bridgeProjection": 0.677516,
+          "hopfProjection": 0.739164,
+          "bitDensity": 0,
+          "bitEntropy": 0,
+          "gridEnergy": 0.064957,
+          "carrierEnergy": 0.655221,
+          "dominantFrequency": 265.768682,
+          "sequence": "10",
+          "sequenceBits": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "spinorPhase": 0.517771,
+          "spinorPan": -0.158247,
+          "voiceWeight": 3.888442,
+          "carriers": [
+            {
+              "label": "sub",
+              "frequency": 265.768682,
+              "amplitude": 0.019716,
+              "energy": 0.232447,
+              "active": 1
+            },
+            {
+              "label": "prime",
+              "frequency": 557.070272,
+              "amplitude": 0.018525,
+              "energy": 0.218407,
+              "active": 1
+            },
+            {
+              "label": "hyper",
+              "frequency": 1723.238369,
+              "amplitude": 0.017334,
+              "energy": 0.204367,
+              "active": 1
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "orientation": [
+            0.655061,
+            0.686904,
+            0.253913,
+            -0.185972
+          ],
+          "gate": 1,
+          "ratio": 1.140377,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "continuumAlignment": 0.680509,
+          "bridgeProjection": 0.633886,
+          "hopfProjection": 0.788102,
+          "bitDensity": 1,
+          "bitEntropy": 1,
+          "gridEnergy": 0.073446,
+          "carrierEnergy": 0.662779,
+          "dominantFrequency": 147.766979,
+          "sequence": "F",
+          "sequenceBits": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "spinorPhase": 0.474517,
+          "spinorPan": -0.434999,
+          "voiceWeight": 3.474605,
+          "carriers": [
+            {
+              "label": "sub",
+              "frequency": 147.766979,
+              "amplitude": 0.01869,
+              "energy": 0.284486,
+              "active": 1
+            },
+            {
+              "label": "prime",
+              "frequency": 257.797652,
+              "amplitude": 0.014514,
+              "energy": 0.220926,
+              "active": 1
+            },
+            {
+              "label": "hyper",
+              "frequency": 632.731186,
+              "amplitude": 0.011826,
+              "energy": 0.157367,
+              "active": 1
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "orientation": [
+            0.622728,
+            0.658667,
+            0.24993,
+            -0.340445
+          ],
+          "gate": 1,
+          "ratio": 0.98169,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "continuumAlignment": 0.563923,
+          "bridgeProjection": 0.605484,
+          "hopfProjection": 0.704687,
+          "bitDensity": 0.5,
+          "bitEntropy": 1,
+          "gridEnergy": 0.035071,
+          "carrierEnergy": 0.620011,
+          "dominantFrequency": 128.808337,
+          "sequence": "15",
+          "sequenceBits": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "spinorPhase": 0.676068,
+          "spinorPan": 0.126781,
+          "voiceWeight": 3.234775,
+          "carriers": [
+            {
+              "label": "sub",
+              "frequency": 128.808337,
+              "amplitude": 0.019066,
+              "energy": 0.286563,
+              "active": 1
+            },
+            {
+              "label": "prime",
+              "frequency": 220.406407,
+              "amplitude": 0.01375,
+              "energy": 0.20667,
+              "active": 1
+            },
+            {
+              "label": "hyper",
+              "frequency": 515.432066,
+              "amplitude": 0.011976,
+              "energy": 0.126777,
+              "active": 1
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "orientation": [
+            0.670753,
+            0.672321,
+            0.250748,
+            -0.187614
+          ],
+          "gate": 1,
+          "ratio": 1.046982,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "continuumAlignment": 0.674591,
+          "bridgeProjection": 0.650128,
+          "hopfProjection": 0.795885,
+          "bitDensity": 1,
+          "bitEntropy": 1,
+          "gridEnergy": 0.026997,
+          "carrierEnergy": 0.772623,
+          "dominantFrequency": 151.068254,
+          "sequence": "1F",
+          "sequenceBits": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "spinorPhase": 0.979829,
+          "spinorPan": 0.949426,
+          "voiceWeight": 3.444604,
+          "carriers": [
+            {
+              "label": "sub",
+              "frequency": 151.068254,
+              "amplitude": 0.023192,
+              "energy": 0.333143,
+              "active": 1
+            },
+            {
+              "label": "prime",
+              "frequency": 262.70993,
+              "amplitude": 0.017929,
+              "energy": 0.257541,
+              "active": 1
+            },
+            {
+              "label": "hyper",
+              "frequency": 647.458189,
+              "amplitude": 0.012666,
+              "energy": 0.181939,
+              "active": 1
+            }
+          ]
+        }
+      ],
+      "sequence": {
+        "sequence": "10F151F",
+        "density": 0.625,
+        "weights": [
+          3.888442,
+          3.474605,
+          3.234775,
+          3.444604
+        ],
+        "bitDensity": 0.625,
+        "bitEntropy": 0.75
+      },
+      "gating": {
+        "mean": 1,
+        "variance": 0
+      },
+      "spinor": {
+        "coherence": 0.348003,
+        "braid": 0.25,
+        "ratioMean": 1.184828,
+        "ratioVariance": 0.0527,
+        "panMean": 0.12074,
+        "panVariance": 0.268359,
+        "phaseMean": 0.662046,
+        "phaseVariance": 0.039291
+      },
+      "energy": {
+        "carrier": 0.642565,
+        "grid": 0.20047,
+        "continuum": 0.677658,
+        "signal": 0
+      },
+      "frequency": {
+        "min": 128.808337,
+        "max": 265.768682,
+        "mean": 173.353063,
+        "centroid": 459.188027,
+        "span": 1594.430031,
+        "variance": 179232.625577
+      },
+      "flux": {
+        "density": 1.33594,
+        "variance": 0.351689,
+        "bridgeAlignment": 0.332499,
+        "hopfAlignment": 0.776503,
+        "voiceAlignment": 0.615108
+      },
+      "synergy": {
+        "bridgeContinuum": 0.332499,
+        "hopfContinuum": 0.776503,
+        "voiceContinuum": 0.615108,
+        "bridgeVoice": 0.646051,
+        "gateMean": 1,
+        "sequenceDensity": 0.625
+      },
+      "carriers": {
+        "summary": {
+          "active": 12,
+          "energy": 2.710634,
+          "meanFrequency": 459.188027,
+          "span": 1594.430031
+        },
+        "spectral": {
+          "span": 1594.430031,
+          "variance": 179232.625577,
+          "mean": 459.188027,
+          "active": 12
+        },
+        "entries": [
+          {
+            "voice": 0,
+            "label": "sub",
+            "frequency": 265.768682,
+            "amplitude": 0.019716,
+            "energy": 0.232447,
+            "active": 1,
+            "alignment": 0.53747,
+            "bridgeProjection": 0.677516,
+            "hopfProjection": 0.739164
+          },
+          {
+            "voice": 0,
+            "label": "prime",
+            "frequency": 557.070272,
+            "amplitude": 0.018525,
+            "energy": 0.218407,
+            "active": 1,
+            "alignment": 0.53747,
+            "bridgeProjection": 0.677516,
+            "hopfProjection": 0.739164
+          },
+          {
+            "voice": 0,
+            "label": "hyper",
+            "frequency": 1723.238369,
+            "amplitude": 0.017334,
+            "energy": 0.204367,
+            "active": 1,
+            "alignment": 0.53747,
+            "bridgeProjection": 0.677516,
+            "hopfProjection": 0.739164
+          },
+          {
+            "voice": 1,
+            "label": "sub",
+            "frequency": 147.766979,
+            "amplitude": 0.01869,
+            "energy": 0.284486,
+            "active": 1,
+            "alignment": 0.680509,
+            "bridgeProjection": 0.633886,
+            "hopfProjection": 0.788102
+          },
+          {
+            "voice": 1,
+            "label": "prime",
+            "frequency": 257.797652,
+            "amplitude": 0.014514,
+            "energy": 0.220926,
+            "active": 1,
+            "alignment": 0.680509,
+            "bridgeProjection": 0.633886,
+            "hopfProjection": 0.788102
+          },
+          {
+            "voice": 1,
+            "label": "hyper",
+            "frequency": 632.731186,
+            "amplitude": 0.011826,
+            "energy": 0.157367,
+            "active": 1,
+            "alignment": 0.680509,
+            "bridgeProjection": 0.633886,
+            "hopfProjection": 0.788102
+          },
+          {
+            "voice": 2,
+            "label": "sub",
+            "frequency": 128.808337,
+            "amplitude": 0.019066,
+            "energy": 0.286563,
+            "active": 1,
+            "alignment": 0.563923,
+            "bridgeProjection": 0.605484,
+            "hopfProjection": 0.704687
+          },
+          {
+            "voice": 2,
+            "label": "prime",
+            "frequency": 220.406407,
+            "amplitude": 0.01375,
+            "energy": 0.20667,
+            "active": 1,
+            "alignment": 0.563923,
+            "bridgeProjection": 0.605484,
+            "hopfProjection": 0.704687
+          },
+          {
+            "voice": 2,
+            "label": "hyper",
+            "frequency": 515.432066,
+            "amplitude": 0.011976,
+            "energy": 0.126777,
+            "active": 1,
+            "alignment": 0.563923,
+            "bridgeProjection": 0.605484,
+            "hopfProjection": 0.704687
+          },
+          {
+            "voice": 3,
+            "label": "sub",
+            "frequency": 151.068254,
+            "amplitude": 0.023192,
+            "energy": 0.333143,
+            "active": 1,
+            "alignment": 0.674591,
+            "bridgeProjection": 0.650128,
+            "hopfProjection": 0.795885
+          },
+          {
+            "voice": 3,
+            "label": "prime",
+            "frequency": 262.70993,
+            "amplitude": 0.017929,
+            "energy": 0.257541,
+            "active": 1,
+            "alignment": 0.674591,
+            "bridgeProjection": 0.650128,
+            "hopfProjection": 0.795885
+          },
+          {
+            "voice": 3,
+            "label": "hyper",
+            "frequency": 647.458189,
+            "amplitude": 0.012666,
+            "energy": 0.181939,
+            "active": 1,
+            "alignment": 0.674591,
+            "bridgeProjection": 0.650128,
+            "hopfProjection": 0.795885
+          }
+        ]
+      }
+    }
+  },
+  "quaternion": {
+    "left": [
+      0.970298,
+      -0.107087,
+      0.213597,
+      -0.037832
+    ],
+    "right": [
+      0.859456,
+      0.308393,
+      0.050269,
+      0.404601
+    ],
+    "leftAngle": 0.488676,
+    "rightAngle": 1.073183,
+    "dot": 0.796334,
+    "bridgeMagnitude": 0.834791,
+    "bridgeVector": [
+      0.833928,
+      -0.033025,
+      0.010737,
+      -0.015307
+    ],
+    "normalizedBridge": [
+      0.998966,
+      -0.039561,
+      0.012862,
+      -0.018336
+    ],
+    "hopfFiber": [
+      0.863857,
+      0.303585,
+      0.271218,
+      0.296695
+    ]
+  },
+  "spinor": {
+    "ratios": [
+      2.271497,
+      1.269769,
+      0.966959,
+      1.087059
+    ],
+    "panOrbit": [
+      0.462545,
+      0.070995,
+      -0.02014,
+      0.128907
+    ],
+    "phaseOrbit": [
+      0.077775,
+      0.170802
+    ],
+    "axis": {
+      "left": [
+        -0.442664,
+        0.882945,
+        -0.156387
+      ],
+      "right": [
+        0.603262,
+        0.098333,
+        0.791458
+      ],
+      "dot": -0.303994,
+      "cross": [
+        0.714192,
+        0.256008,
+        -0.576175
+      ]
+    },
+    "coherence": 0.348003,
+    "braidDensity": 0.25,
+    "bridgeMagnitude": 0.834791,
+    "fiber": [
+      0.863857,
+      0.303585,
+      0.271218,
+      0.296695
+    ],
+    "pitchLattice": [
+      {
+        "index": 0,
+        "ratio": 2.271497,
+        "cents": 1420.372306,
+        "pan": 0.462545
+      },
+      {
+        "index": 1,
+        "ratio": 1.269769,
+        "cents": 413.479254,
+        "pan": 0.070995
+      },
+      {
+        "index": 2,
+        "ratio": 0.966959,
+        "cents": -58.167405,
+        "pan": -0.02014
+      },
+      {
+        "index": 3,
+        "ratio": 1.087059,
+        "cents": 144.515804,
+        "pan": 0.128907
+      }
+    ]
+  },
+  "resonance": {
+    "timeline": 0.35,
+    "matrix": [
+      [
+        0.862383,
+        0.36461,
+        0.189796,
+        0.29552
+      ],
+      [
+        -0.485587,
+        0.774859,
+        0.30675,
+        0.264013
+      ],
+      [
+        -0.079807,
+        -0.475789,
+        0.826948,
+        0.288813
+      ],
+      [
+        -0.118874,
+        -0.200692,
+        -0.431323,
+        0.871523
+      ]
+    ],
+    "axes": [
+      [
+        0.862383,
+        0.36461,
+        0.189796,
+        0.29552
+      ],
+      [
+        -0.485587,
+        0.774859,
+        0.30675,
+        0.264013
+      ],
+      [
+        -0.079807,
+        -0.475789,
+        0.826948,
+        0.288813
+      ],
+      [
+        -0.118874,
+        -0.200692,
+        -0.431323,
+        0.871523
+      ]
+    ],
+    "bridge": {
+      "vector": [
+        0.833928,
+        -0.033025,
+        0.010737,
+        -0.015307
+      ],
+      "normalized": [
+        0.998966,
+        -0.039561,
+        0.012862,
+        -0.018336
+      ],
+      "magnitude": 0.834791,
+      "coherence": 0.348003,
+      "braidDensity": 0.25
+    },
+    "hopf": [
+      0.863857,
+      0.303585,
+      0.271218,
+      0.296695
+    ],
+    "voices": [
+      {
+        "index": 0,
+        "frequency": 688.010247,
+        "pan": -0.158247,
+        "gate": 1,
+        "harmonic": 0.498481,
+        "ratio": 1.570261,
+        "phase": 0.03111,
+        "source": [
+          0.498481,
+          1,
+          0.980956,
+          0.194228
+        ],
+        "rotated": [
+          1.038071,
+          0.88499,
+          0.351724,
+          -0.513784
+        ],
+        "normalized": [
+          0.692281,
+          0.590193,
+          0.234562,
+          -0.342638
+        ],
+        "magnitude": 1.499494,
+        "projection": 1.015932,
+        "hopfProjection": 1.108371,
+        "carriers": [
+          {
+            "band": "sub",
+            "multiple": 0.386286,
+            "frequency": 265.768682,
+            "energy": 0.232447,
+            "amplitude": 0.019716,
+            "source": [
+              0.232447,
+              0.019716,
+              0.997151,
+              0.075436
+            ],
+            "rotated": [
+              0.419195,
+              0.228195,
+              0.818447,
+              -0.395939
+            ],
+            "magnitude": 1.02685
+          },
+          {
+            "band": "prime",
+            "multiple": 0.809683,
+            "frequency": 557.070272,
+            "energy": 0.218407,
+            "amplitude": 0.018525,
+            "source": [
+              0.218407,
+              0.018525,
+              0.987502,
+              0.157609
+            ],
+            "rotated": [
+              0.429105,
+              0.252825,
+              0.835887,
+              -0.318253
+            ],
+            "magnitude": 1.023741
+          },
+          {
+            "band": "hyper",
+            "multiple": 2.50467,
+            "frequency": 1723.238369,
+            "energy": 0.204367,
+            "amplitude": 0.017334,
+            "source": [
+              0.204367,
+              0.017334,
+              0.882526,
+              0.470263
+            ],
+            "rotated": [
+              0.489035,
+              0.309063,
+              0.841064,
+              0.001418
+            ],
+            "magnitude": 1.020817
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "frequency": 321.234722,
+        "pan": -0.434999,
+        "gate": 1,
+        "harmonic": 0.339153,
+        "ratio": 1.140377,
+        "phase": 0.068321,
+        "source": [
+          0.339153,
+          1,
+          0.909268,
+          0.41621
+        ],
+        "rotated": [
+          0.952664,
+          0.998974,
+          0.369268,
+          -0.270461
+        ],
+        "normalized": [
+          0.655061,
+          0.686904,
+          0.253913,
+          -0.185972
+        ],
+        "magnitude": 1.454313,
+        "projection": 0.921868,
+        "hopfProjection": 1.146147,
+        "carriers": [
+          {
+            "band": "sub",
+            "multiple": 0.459997,
+            "frequency": 147.766979,
+            "energy": 0.284486,
+            "amplitude": 0.01869,
+            "source": [
+              0.284486,
+              0.01869,
+              0.980567,
+              0.196184
+            ],
+            "rotated": [
+              0.496235,
+              0.228923,
+              0.835942,
+              -0.289532
+            ],
+            "magnitude": 1.039847
+          },
+          {
+            "band": "prime",
+            "multiple": 0.802521,
+            "frequency": 257.797652,
+            "energy": 0.220926,
+            "amplitude": 0.014514,
+            "source": [
+              0.220926,
+              0.014514,
+              0.941244,
+              0.337727
+            ],
+            "rotated": [
+              0.474265,
+              0.281858,
+              0.851362,
+              -0.140819
+            ],
+            "magnitude": 1.024216
+          },
+          {
+            "band": "hyper",
+            "multiple": 1.969685,
+            "frequency": 632.731186,
+            "energy": 0.157367,
+            "amplitude": 0.011826,
+            "source": [
+              0.157367,
+              0.011826,
+              0.663332,
+              0.748325
+            ],
+            "rotated": [
+              0.487065,
+              0.333792,
+              0.746482,
+              0.344991
+            ],
+            "magnitude": 1.012375
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "frequency": 281.910554,
+        "pan": 0.126781,
+        "gate": 1,
+        "harmonic": 0.346099,
+        "ratio": 0.98169,
+        "phase": 0.03111,
+        "source": [
+          0.346099,
+          1,
+          0.980956,
+          0.194228
+        ],
+        "rotated": [
+          0.906659,
+          0.958985,
+          0.363885,
+          -0.495669
+        ],
+        "normalized": [
+          0.622728,
+          0.658667,
+          0.24993,
+          -0.340445
+        ],
+        "magnitude": 1.455948,
+        "projection": 0.881553,
+        "hopfProjection": 1.025987,
+        "carriers": [
+          {
+            "band": "sub",
+            "multiple": 0.456912,
+            "frequency": 128.808337,
+            "energy": 0.286563,
+            "amplitude": 0.019066,
+            "source": [
+              0.286563,
+              0.019066,
+              0.996014,
+              0.089194
+            ],
+            "rotated": [
+              0.469477,
+              0.204697,
+              0.817471,
+              -0.389761
+            ],
+            "magnitude": 1.040424
+          },
+          {
+            "band": "prime",
+            "multiple": 0.781831,
+            "frequency": 220.406407,
+            "energy": 0.20667,
+            "amplitude": 0.01375,
+            "source": [
+              0.20667,
+              0.01375,
+              0.988345,
+              0.152231
+            ],
+            "rotated": [
+              0.415814,
+              0.253663,
+              0.83824,
+              -0.320951
+            ],
+            "magnitude": 1.021226
+          },
+          {
+            "band": "hyper",
+            "multiple": 1.828353,
+            "frequency": 515.432066,
+            "energy": 0.126777,
+            "amplitude": 0.011976,
+            "source": [
+              0.126777,
+              0.011976,
+              0.936813,
+              0.349829
+            ],
+            "rotated": [
+              0.394882,
+              0.327445,
+              0.859915,
+              -0.116659
+            ],
+            "magnitude": 1.008075
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "frequency": 322.873549,
+        "pan": 0.949426,
+        "gate": 1,
+        "harmonic": 0.371807,
+        "ratio": 1.046982,
+        "phase": 0.068321,
+        "source": [
+          0.371807,
+          1,
+          0.909268,
+          0.41621
+        ],
+        "rotated": [
+          0.980824,
+          0.983117,
+          0.366662,
+          -0.274342
+        ],
+        "normalized": [
+          0.670753,
+          0.672321,
+          0.250748,
+          -0.187614
+        ],
+        "magnitude": 1.462272,
+        "projection": 0.950664,
+        "hopfProjection": 1.163801,
+        "carriers": [
+          {
+            "band": "sub",
+            "multiple": 0.467887,
+            "frequency": 151.068254,
+            "energy": 0.333143,
+            "amplitude": 0.023192,
+            "source": [
+              0.333143,
+              0.023192,
+              0.979897,
+              0.199504
+            ],
+            "rotated": [
+              0.540691,
+              0.209456,
+              0.830321,
+              -0.293037
+            ],
+            "magnitude": 1.054288
+          },
+          {
+            "band": "prime",
+            "multiple": 0.813662,
+            "frequency": 262.70993,
+            "energy": 0.257541,
+            "amplitude": 0.017929,
+            "source": [
+              0.257541,
+              0.017929,
+              0.939618,
+              0.342225
+            ],
+            "rotated": [
+              0.508106,
+              0.267413,
+              0.84677,
+              -0.141236
+            ],
+            "magnitude": 1.032787
+          },
+          {
+            "band": "hyper",
+            "multiple": 2.0053,
+            "frequency": 647.458189,
+            "energy": 0.181939,
+            "amplitude": 0.012666,
+            "source": [
+              0.181939,
+              0.012666,
+              0.651815,
+              0.758378
+            ],
+            "rotated": [
+              0.509347,
+              0.321633,
+              0.7375,
+              0.355632
+            ],
+            "magnitude": 1.016495
+          }
+        ]
+      }
+    ],
+    "aggregate": {
+      "centroid": [
+        0.969555,
+        0.956517,
+        0.362885,
+        -0.388564
+      ],
+      "magnitude": 1.468007,
+      "bridgeProjection": 0.942504,
+      "hopfProjection": 1.111076,
+      "spinorRatio": 1.184828,
+      "gateMean": 1,
+      "gateVariance": 0,
+      "panMean": 0.12074,
+      "panVariance": 0.268359,
+      "phaseVector": [
+        0.945112,
+        0.305219
+      ],
+      "carrierCentroid": [
+        0.469435,
+        0.268247,
+        0.821617,
+        -0.142012
+      ],
+      "carrierMagnitude": 1.026762,
+      "spinorCoherence": 0.348003,
+      "braidDensity": 0.25
+    }
+  },
+  "signal": {
+    "progress": 0.35,
+    "transport": {
+      "playing": true,
+      "mode": "test"
+    },
+    "quantum": {
+      "left": [
+        0.970298,
+        -0.107087,
+        0.213597,
+        -0.037832
+      ],
+      "right": [
+        0.859456,
+        0.308393,
+        0.050269,
+        0.404601
+      ],
+      "dot": 0.796334,
+      "bridgeMagnitude": 0.834791,
+      "hopf": [
+        0.863857,
+        0.303585,
+        0.271218,
+        0.296695
+      ]
+    },
+    "spinor": {
+      "coherence": 0.348003,
+      "braidDensity": 0.25,
+      "ratios": [
+        2.271497,
+        1.269769,
+        0.966959,
+        1.087059
+      ],
+      "panOrbit": [
+        0.462545,
+        0.070995,
+        -0.02014,
+        0.128907
+      ],
+      "phaseOrbit": [
+        0.077775,
+        0.170802
+      ]
+    },
+    "resonance": {
+      "aggregate": {
+        "centroid": [
+          0.969555,
+          0.956517,
+          0.362885,
+          -0.388564
+        ],
+        "magnitude": 1.468007,
+        "bridgeProjection": 0.942504,
+        "hopfProjection": 1.111076,
+        "spinorRatio": 1.184828,
+        "gateMean": 1,
+        "gateVariance": 0,
+        "panMean": 0.12074,
+        "panVariance": 0.268359,
+        "phaseVector": [
+          0.945112,
+          0.305219
+        ],
+        "carrierCentroid": [
+          0.469435,
+          0.268247,
+          0.821617,
+          -0.142012
+        ],
+        "carrierMagnitude": 1.026762,
+        "spinorCoherence": 0.348003,
+        "braidDensity": 0.25
+      },
+      "axes": [
+        [
+          0.862383,
+          0.36461,
+          0.189796,
+          0.29552
+        ],
+        [
+          -0.485587,
+          0.774859,
+          0.30675,
+          0.264013
+        ],
+        [
+          -0.079807,
+          -0.475789,
+          0.826948,
+          0.288813
+        ],
+        [
+          -0.118874,
+          -0.200692,
+          -0.431323,
+          0.871523
+        ]
+      ],
+      "bridge": {
+        "magnitude": 0.834791,
+        "coherence": 0.348003,
+        "braidDensity": 0.25
+      }
+    },
+    "voices": [
+      {
+        "index": 0,
+        "gate": 1,
+        "sequence": "10",
+        "bits": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "phase": 0.517771,
+        "baseFrequency": 688.010247,
+        "pan": -0.158247,
+        "drift": 0.136661,
+        "quaternion": {
+          "weight": 0.32,
+          "bridge": 0.998966,
+          "hopf": 0.863857
+        },
+        "spinor": {
+          "ratio": 1.570261,
+          "pan": 0.393163,
+          "phase": 0.03111,
+          "coherence": 0.348003,
+          "braid": 0.25
+        },
+        "carriers": [
+          {
+            "label": "sub",
+            "frequency": 265.768682,
+            "amplitude": 0.019716,
+            "energy": 0.232447,
+            "active": 1
+          },
+          {
+            "label": "prime",
+            "frequency": 557.070272,
+            "amplitude": 0.018525,
+            "energy": 0.218407,
+            "active": 1
+          },
+          {
+            "label": "hyper",
+            "frequency": 1723.238369,
+            "amplitude": 0.017334,
+            "energy": 0.204367,
+            "active": 1
+          }
+        ],
+        "dominant": {
+          "label": "sub",
+          "frequency": 265.768682,
+          "amplitude": 0.019716,
+          "energy": 0.232447,
+          "active": 1
+        },
+        "resonance": {
+          "vector": [
+            1.038071,
+            0.88499,
+            0.351724,
+            -0.513784
+          ],
+          "normalized": [
+            0.692281,
+            0.590193,
+            0.234562,
+            -0.342638
+          ],
+          "carriers": [
+            {
+              "label": null,
+              "magnitude": 1.02685,
+              "phase": 0,
+              "orientation": [
+                0.419195,
+                0.228195,
+                0.818447,
+                -0.395939
+              ]
+            },
+            {
+              "label": null,
+              "magnitude": 1.023741,
+              "phase": 0,
+              "orientation": [
+                0.429105,
+                0.252825,
+                0.835887,
+                -0.318253
+              ]
+            },
+            {
+              "label": null,
+              "magnitude": 1.020817,
+              "phase": 0,
+              "orientation": [
+                0.489035,
+                0.309063,
+                0.841064,
+                0.001418
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "index": 1,
+        "gate": 1,
+        "sequence": "F",
+        "bits": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "phase": 0.474517,
+        "baseFrequency": 321.234722,
+        "pan": -0.434999,
+        "drift": -0.193804,
+        "quaternion": {
+          "weight": 0.32,
+          "bridge": -0.039561,
+          "hopf": 0.303585
+        },
+        "spinor": {
+          "ratio": 1.140377,
+          "pan": 0.060346,
+          "phase": 0.068321,
+          "coherence": 0.348003,
+          "braid": 0.25
+        },
+        "carriers": [
+          {
+            "label": "sub",
+            "frequency": 147.766979,
+            "amplitude": 0.01869,
+            "energy": 0.284486,
+            "active": 1
+          },
+          {
+            "label": "prime",
+            "frequency": 257.797652,
+            "amplitude": 0.014514,
+            "energy": 0.220926,
+            "active": 1
+          },
+          {
+            "label": "hyper",
+            "frequency": 632.731186,
+            "amplitude": 0.011826,
+            "energy": 0.157367,
+            "active": 1
+          }
+        ],
+        "dominant": {
+          "label": "sub",
+          "frequency": 147.766979,
+          "amplitude": 0.01869,
+          "energy": 0.284486,
+          "active": 1
+        },
+        "resonance": {
+          "vector": [
+            0.952664,
+            0.998974,
+            0.369268,
+            -0.270461
+          ],
+          "normalized": [
+            0.655061,
+            0.686904,
+            0.253913,
+            -0.185972
+          ],
+          "carriers": [
+            {
+              "label": null,
+              "magnitude": 1.039847,
+              "phase": 0,
+              "orientation": [
+                0.496235,
+                0.228923,
+                0.835942,
+                -0.289532
+              ]
+            },
+            {
+              "label": null,
+              "magnitude": 1.024216,
+              "phase": 0,
+              "orientation": [
+                0.474265,
+                0.281858,
+                0.851362,
+                -0.140819
+              ]
+            },
+            {
+              "label": null,
+              "magnitude": 1.012375,
+              "phase": 0,
+              "orientation": [
+                0.487065,
+                0.333792,
+                0.746482,
+                0.344991
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "index": 2,
+        "gate": 1,
+        "sequence": "15",
+        "bits": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "phase": 0.676068,
+        "baseFrequency": 281.910554,
+        "pan": 0.126781,
+        "drift": -0.205042,
+        "quaternion": {
+          "weight": 0.32,
+          "bridge": 0.012862,
+          "hopf": 0.271218
+        },
+        "spinor": {
+          "ratio": 0.98169,
+          "pan": -0.017119,
+          "phase": 0.03111,
+          "coherence": 0.348003,
+          "braid": 0.25
+        },
+        "carriers": [
+          {
+            "label": "sub",
+            "frequency": 128.808337,
+            "amplitude": 0.019066,
+            "energy": 0.286563,
+            "active": 1
+          },
+          {
+            "label": "prime",
+            "frequency": 220.406407,
+            "amplitude": 0.01375,
+            "energy": 0.20667,
+            "active": 1
+          },
+          {
+            "label": "hyper",
+            "frequency": 515.432066,
+            "amplitude": 0.011976,
+            "energy": 0.126777,
+            "active": 1
+          }
+        ],
+        "dominant": {
+          "label": "sub",
+          "frequency": 128.808337,
+          "amplitude": 0.019066,
+          "energy": 0.286563,
+          "active": 1
+        },
+        "resonance": {
+          "vector": [
+            0.906659,
+            0.958985,
+            0.363885,
+            -0.495669
+          ],
+          "normalized": [
+            0.622728,
+            0.658667,
+            0.24993,
+            -0.340445
+          ],
+          "carriers": [
+            {
+              "label": null,
+              "magnitude": 1.040424,
+              "phase": 0,
+              "orientation": [
+                0.469477,
+                0.204697,
+                0.817471,
+                -0.389761
+              ]
+            },
+            {
+              "label": null,
+              "magnitude": 1.021226,
+              "phase": 0,
+              "orientation": [
+                0.415814,
+                0.253663,
+                0.83824,
+                -0.320951
+              ]
+            },
+            {
+              "label": null,
+              "magnitude": 1.008075,
+              "phase": 0,
+              "orientation": [
+                0.394882,
+                0.327445,
+                0.859915,
+                -0.116659
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "index": 3,
+        "gate": 1,
+        "sequence": "1F",
+        "bits": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "phase": 0.979829,
+        "baseFrequency": 322.873549,
+        "pan": 0.949426,
+        "drift": -0.188492,
+        "quaternion": {
+          "weight": 0.32,
+          "bridge": -0.018336,
+          "hopf": 0.296695
+        },
+        "spinor": {
+          "ratio": 1.046982,
+          "pan": 0.109571,
+          "phase": 0.068321,
+          "coherence": 0.348003,
+          "braid": 0.25
+        },
+        "carriers": [
+          {
+            "label": "sub",
+            "frequency": 151.068254,
+            "amplitude": 0.023192,
+            "energy": 0.333143,
+            "active": 1
+          },
+          {
+            "label": "prime",
+            "frequency": 262.70993,
+            "amplitude": 0.017929,
+            "energy": 0.257541,
+            "active": 1
+          },
+          {
+            "label": "hyper",
+            "frequency": 647.458189,
+            "amplitude": 0.012666,
+            "energy": 0.181939,
+            "active": 1
+          }
+        ],
+        "dominant": {
+          "label": "sub",
+          "frequency": 151.068254,
+          "amplitude": 0.023192,
+          "energy": 0.333143,
+          "active": 1
+        },
+        "resonance": {
+          "vector": [
+            0.980824,
+            0.983117,
+            0.366662,
+            -0.274342
+          ],
+          "normalized": [
+            0.670753,
+            0.672321,
+            0.250748,
+            -0.187614
+          ],
+          "carriers": [
+            {
+              "label": null,
+              "magnitude": 1.054288,
+              "phase": 0,
+              "orientation": [
+                0.540691,
+                0.209456,
+                0.830321,
+                -0.293037
+              ]
+            },
+            {
+              "label": null,
+              "magnitude": 1.032787,
+              "phase": 0,
+              "orientation": [
+                0.508106,
+                0.267413,
+                0.84677,
+                -0.141236
+              ]
+            },
+            {
+              "label": null,
+              "magnitude": 1.016495,
+              "phase": 0,
+              "orientation": [
+                0.509347,
+                0.321633,
+                0.7375,
+                0.355632
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "carrierMatrix": [
+      [
+        {
+          "frequency": 265.768682,
+          "relative": 0.644497,
+          "gate": 1,
+          "energy": 0.232447
+        },
+        {
+          "frequency": 557.070272,
+          "relative": 1.350912,
+          "gate": 1,
+          "energy": 0.218407
+        },
+        {
+          "frequency": 1723.238369,
+          "relative": 4.178905,
+          "gate": 1,
+          "energy": 0.204367
+        }
+      ],
+      [
+        {
+          "frequency": 147.766979,
+          "relative": 0.358339,
+          "gate": 1,
+          "energy": 0.284486
+        },
+        {
+          "frequency": 257.797652,
+          "relative": 0.625167,
+          "gate": 1,
+          "energy": 0.220926
+        },
+        {
+          "frequency": 632.731186,
+          "relative": 1.534392,
+          "gate": 1,
+          "energy": 0.157367
+        }
+      ],
+      [
+        {
+          "frequency": 128.808337,
+          "relative": 0.312364,
+          "gate": 1,
+          "energy": 0.286563
+        },
+        {
+          "frequency": 220.406407,
+          "relative": 0.534492,
+          "gate": 1,
+          "energy": 0.20667
+        },
+        {
+          "frequency": 515.432066,
+          "relative": 1.249938,
+          "gate": 1,
+          "energy": 0.126777
+        }
+      ],
+      [
+        {
+          "frequency": 151.068254,
+          "relative": 0.366345,
+          "gate": 1,
+          "energy": 0.333143
+        },
+        {
+          "frequency": 262.70993,
+          "relative": 0.63708,
+          "gate": 1,
+          "energy": 0.257541
+        },
+        {
+          "frequency": 647.458189,
+          "relative": 1.570106,
+          "gate": 1,
+          "energy": 0.181939
+        }
+      ]
+    ],
+    "bitstream": {
+      "sequence": "10F151F",
+      "density": 0.625,
+      "segments": [
+        {
+          "voice": 0,
+          "hex": "10",
+          "bits": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "gate": 1
+        },
+        {
+          "voice": 1,
+          "hex": "F",
+          "bits": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "gate": 1
+        },
+        {
+          "voice": 2,
+          "hex": "15",
+          "bits": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "gate": 1
+        },
+        {
+          "voice": 3,
+          "hex": "1F",
+          "bits": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "gate": 1
+        }
+      ]
+    },
+    "envelope": {
+      "centroid": 412.366001,
+      "spread": 413.808048,
+      "resonance": 1.468007,
+      "progress": 0.35
+    }
+  },
+  "transduction": {
+    "progress": 0.35,
+    "invariants": {
+      "determinant": 1,
+      "trace": 3.335713,
+      "frobenius": 2,
+      "hopfAlignment": 0.849002,
+      "bridgeMagnitude": 0.834791
+    },
+    "topology": {
+      "bridge": [
+        0.998966,
+        -0.039561,
+        0.012862,
+        -0.018336
+      ],
+      "hopf": [
+        0.863857,
+        0.303585,
+        0.271218,
+        0.296695
+      ],
+      "spinorCoherence": 0.348003,
+      "braidDensity": 0.25
+    },
+    "matrix": [
+      [
+        0.862383,
+        0.36461,
+        0.189796,
+        0.29552
+      ],
+      [
+        -0.485587,
+        0.774859,
+        0.30675,
+        0.264013
+      ],
+      [
+        -0.079807,
+        -0.475789,
+        0.826948,
+        0.288813
+      ],
+      [
+        -0.118874,
+        -0.200692,
+        -0.431323,
+        0.871523
+      ]
+    ],
+    "signal": {
+      "density": 0.625,
+      "centroid": 412.366001,
+      "spread": 413.808048
+    },
+    "resonance": {
+      "centroid": [
+        0.969555,
+        0.956517,
+        0.362885,
+        -0.388564
+      ],
+      "magnitude": 1.468007,
+      "bridgeProjection": 0.942504,
+      "hopfProjection": 1.111076,
+      "spinorRatio": 1.184828,
+      "gateMean": 1,
+      "gateVariance": 0,
+      "panMean": 0.12074,
+      "panVariance": 0.268359,
+      "phaseVector": [
+        0.945112,
+        0.305219
+      ],
+      "carrierCentroid": [
+        0.469435,
+        0.268247,
+        0.821617,
+        -0.142012
+      ],
+      "carrierMagnitude": 1.026762,
+      "spinorCoherence": 0.348003,
+      "braidDensity": 0.25
+    },
+    "voices": [
+      {
+        "index": 0,
+        "gate": 1,
+        "quaternionWeight": 0.32,
+        "bridge": 0.998966,
+        "hopf": 0.863857,
+        "spinor": {
+          "ratio": 1.570261,
+          "pan": 0.393163,
+          "phase": 0.03111,
+          "coherence": 0.348003
+        },
+        "bits": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bitSequence": "10",
+        "bitDensity": 0,
+        "rowProjection": 0.84409,
+        "matrixRow": [
+          0.862383,
+          0.36461,
+          0.189796,
+          0.29552
+        ],
+        "resonanceVector": [
+          0.692281,
+          0.590193,
+          0.234562,
+          -0.342638
+        ],
+        "carriers": [
+          {
+            "index": 0,
+            "label": "band-1",
+            "frequency": 265.768682,
+            "amplitude": 0.019716,
+            "energy": 0.232447,
+            "active": 1,
+            "ratio": 2.271497,
+            "cents": 1420.372306,
+            "pan": 0.462545,
+            "phase": 0.077775,
+            "projection": 0.597011,
+            "hopf": 0.863857,
+            "gateBit": 0
+          },
+          {
+            "index": 1,
+            "label": "band-2",
+            "frequency": 557.070272,
+            "amplitude": 0.018525,
+            "energy": 0.218407,
+            "active": 1,
+            "ratio": 1.269769,
+            "cents": 413.479254,
+            "pan": 0.070995,
+            "phase": 0.170802,
+            "projection": 0.21519,
+            "hopf": 0.303585,
+            "gateBit": 0
+          },
+          {
+            "index": 2,
+            "label": "band-3",
+            "frequency": 1723.238369,
+            "amplitude": 0.017334,
+            "energy": 0.204367,
+            "active": 1,
+            "ratio": 0.966959,
+            "cents": -58.167405,
+            "pan": -0.02014,
+            "phase": 0.077775,
+            "projection": 0.044519,
+            "hopf": 0.271218,
+            "gateBit": 0
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "gate": 1,
+        "quaternionWeight": 0.32,
+        "bridge": -0.039561,
+        "hopf": 0.303585,
+        "spinor": {
+          "ratio": 1.140377,
+          "pan": 0.060346,
+          "phase": 0.068321,
+          "coherence": 0.348003
+        },
+        "bits": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "bitSequence": "F",
+        "bitDensity": 1,
+        "rowProjection": -0.516635,
+        "matrixRow": [
+          -0.485587,
+          0.774859,
+          0.30675,
+          0.264013
+        ],
+        "resonanceVector": [
+          0.655061,
+          0.686904,
+          0.253913,
+          -0.185972
+        ],
+        "carriers": [
+          {
+            "index": 0,
+            "label": "band-1",
+            "frequency": 147.766979,
+            "amplitude": 0.01869,
+            "energy": 0.284486,
+            "active": 1,
+            "ratio": 2.271497,
+            "cents": 1420.372306,
+            "pan": 0.462545,
+            "phase": 0.077775,
+            "projection": -0.318089,
+            "hopf": 0.863857,
+            "gateBit": 1
+          },
+          {
+            "index": 1,
+            "label": "band-2",
+            "frequency": 257.797652,
+            "amplitude": 0.014514,
+            "energy": 0.220926,
+            "active": 1,
+            "ratio": 1.269769,
+            "cents": 413.479254,
+            "pan": 0.070995,
+            "phase": 0.170802,
+            "projection": 0.532254,
+            "hopf": 0.303585,
+            "gateBit": 1
+          },
+          {
+            "index": 2,
+            "label": "band-3",
+            "frequency": 632.731186,
+            "amplitude": 0.011826,
+            "energy": 0.157367,
+            "active": 1,
+            "ratio": 0.966959,
+            "cents": -58.167405,
+            "pan": -0.02014,
+            "phase": 0.077775,
+            "projection": 0.077888,
+            "hopf": 0.271218,
+            "gateBit": 1
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "gate": 1,
+        "quaternionWeight": 0.32,
+        "bridge": 0.012862,
+        "hopf": 0.271218,
+        "spinor": {
+          "ratio": 0.98169,
+          "pan": -0.017119,
+          "phase": 0.03111,
+          "coherence": 0.348003
+        },
+        "bits": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "bitSequence": "15",
+        "bitDensity": 0.5,
+        "rowProjection": -0.055561,
+        "matrixRow": [
+          -0.079807,
+          -0.475789,
+          0.826948,
+          0.288813
+        ],
+        "resonanceVector": [
+          0.622728,
+          0.658667,
+          0.24993,
+          -0.340445
+        ],
+        "carriers": [
+          {
+            "index": 0,
+            "label": "band-1",
+            "frequency": 128.808337,
+            "amplitude": 0.019066,
+            "energy": 0.286563,
+            "active": 1,
+            "ratio": 2.271497,
+            "cents": 1420.372306,
+            "pan": 0.462545,
+            "phase": 0.077775,
+            "projection": -0.049698,
+            "hopf": 0.863857,
+            "gateBit": 0
+          },
+          {
+            "index": 1,
+            "label": "band-2",
+            "frequency": 220.406407,
+            "amplitude": 0.01375,
+            "energy": 0.20667,
+            "active": 1,
+            "ratio": 1.269769,
+            "cents": 413.479254,
+            "pan": 0.070995,
+            "phase": 0.170802,
+            "projection": -0.313387,
+            "hopf": 0.303585,
+            "gateBit": 1
+          },
+          {
+            "index": 2,
+            "label": "band-3",
+            "frequency": 515.432066,
+            "amplitude": 0.011976,
+            "energy": 0.126777,
+            "active": 1,
+            "ratio": 0.966959,
+            "cents": -58.167405,
+            "pan": -0.02014,
+            "phase": 0.077775,
+            "projection": 0.206679,
+            "hopf": 0.271218,
+            "gateBit": 0
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "gate": 1,
+        "quaternionWeight": 0.32,
+        "bridge": -0.018336,
+        "hopf": 0.296695,
+        "spinor": {
+          "ratio": 1.046982,
+          "pan": 0.109571,
+          "phase": 0.068321,
+          "coherence": 0.348003
+        },
+        "bits": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "bitSequence": "1F",
+        "bitDensity": 1,
+        "rowProjection": -0.13234,
+        "matrixRow": [
+          -0.118874,
+          -0.200692,
+          -0.431323,
+          0.871523
+        ],
+        "resonanceVector": [
+          0.670753,
+          0.672321,
+          0.250748,
+          -0.187614
+        ],
+        "carriers": [
+          {
+            "index": 0,
+            "label": "band-1",
+            "frequency": 151.068254,
+            "amplitude": 0.023192,
+            "energy": 0.333143,
+            "active": 1,
+            "ratio": 2.271497,
+            "cents": 1420.372306,
+            "pan": 0.462545,
+            "phase": 0.077775,
+            "projection": -0.079735,
+            "hopf": 0.863857,
+            "gateBit": 1
+          },
+          {
+            "index": 1,
+            "label": "band-2",
+            "frequency": 262.70993,
+            "amplitude": 0.017929,
+            "energy": 0.257541,
+            "active": 1,
+            "ratio": 1.269769,
+            "cents": 413.479254,
+            "pan": 0.070995,
+            "phase": 0.170802,
+            "projection": -0.13493,
+            "hopf": 0.303585,
+            "gateBit": 1
+          },
+          {
+            "index": 2,
+            "label": "band-3",
+            "frequency": 647.458189,
+            "amplitude": 0.012666,
+            "energy": 0.181939,
+            "active": 1,
+            "ratio": 0.966959,
+            "cents": -58.167405,
+            "pan": -0.02014,
+            "phase": 0.077775,
+            "projection": -0.108154,
+            "hopf": 0.271218,
+            "gateBit": 1
+          }
+        ]
+      }
+    ],
+    "grid": [
+      {
+        "voice": 0,
+        "carrier": 0,
+        "ratio": 2.271497,
+        "frequency": 265.768682,
+        "projection": 0.597011,
+        "gateBit": 0,
+        "energy": 0.232447
+      },
+      {
+        "voice": 0,
+        "carrier": 1,
+        "ratio": 1.269769,
+        "frequency": 557.070272,
+        "projection": 0.21519,
+        "gateBit": 0,
+        "energy": 0.218407
+      },
+      {
+        "voice": 0,
+        "carrier": 2,
+        "ratio": 0.966959,
+        "frequency": 1723.238369,
+        "projection": 0.044519,
+        "gateBit": 0,
+        "energy": 0.204367
+      },
+      {
+        "voice": 1,
+        "carrier": 0,
+        "ratio": 2.271497,
+        "frequency": 147.766979,
+        "projection": -0.318089,
+        "gateBit": 1,
+        "energy": 0.284486
+      },
+      {
+        "voice": 1,
+        "carrier": 1,
+        "ratio": 1.269769,
+        "frequency": 257.797652,
+        "projection": 0.532254,
+        "gateBit": 1,
+        "energy": 0.220926
+      },
+      {
+        "voice": 1,
+        "carrier": 2,
+        "ratio": 0.966959,
+        "frequency": 632.731186,
+        "projection": 0.077888,
+        "gateBit": 1,
+        "energy": 0.157367
+      },
+      {
+        "voice": 2,
+        "carrier": 0,
+        "ratio": 2.271497,
+        "frequency": 128.808337,
+        "projection": -0.049698,
+        "gateBit": 0,
+        "energy": 0.286563
+      },
+      {
+        "voice": 2,
+        "carrier": 1,
+        "ratio": 1.269769,
+        "frequency": 220.406407,
+        "projection": -0.313387,
+        "gateBit": 1,
+        "energy": 0.20667
+      },
+      {
+        "voice": 2,
+        "carrier": 2,
+        "ratio": 0.966959,
+        "frequency": 515.432066,
+        "projection": 0.206679,
+        "gateBit": 0,
+        "energy": 0.126777
+      },
+      {
+        "voice": 3,
+        "carrier": 0,
+        "ratio": 2.271497,
+        "frequency": 151.068254,
+        "projection": -0.079735,
+        "gateBit": 1,
+        "energy": 0.333143
+      },
+      {
+        "voice": 3,
+        "carrier": 1,
+        "ratio": 1.269769,
+        "frequency": 262.70993,
+        "projection": -0.13493,
+        "gateBit": 1,
+        "energy": 0.257541
+      },
+      {
+        "voice": 3,
+        "carrier": 2,
+        "ratio": 0.966959,
+        "frequency": 647.458189,
+        "projection": -0.108154,
+        "gateBit": 1,
+        "energy": 0.181939
+      }
+    ]
+  },
+  "manifold": {
+    "timestamp": 0,
+    "progress": 0.35,
+    "quaternion": {
+      "bridgeMagnitude": 0.834791,
+      "hopfAlignment": 0.849002,
+      "trace": 3.335713,
+      "determinant": 1,
+      "frobenius": 2,
+      "normalizedBridge": [
+        0.998966,
+        -0.039561,
+        0.012862,
+        -0.018336
+      ],
+      "hopfFiber": [
+        0.863857,
+        0.303585,
+        0.271218,
+        0.296695
+      ]
+    },
+    "spinor": {
+      "coherence": 0.348003,
+      "braidDensity": 0.25,
+      "ratioEntropy": 0.955239,
+      "panVariance": 0.033218,
+      "phaseVariance": 0.002164,
+      "ratios": [
+        2.271497,
+        1.269769,
+        0.966959,
+        1.087059
+      ],
+      "panOrbit": [
+        0.462545,
+        0.070995,
+        -0.02014,
+        0.128907
+      ],
+      "phaseOrbit": [
+        0.077775,
+        0.170802
+      ]
+    },
+    "resonance": {
+      "magnitude": 1.468007,
+      "bridgeProjection": 0.942504,
+      "hopfProjection": 1.111076,
+      "gateMean": 1,
+      "gateVariance": 0,
+      "carrierMagnitude": 1.026762,
+      "centroid": [
+        0.969555,
+        0.956517,
+        0.362885,
+        -0.388564
+      ],
+      "carrierCentroid": [
+        0.469435,
+        0.268247,
+        0.821617,
+        -0.142012
+      ]
+    },
+    "signal": {
+      "density": 0.625,
+      "centroid": 412.366001,
+      "spread": 413.808048,
+      "resonance": 1.468007,
+      "entropy": 1
+    },
+    "transduction": {
+      "energy": 0.050118,
+      "gateCoherence": 0.583333,
+      "projectionMean": 0.055796,
+      "projectionDeviation": 0.279516,
+      "trace": 3.335713,
+      "determinant": 1,
+      "frobenius": 2,
+      "hopfAlignment": 0.849002
+    },
+    "summary": {
+      "voiceGateMean": 1,
+      "voiceCarrierEnergy": 0.677658,
+      "voiceSpinorCoherence": 0.348003
+    },
+    "alignment": {
+      "bridgeToResonance": 0.64464,
+      "bridgeToCarrierCentroid": 0.474473,
+      "hopfToCarrierCentroid": 0.671859,
+      "spinorToSignal": 0.030484,
+      "signalToGrid": 0.731134
+    },
+    "voices": [
+      {
+        "index": 0,
+        "gate": 1,
+        "frequency": 688.010247,
+        "pan": -0.158247,
+        "drift": 0.136661,
+        "spinor": {
+          "ratio": 1.570261,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "pan": 0.393163,
+          "phase": 0.03111
+        },
+        "quaternion": {
+          "weight": 0.32,
+          "bridge": 0.998966,
+          "hopf": 0.863857
+        },
+        "resonance": {
+          "magnitude": 1.499494,
+          "projection": 1.015932,
+          "hopfProjection": 1.108371
+        },
+        "signal": {
+          "dominantFrequency": 265.768682,
+          "bitDensity": 0,
+          "bitEntropy": 0,
+          "bits": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "transduction": {
+          "gridEnergy": 0.064957,
+          "projectionMean": 0.285573,
+          "projectionDeviation": 0.23098
+        },
+        "carrierEnergy": 0.655221
+      },
+      {
+        "index": 1,
+        "gate": 1,
+        "frequency": 321.234722,
+        "pan": -0.434999,
+        "drift": -0.193804,
+        "spinor": {
+          "ratio": 1.140377,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "pan": 0.060346,
+          "phase": 0.068321
+        },
+        "quaternion": {
+          "weight": 0.32,
+          "bridge": -0.039561,
+          "hopf": 0.303585
+        },
+        "resonance": {
+          "magnitude": 1.454313,
+          "projection": 0.921868,
+          "hopfProjection": 1.146147
+        },
+        "signal": {
+          "dominantFrequency": 147.766979,
+          "bitDensity": 1,
+          "bitEntropy": 1,
+          "bits": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "transduction": {
+          "gridEnergy": 0.073446,
+          "projectionMean": 0.097351,
+          "projectionDeviation": 0.347424
+        },
+        "carrierEnergy": 0.662779
+      },
+      {
+        "index": 2,
+        "gate": 1,
+        "frequency": 281.910554,
+        "pan": 0.126781,
+        "drift": -0.205042,
+        "spinor": {
+          "ratio": 0.98169,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "pan": -0.017119,
+          "phase": 0.03111
+        },
+        "quaternion": {
+          "weight": 0.32,
+          "bridge": 0.012862,
+          "hopf": 0.271218
+        },
+        "resonance": {
+          "magnitude": 1.455948,
+          "projection": 0.881553,
+          "hopfProjection": 1.025987
+        },
+        "signal": {
+          "dominantFrequency": 128.808337,
+          "bitDensity": 0.5,
+          "bitEntropy": 1,
+          "bits": [
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        "transduction": {
+          "gridEnergy": 0.035071,
+          "projectionMean": -0.052135,
+          "projectionDeviation": 0.212323
+        },
+        "carrierEnergy": 0.620011
+      },
+      {
+        "index": 3,
+        "gate": 1,
+        "frequency": 322.873549,
+        "pan": 0.949426,
+        "drift": -0.188492,
+        "spinor": {
+          "ratio": 1.046982,
+          "coherence": 0.348003,
+          "braid": 0.25,
+          "pan": 0.109571,
+          "phase": 0.068321
+        },
+        "quaternion": {
+          "weight": 0.32,
+          "bridge": -0.018336,
+          "hopf": 0.296695
+        },
+        "resonance": {
+          "magnitude": 1.462272,
+          "projection": 0.950664,
+          "hopfProjection": 1.163801
+        },
+        "signal": {
+          "dominantFrequency": 151.068254,
+          "bitDensity": 1,
+          "bitEntropy": 1,
+          "bits": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "transduction": {
+          "gridEnergy": 0.026997,
+          "projectionMean": -0.107606,
+          "projectionDeviation": 0.022536
+        },
+        "carrierEnergy": 0.772623
+      }
+    ]
+  },
+  "topology": {
+    "timestamp": 0,
+    "progress": 0.35,
+    "transport": {
+      "playing": true,
+      "mode": "test"
+    },
+    "matrix": [
+      [
+        0.862383,
+        0.36461,
+        0.189796,
+        0.29552
+      ],
+      [
+        -0.485587,
+        0.774859,
+        0.30675,
+        0.264013
+      ],
+      [
+        -0.079807,
+        -0.475789,
+        0.826948,
+        0.288813
+      ],
+      [
+        -0.118874,
+        -0.200692,
+        -0.431323,
+        0.871523
+      ]
+    ],
+    "bridge": {
+      "normalized": [
+        0.998966,
+        -0.039561,
+        0.012862,
+        -0.018336
+      ],
+      "hopf": [
+        0.863857,
+        0.303585,
+        0.271218,
+        0.296695
+      ],
+      "magnitude": 0.834791
+    },
+    "spectrum": {
+      "ratioMean": 1.398821,
+      "ratioVariance": 0.26548,
+      "ratioEntropy": 0.955239,
+      "gateMean": 1,
+      "gateVariance": 0,
+      "carrierMagnitude": 1.026762
+    },
+    "axes": [
+      {
+        "index": 0,
+        "orientation": [
+          0.862383,
+          0.36461,
+          0.189796,
+          0.29552
+        ],
+        "magnitude": 0.969555,
+        "bridgeCoupling": 0.84409,
+        "hopfCoupling": 0.994821,
+        "gateFlux": 0.969555,
+        "ratioFlux": 1.158351,
+        "coherenceFlux": 0.337408,
+        "braidFlux": 0.242389,
+        "bitFlux": 0.596704,
+        "entropyFlux": 0.710037,
+        "gridFlux": 0.048919,
+        "carrierFlux": 0.657879,
+        "gateCorrelation": 0,
+        "ratioCorrelation": 0.878146,
+        "coherenceCorrelation": 0,
+        "braidCorrelation": 0,
+        "bitCorrelation": -0.469618,
+        "entropyCorrelation": -0.831069,
+        "gridCorrelation": 0.351937,
+        "carrierCorrelation": 0.313362
+      },
+      {
+        "index": 1,
+        "orientation": [
+          -0.485587,
+          0.774859,
+          0.30675,
+          0.264013
+        ],
+        "magnitude": 0.956517,
+        "bridgeCoupling": -0.516635,
+        "hopfCoupling": -0.022715,
+        "gateFlux": 0.956517,
+        "ratioFlux": 1.124901,
+        "coherenceFlux": 0.332871,
+        "braidFlux": 0.239129,
+        "bitFlux": 0.615396,
+        "entropyFlux": 0.735269,
+        "gridFlux": 0.047757,
+        "carrierFlux": 0.649031,
+        "gateCorrelation": 0,
+        "ratioCorrelation": -0.838275,
+        "coherenceCorrelation": 0,
+        "braidCorrelation": 0,
+        "bitCorrelation": 0.97038,
+        "entropyCorrelation": 0.945382,
+        "gridCorrelation": -0.211929,
+        "carrierCorrelation": 0.336152
+      },
+      {
+        "index": 2,
+        "orientation": [
+          -0.079807,
+          -0.475789,
+          0.826948,
+          0.288813
+        ],
+        "magnitude": 0.362885,
+        "bridgeCoupling": -0.055561,
+        "hopfCoupling": 0.096588,
+        "gateFlux": 0.362885,
+        "ratioFlux": 0.428629,
+        "coherenceFlux": 0.126285,
+        "braidFlux": 0.090721,
+        "bitFlux": 0.229468,
+        "entropyFlux": 0.274954,
+        "gridFlux": 0.018157,
+        "carrierFlux": 0.246026,
+        "gateCorrelation": 0,
+        "ratioCorrelation": -0.860535,
+        "coherenceCorrelation": 0,
+        "braidCorrelation": 0,
+        "bitCorrelation": 0.956795,
+        "entropyCorrelation": 0.959025,
+        "gridCorrelation": -0.226906,
+        "carrierCorrelation": 0.297192
+      },
+      {
+        "index": 3,
+        "orientation": [
+          -0.118874,
+          -0.200692,
+          -0.431323,
+          0.871523
+        ],
+        "magnitude": 0.388564,
+        "bridgeCoupling": -0.13234,
+        "hopfCoupling": -0.022023,
+        "gateFlux": -0.388564,
+        "ratioFlux": -0.472257,
+        "coherenceFlux": -0.135222,
+        "braidFlux": -0.097141,
+        "bitFlux": -0.198159,
+        "entropyFlux": -0.260118,
+        "gridFlux": -0.019507,
+        "carrierFlux": -0.258795,
+        "gateCorrelation": 0,
+        "ratioCorrelation": -0.444616,
+        "coherenceCorrelation": 0,
+        "braidCorrelation": 0,
+        "bitCorrelation": 0.926571,
+        "entropyCorrelation": 0.621379,
+        "gridCorrelation": -0.014556,
+        "carrierCorrelation": 0.679489
+      }
+    ],
+    "braiding": {
+      "bridgeToGateFlux": 0.260878,
+      "bridgeToRatioFlux": 0.269862,
+      "hopfToCarrierFlux": 0.517066,
+      "gateToGridFlux": 0.999979,
+      "ratioToBitFlux": 0.998906
+    }
+  },
+  "continuum": {
+    "timestamp": 0,
+    "progress": 0.35,
+    "transport": {
+      "playing": true,
+      "mode": "test"
+    },
+    "flux": {
+      "density": 1.33594,
+      "variance": 0.351689,
+      "bridgeAlignment": 0.332499,
+      "hopfAlignment": 0.776503,
+      "voiceAlignment": 0.615108,
+      "gateMean": 1,
+      "coherenceMean": 0.348003,
+      "braidMean": 0.25,
+      "bitDensity": 0.625,
+      "bitEntropy": 0.75,
+      "gridEnergy": 0.050118,
+      "carrierEnergy": 0.677658
+    },
+    "continuum": {
+      "orientation": [
+        0.364159,
+        0.655977,
+        0.368188,
+        0.549108
+      ],
+      "magnitude": 3.314035,
+      "voiceOrientation": [
+        0.664486,
+        0.652711,
+        0.247874,
+        -0.26643
+      ],
+      "voiceMagnitude": 13.985006,
+      "sequence": "10F151F"
+    },
+    "axes": [
+      {
+        "index": 0,
+        "orientation": [
+          0.862383,
+          0.36461,
+          0.189796,
+          0.29552
+        ],
+        "intensity": 1.936444,
+        "gateFlux": 0.969555,
+        "ratioFlux": 1.158351,
+        "coherenceFlux": 0.337408,
+        "braidFlux": 0.242389,
+        "bitFlux": 0.596704,
+        "entropyFlux": 0.710037,
+        "gridFlux": 0.048919,
+        "carrierFlux": 0.657879,
+        "gateCorrelation": 0,
+        "ratioCorrelation": 0.878146,
+        "coherenceCorrelation": 0,
+        "braidCorrelation": 0,
+        "bitCorrelation": -0.469618,
+        "entropyCorrelation": -0.831069,
+        "gridCorrelation": 0.351937,
+        "carrierCorrelation": 0.313362,
+        "bridgeCoupling": 0.84409,
+        "hopfCoupling": 0.994821
+      },
+      {
+        "index": 1,
+        "orientation": [
+          -0.485587,
+          0.774859,
+          0.30675,
+          0.264013
+        ],
+        "intensity": 1.921241,
+        "gateFlux": 0.956517,
+        "ratioFlux": 1.124901,
+        "coherenceFlux": 0.332871,
+        "braidFlux": 0.239129,
+        "bitFlux": 0.615396,
+        "entropyFlux": 0.735269,
+        "gridFlux": 0.047757,
+        "carrierFlux": 0.649031,
+        "gateCorrelation": 0,
+        "ratioCorrelation": -0.838275,
+        "coherenceCorrelation": 0,
+        "braidCorrelation": 0,
+        "bitCorrelation": 0.97038,
+        "entropyCorrelation": 0.945382,
+        "gridCorrelation": -0.211929,
+        "carrierCorrelation": 0.336152,
+        "bridgeCoupling": -0.516635,
+        "hopfCoupling": -0.022715
+      },
+      {
+        "index": 2,
+        "orientation": [
+          -0.079807,
+          -0.475789,
+          0.826948,
+          0.288813
+        ],
+        "intensity": 0.727118,
+        "gateFlux": 0.362885,
+        "ratioFlux": 0.428629,
+        "coherenceFlux": 0.126285,
+        "braidFlux": 0.090721,
+        "bitFlux": 0.229468,
+        "entropyFlux": 0.274954,
+        "gridFlux": 0.018157,
+        "carrierFlux": 0.246026,
+        "gateCorrelation": 0,
+        "ratioCorrelation": -0.860535,
+        "coherenceCorrelation": 0,
+        "braidCorrelation": 0,
+        "bitCorrelation": 0.956795,
+        "entropyCorrelation": 0.959025,
+        "gridCorrelation": -0.226906,
+        "carrierCorrelation": 0.297192,
+        "bridgeCoupling": -0.055561,
+        "hopfCoupling": 0.096588
+      },
+      {
+        "index": 3,
+        "orientation": [
+          -0.118874,
+          -0.200692,
+          -0.431323,
+          0.871523
+        ],
+        "intensity": 0.758956,
+        "gateFlux": -0.388564,
+        "ratioFlux": -0.472257,
+        "coherenceFlux": -0.135222,
+        "braidFlux": -0.097141,
+        "bitFlux": -0.198159,
+        "entropyFlux": -0.260118,
+        "gridFlux": -0.019507,
+        "carrierFlux": -0.258795,
+        "gateCorrelation": 0,
+        "ratioCorrelation": -0.444616,
+        "coherenceCorrelation": 0,
+        "braidCorrelation": 0,
+        "bitCorrelation": 0.926571,
+        "entropyCorrelation": 0.621379,
+        "gridCorrelation": -0.014556,
+        "carrierCorrelation": 0.679489,
+        "bridgeCoupling": -0.13234,
+        "hopfCoupling": -0.022023
+      }
+    ],
+    "voices": [
+      {
+        "index": 0,
+        "gate": 1,
+        "ratio": 1.570261,
+        "coherence": 0.348003,
+        "braid": 0.25,
+        "bitDensity": 0,
+        "bitEntropy": 0,
+        "gridEnergy": 0.064957,
+        "carrierEnergy": 0.655221,
+        "dominantFrequency": 265.768682,
+        "continuumAlignment": 0.53747,
+        "orientation": [
+          0.692281,
+          0.590193,
+          0.234562,
+          -0.342638
+        ]
+      },
+      {
+        "index": 1,
+        "gate": 1,
+        "ratio": 1.140377,
+        "coherence": 0.348003,
+        "braid": 0.25,
+        "bitDensity": 1,
+        "bitEntropy": 1,
+        "gridEnergy": 0.073446,
+        "carrierEnergy": 0.662779,
+        "dominantFrequency": 147.766979,
+        "continuumAlignment": 0.680509,
+        "orientation": [
+          0.655061,
+          0.686904,
+          0.253913,
+          -0.185972
+        ]
+      },
+      {
+        "index": 2,
+        "gate": 1,
+        "ratio": 0.98169,
+        "coherence": 0.348003,
+        "braid": 0.25,
+        "bitDensity": 0.5,
+        "bitEntropy": 1,
+        "gridEnergy": 0.035071,
+        "carrierEnergy": 0.620011,
+        "dominantFrequency": 128.808337,
+        "continuumAlignment": 0.563923,
+        "orientation": [
+          0.622728,
+          0.658667,
+          0.24993,
+          -0.340445
+        ]
+      },
+      {
+        "index": 3,
+        "gate": 1,
+        "ratio": 1.046982,
+        "coherence": 0.348003,
+        "braid": 0.25,
+        "bitDensity": 1,
+        "bitEntropy": 1,
+        "gridEnergy": 0.026997,
+        "carrierEnergy": 0.772623,
+        "dominantFrequency": 151.068254,
+        "continuumAlignment": 0.674591,
+        "orientation": [
+          0.670753,
+          0.672321,
+          0.250748,
+          -0.187614
+        ]
+      }
+    ],
+    "braiding": {
+      "bridgeToGateFlux": 0.260878,
+      "bridgeToRatioFlux": 0.269862,
+      "hopfToCarrierFlux": 0.517066,
+      "gateToGridFlux": 0.999979,
+      "ratioToBitFlux": 0.998906
+    },
+    "quaternion": {
+      "bridge": [
+        0.998966,
+        -0.039561,
+        0.012862,
+        -0.018336
+      ],
+      "hopf": [
+        0.863857,
+        0.303585,
+        0.271218,
+        0.296695
+      ]
+    }
+  },
+  "lattice": {
+    "timestamp": 0,
+    "progress": 0.35,
+    "transport": {
+      "playing": true,
+      "mode": "test"
+    },
+    "orientation": {
+      "continuum": [
+        0.364159,
+        0.655977,
+        0.368188,
+        0.549108
+      ],
+      "voice": [
+        0.664486,
+        0.652711,
+        0.247874,
+        -0.26643
+      ],
+      "bridge": [
+        0.998966,
+        -0.039561,
+        0.012862,
+        -0.018336
+      ],
+      "hopf": [
+        0.863857,
+        0.303585,
+        0.271218,
+        0.296695
+      ],
+      "residual": [
+        0.033935,
+        0.709499,
+        0.385866,
+        0.5887
+      ],
+      "voiceResidual": [
+        0.025027,
+        0.888608,
+        0.313856,
+        -0.333533
+      ]
+    },
+    "synergy": {
+      "bridgeContinuum": 0.332499,
+      "hopfContinuum": 0.776503,
+      "voiceContinuum": 0.615108,
+      "bridgeVoice": 0.646051,
+      "continuumResidual": 0.943104,
+      "voiceResidual": 0.763294,
+      "coherence": 0.348003,
+      "braid": 0.25,
+      "carrier": 0.642565,
+      "gateMean": 1,
+      "ratioMean": 1.184828,
+      "ratioVariance": 0.0527,
+      "sequenceDensity": 0.625
+    },
+    "flux": {
+      "density": 1.33594,
+      "variance": 0.351689,
+      "bridgeAlignment": 0.332499,
+      "hopfAlignment": 0.776503,
+      "voiceAlignment": 0.615108,
+      "carrierEnergy": 0.677658,
+      "gridEnergy": 0.050118
+    },
+    "axes": [
+      {
+        "index": 0,
+        "intensity": 0,
+        "continuumProjection": 0.785374,
+        "voiceProjection": 0.779337,
+        "bridgeProjection": 0.84409,
+        "hopfProjection": 0.994821,
+        "gateFlux": 0.969555,
+        "ratioFlux": 1.158351,
+        "coherenceFlux": 0.337408,
+        "braidFlux": 0.242389,
+        "bitFlux": 0.596704,
+        "entropyFlux": 0.710037,
+        "gridFlux": 0.048919,
+        "carrierFlux": 0.657879,
+        "bridgeCoupling": 0.84409,
+        "hopfCoupling": 0.994821,
+        "orientation": [
+          0.862383,
+          0.36461,
+          0.189796,
+          0.29552
+        ]
+      },
+      {
+        "index": 1,
+        "intensity": 0,
+        "continuumProjection": 0.589372,
+        "voiceProjection": 0.188788,
+        "bridgeProjection": -0.516635,
+        "hopfProjection": -0.022715,
+        "gateFlux": 0.956517,
+        "ratioFlux": 1.124901,
+        "coherenceFlux": 0.332871,
+        "braidFlux": 0.239129,
+        "bitFlux": 0.615396,
+        "entropyFlux": 0.735269,
+        "gridFlux": 0.047757,
+        "carrierFlux": 0.649031,
+        "bridgeCoupling": -0.516635,
+        "hopfCoupling": -0.022715,
+        "orientation": [
+          -0.485587,
+          0.774859,
+          0.30675,
+          0.264013
+        ]
+      },
+      {
+        "index": 2,
+        "intensity": 0,
+        "continuumProjection": 0.121893,
+        "voiceProjection": -0.235553,
+        "bridgeProjection": -0.055561,
+        "hopfProjection": 0.096588,
+        "gateFlux": 0.362885,
+        "ratioFlux": 0.428629,
+        "coherenceFlux": 0.126285,
+        "braidFlux": 0.090721,
+        "bitFlux": 0.229468,
+        "entropyFlux": 0.274954,
+        "gridFlux": 0.018157,
+        "carrierFlux": 0.246026,
+        "bridgeCoupling": -0.055561,
+        "hopfCoupling": 0.096588,
+        "orientation": [
+          -0.079807,
+          -0.475789,
+          0.826948,
+          0.288813
+        ]
+      },
+      {
+        "index": 3,
+        "intensity": 0,
+        "continuumProjection": 0.144814,
+        "voiceProjection": -0.549098,
+        "bridgeProjection": -0.13234,
+        "hopfProjection": -0.022023,
+        "gateFlux": -0.388564,
+        "ratioFlux": -0.472257,
+        "coherenceFlux": -0.135222,
+        "braidFlux": -0.097141,
+        "bitFlux": -0.198159,
+        "entropyFlux": -0.260118,
+        "gridFlux": -0.019507,
+        "carrierFlux": -0.258795,
+        "bridgeCoupling": -0.13234,
+        "hopfCoupling": -0.022023,
+        "orientation": [
+          -0.118874,
+          -0.200692,
+          -0.431323,
+          0.871523
+        ]
+      }
+    ],
+    "voices": [
+      {
+        "index": 0,
+        "gate": 1,
+        "ratio": 1.570261,
+        "coherence": 0.348003,
+        "braid": 0.25,
+        "continuumAlignment": 0.53747,
+        "bridgeProjection": 0.677516,
+        "hopfProjection": 0.739164,
+        "bitDensity": 0,
+        "bitEntropy": 0,
+        "gridEnergy": 0.064957,
+        "carrierEnergy": 0.655221,
+        "dominantFrequency": 265.768682,
+        "sequence": "10",
+        "sequenceBits": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "spinorPhase": 0.517771,
+        "spinorPan": -0.158247,
+        "voiceWeight": 3.888442,
+        "orientation": [
+          0.692281,
+          0.590193,
+          0.234562,
+          -0.342638
+        ],
+        "carriers": [
+          {
+            "label": "sub",
+            "frequency": 265.768682,
+            "amplitude": 0.019716,
+            "energy": 0.232447,
+            "active": 1
+          },
+          {
+            "label": "prime",
+            "frequency": 557.070272,
+            "amplitude": 0.018525,
+            "energy": 0.218407,
+            "active": 1
+          },
+          {
+            "label": "hyper",
+            "frequency": 1723.238369,
+            "amplitude": 0.017334,
+            "energy": 0.204367,
+            "active": 1
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "gate": 1,
+        "ratio": 1.140377,
+        "coherence": 0.348003,
+        "braid": 0.25,
+        "continuumAlignment": 0.680509,
+        "bridgeProjection": 0.633886,
+        "hopfProjection": 0.788102,
+        "bitDensity": 1,
+        "bitEntropy": 1,
+        "gridEnergy": 0.073446,
+        "carrierEnergy": 0.662779,
+        "dominantFrequency": 147.766979,
+        "sequence": "F",
+        "sequenceBits": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "spinorPhase": 0.474517,
+        "spinorPan": -0.434999,
+        "voiceWeight": 3.474605,
+        "orientation": [
+          0.655061,
+          0.686904,
+          0.253913,
+          -0.185972
+        ],
+        "carriers": [
+          {
+            "label": "sub",
+            "frequency": 147.766979,
+            "amplitude": 0.01869,
+            "energy": 0.284486,
+            "active": 1
+          },
+          {
+            "label": "prime",
+            "frequency": 257.797652,
+            "amplitude": 0.014514,
+            "energy": 0.220926,
+            "active": 1
+          },
+          {
+            "label": "hyper",
+            "frequency": 632.731186,
+            "amplitude": 0.011826,
+            "energy": 0.157367,
+            "active": 1
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "gate": 1,
+        "ratio": 0.98169,
+        "coherence": 0.348003,
+        "braid": 0.25,
+        "continuumAlignment": 0.563923,
+        "bridgeProjection": 0.605484,
+        "hopfProjection": 0.704687,
+        "bitDensity": 0.5,
+        "bitEntropy": 1,
+        "gridEnergy": 0.035071,
+        "carrierEnergy": 0.620011,
+        "dominantFrequency": 128.808337,
+        "sequence": "15",
+        "sequenceBits": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "spinorPhase": 0.676068,
+        "spinorPan": 0.126781,
+        "voiceWeight": 3.234775,
+        "orientation": [
+          0.622728,
+          0.658667,
+          0.24993,
+          -0.340445
+        ],
+        "carriers": [
+          {
+            "label": "sub",
+            "frequency": 128.808337,
+            "amplitude": 0.019066,
+            "energy": 0.286563,
+            "active": 1
+          },
+          {
+            "label": "prime",
+            "frequency": 220.406407,
+            "amplitude": 0.01375,
+            "energy": 0.20667,
+            "active": 1
+          },
+          {
+            "label": "hyper",
+            "frequency": 515.432066,
+            "amplitude": 0.011976,
+            "energy": 0.126777,
+            "active": 1
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "gate": 1,
+        "ratio": 1.046982,
+        "coherence": 0.348003,
+        "braid": 0.25,
+        "continuumAlignment": 0.674591,
+        "bridgeProjection": 0.650128,
+        "hopfProjection": 0.795885,
+        "bitDensity": 1,
+        "bitEntropy": 1,
+        "gridEnergy": 0.026997,
+        "carrierEnergy": 0.772623,
+        "dominantFrequency": 151.068254,
+        "sequence": "1F",
+        "sequenceBits": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "spinorPhase": 0.979829,
+        "spinorPan": 0.949426,
+        "voiceWeight": 3.444604,
+        "orientation": [
+          0.670753,
+          0.672321,
+          0.250748,
+          -0.187614
+        ],
+        "carriers": [
+          {
+            "label": "sub",
+            "frequency": 151.068254,
+            "amplitude": 0.023192,
+            "energy": 0.333143,
+            "active": 1
+          },
+          {
+            "label": "prime",
+            "frequency": 262.70993,
+            "amplitude": 0.017929,
+            "energy": 0.257541,
+            "active": 1
+          },
+          {
+            "label": "hyper",
+            "frequency": 647.458189,
+            "amplitude": 0.012666,
+            "energy": 0.181939,
+            "active": 1
+          }
+        ]
+      }
+    ],
+    "carriers": [
+      {
+        "voice": 0,
+        "label": "sub",
+        "frequency": 265.768682,
+        "amplitude": 0.019716,
+        "energy": 0.232447,
+        "active": 1,
+        "alignment": 0.53747,
+        "bridgeProjection": 0.677516,
+        "hopfProjection": 0.739164
+      },
+      {
+        "voice": 0,
+        "label": "prime",
+        "frequency": 557.070272,
+        "amplitude": 0.018525,
+        "energy": 0.218407,
+        "active": 1,
+        "alignment": 0.53747,
+        "bridgeProjection": 0.677516,
+        "hopfProjection": 0.739164
+      },
+      {
+        "voice": 0,
+        "label": "hyper",
+        "frequency": 1723.238369,
+        "amplitude": 0.017334,
+        "energy": 0.204367,
+        "active": 1,
+        "alignment": 0.53747,
+        "bridgeProjection": 0.677516,
+        "hopfProjection": 0.739164
+      },
+      {
+        "voice": 1,
+        "label": "sub",
+        "frequency": 147.766979,
+        "amplitude": 0.01869,
+        "energy": 0.284486,
+        "active": 1,
+        "alignment": 0.680509,
+        "bridgeProjection": 0.633886,
+        "hopfProjection": 0.788102
+      },
+      {
+        "voice": 1,
+        "label": "prime",
+        "frequency": 257.797652,
+        "amplitude": 0.014514,
+        "energy": 0.220926,
+        "active": 1,
+        "alignment": 0.680509,
+        "bridgeProjection": 0.633886,
+        "hopfProjection": 0.788102
+      },
+      {
+        "voice": 1,
+        "label": "hyper",
+        "frequency": 632.731186,
+        "amplitude": 0.011826,
+        "energy": 0.157367,
+        "active": 1,
+        "alignment": 0.680509,
+        "bridgeProjection": 0.633886,
+        "hopfProjection": 0.788102
+      },
+      {
+        "voice": 2,
+        "label": "sub",
+        "frequency": 128.808337,
+        "amplitude": 0.019066,
+        "energy": 0.286563,
+        "active": 1,
+        "alignment": 0.563923,
+        "bridgeProjection": 0.605484,
+        "hopfProjection": 0.704687
+      },
+      {
+        "voice": 2,
+        "label": "prime",
+        "frequency": 220.406407,
+        "amplitude": 0.01375,
+        "energy": 0.20667,
+        "active": 1,
+        "alignment": 0.563923,
+        "bridgeProjection": 0.605484,
+        "hopfProjection": 0.704687
+      },
+      {
+        "voice": 2,
+        "label": "hyper",
+        "frequency": 515.432066,
+        "amplitude": 0.011976,
+        "energy": 0.126777,
+        "active": 1,
+        "alignment": 0.563923,
+        "bridgeProjection": 0.605484,
+        "hopfProjection": 0.704687
+      },
+      {
+        "voice": 3,
+        "label": "sub",
+        "frequency": 151.068254,
+        "amplitude": 0.023192,
+        "energy": 0.333143,
+        "active": 1,
+        "alignment": 0.674591,
+        "bridgeProjection": 0.650128,
+        "hopfProjection": 0.795885
+      },
+      {
+        "voice": 3,
+        "label": "prime",
+        "frequency": 262.70993,
+        "amplitude": 0.017929,
+        "energy": 0.257541,
+        "active": 1,
+        "alignment": 0.674591,
+        "bridgeProjection": 0.650128,
+        "hopfProjection": 0.795885
+      },
+      {
+        "voice": 3,
+        "label": "hyper",
+        "frequency": 647.458189,
+        "amplitude": 0.012666,
+        "energy": 0.181939,
+        "active": 1,
+        "alignment": 0.674591,
+        "bridgeProjection": 0.650128,
+        "hopfProjection": 0.795885
+      }
+    ],
+    "spectral": {
+      "span": 1594.430031,
+      "mean": 459.188027,
+      "variance": 179232.625577,
+      "active": 12,
+      "energy": 2.710634,
+      "gridEnergy": 0.20047
+    },
+    "timeline": {
+      "sequence": "10F151F",
+      "density": 0.625,
+      "weights": [
+        3.888442,
+        3.474605,
+        3.234775,
+        3.444604
+      ]
+    }
+  },
+  "constellation": {
+    "timestamp": 0,
+    "progress": 0.35,
+    "transport": {
+      "playing": true,
+      "mode": "test"
+    },
+    "orientation": {
+      "continuum": [
+        0.364159,
+        0.655977,
+        0.368188,
+        0.549108
+      ],
+      "voice": [
+        0.664486,
+        0.652711,
+        0.247874,
+        -0.26643
+      ],
+      "residual": [
+        0.033935,
+        0.709499,
+        0.385866,
+        0.5887
+      ],
+      "bridge": [
+        0.998966,
+        -0.039561,
+        0.012862,
+        -0.018336
+      ],
+      "hopf": [
+        0.863857,
+        0.303585,
+        0.271218,
+        0.296695
+      ],
+      "centroid": [
+        0.664486,
+        0.652711,
+        0.247874,
+        -0.26643
+      ]
+    },
+    "centroid": {
+      "bridgeProjection": 0.646051,
+      "hopfProjection": 0.760354,
+      "dispersion": {
+        "mean": 0.008085,
+        "max": 0.010666
+      }
+    },
+    "nodes": [
+      {
+        "index": 0,
+        "orientation": [
+          0.692281,
+          0.590193,
+          0.234562,
+          -0.342638
+        ],
+        "gate": 1,
+        "ratio": 1.570261,
+        "coherence": 0.348003,
+        "braid": 0.25,
+        "continuumAlignment": 0.53747,
+        "bridgeProjection": 0.677516,
+        "hopfProjection": 0.739164,
+        "bitDensity": 0,
+        "bitEntropy": 0,
+        "gridEnergy": 0.064957,
+        "carrierEnergy": 0.655221,
+        "dominantFrequency": 265.768682,
+        "sequence": "10",
+        "sequenceBits": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "spinorPhase": 0.517771,
+        "spinorPan": -0.158247,
+        "voiceWeight": 3.888442,
+        "carriers": [
+          {
+            "label": "sub",
+            "frequency": 265.768682,
+            "amplitude": 0.019716,
+            "energy": 0.232447,
+            "active": 1
+          },
+          {
+            "label": "prime",
+            "frequency": 557.070272,
+            "amplitude": 0.018525,
+            "energy": 0.218407,
+            "active": 1
+          },
+          {
+            "label": "hyper",
+            "frequency": 1723.238369,
+            "amplitude": 0.017334,
+            "energy": 0.204367,
+            "active": 1
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "orientation": [
+          0.655061,
+          0.686904,
+          0.253913,
+          -0.185972
+        ],
+        "gate": 1,
+        "ratio": 1.140377,
+        "coherence": 0.348003,
+        "braid": 0.25,
+        "continuumAlignment": 0.680509,
+        "bridgeProjection": 0.633886,
+        "hopfProjection": 0.788102,
+        "bitDensity": 1,
+        "bitEntropy": 1,
+        "gridEnergy": 0.073446,
+        "carrierEnergy": 0.662779,
+        "dominantFrequency": 147.766979,
+        "sequence": "F",
+        "sequenceBits": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "spinorPhase": 0.474517,
+        "spinorPan": -0.434999,
+        "voiceWeight": 3.474605,
+        "carriers": [
+          {
+            "label": "sub",
+            "frequency": 147.766979,
+            "amplitude": 0.01869,
+            "energy": 0.284486,
+            "active": 1
+          },
+          {
+            "label": "prime",
+            "frequency": 257.797652,
+            "amplitude": 0.014514,
+            "energy": 0.220926,
+            "active": 1
+          },
+          {
+            "label": "hyper",
+            "frequency": 632.731186,
+            "amplitude": 0.011826,
+            "energy": 0.157367,
+            "active": 1
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "orientation": [
+          0.622728,
+          0.658667,
+          0.24993,
+          -0.340445
+        ],
+        "gate": 1,
+        "ratio": 0.98169,
+        "coherence": 0.348003,
+        "braid": 0.25,
+        "continuumAlignment": 0.563923,
+        "bridgeProjection": 0.605484,
+        "hopfProjection": 0.704687,
+        "bitDensity": 0.5,
+        "bitEntropy": 1,
+        "gridEnergy": 0.035071,
+        "carrierEnergy": 0.620011,
+        "dominantFrequency": 128.808337,
+        "sequence": "15",
+        "sequenceBits": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "spinorPhase": 0.676068,
+        "spinorPan": 0.126781,
+        "voiceWeight": 3.234775,
+        "carriers": [
+          {
+            "label": "sub",
+            "frequency": 128.808337,
+            "amplitude": 0.019066,
+            "energy": 0.286563,
+            "active": 1
+          },
+          {
+            "label": "prime",
+            "frequency": 220.406407,
+            "amplitude": 0.01375,
+            "energy": 0.20667,
+            "active": 1
+          },
+          {
+            "label": "hyper",
+            "frequency": 515.432066,
+            "amplitude": 0.011976,
+            "energy": 0.126777,
+            "active": 1
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "orientation": [
+          0.670753,
+          0.672321,
+          0.250748,
+          -0.187614
+        ],
+        "gate": 1,
+        "ratio": 1.046982,
+        "coherence": 0.348003,
+        "braid": 0.25,
+        "continuumAlignment": 0.674591,
+        "bridgeProjection": 0.650128,
+        "hopfProjection": 0.795885,
+        "bitDensity": 1,
+        "bitEntropy": 1,
+        "gridEnergy": 0.026997,
+        "carrierEnergy": 0.772623,
+        "dominantFrequency": 151.068254,
+        "sequence": "1F",
+        "sequenceBits": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "spinorPhase": 0.979829,
+        "spinorPan": 0.949426,
+        "voiceWeight": 3.444604,
+        "carriers": [
+          {
+            "label": "sub",
+            "frequency": 151.068254,
+            "amplitude": 0.023192,
+            "energy": 0.333143,
+            "active": 1
+          },
+          {
+            "label": "prime",
+            "frequency": 262.70993,
+            "amplitude": 0.017929,
+            "energy": 0.257541,
+            "active": 1
+          },
+          {
+            "label": "hyper",
+            "frequency": 647.458189,
+            "amplitude": 0.012666,
+            "energy": 0.181939,
+            "active": 1
+          }
+        ]
+      }
+    ],
+    "sequence": {
+      "sequence": "10F151F",
+      "density": 0.625,
+      "weights": [
+        3.888442,
+        3.474605,
+        3.234775,
+        3.444604
+      ],
+      "bitDensity": 0.625,
+      "bitEntropy": 0.75
+    },
+    "gating": {
+      "mean": 1,
+      "variance": 0
+    },
+    "spinor": {
+      "coherence": 0.348003,
+      "braid": 0.25,
+      "ratioMean": 1.184828,
+      "ratioVariance": 0.0527,
+      "panMean": 0.12074,
+      "panVariance": 0.268359,
+      "phaseMean": 0.662046,
+      "phaseVariance": 0.039291
+    },
+    "energy": {
+      "carrier": 0.642565,
+      "grid": 0.20047,
+      "continuum": 0.677658,
+      "signal": 0
+    },
+    "frequency": {
+      "min": 128.808337,
+      "max": 265.768682,
+      "mean": 173.353063,
+      "centroid": 459.188027,
+      "span": 1594.430031,
+      "variance": 179232.625577
+    },
+    "flux": {
+      "density": 1.33594,
+      "variance": 0.351689,
+      "bridgeAlignment": 0.332499,
+      "hopfAlignment": 0.776503,
+      "voiceAlignment": 0.615108
+    },
+    "synergy": {
+      "bridgeContinuum": 0.332499,
+      "hopfContinuum": 0.776503,
+      "voiceContinuum": 0.615108,
+      "bridgeVoice": 0.646051,
+      "gateMean": 1,
+      "sequenceDensity": 0.625
+    },
+    "carriers": {
+      "summary": {
+        "active": 12,
+        "energy": 2.710634,
+        "meanFrequency": 459.188027,
+        "span": 1594.430031
+      },
+      "spectral": {
+        "span": 1594.430031,
+        "variance": 179232.625577,
+        "mean": 459.188027,
+        "active": 12
+      },
+      "entries": [
+        {
+          "voice": 0,
+          "label": "sub",
+          "frequency": 265.768682,
+          "amplitude": 0.019716,
+          "energy": 0.232447,
+          "active": 1,
+          "alignment": 0.53747,
+          "bridgeProjection": 0.677516,
+          "hopfProjection": 0.739164
+        },
+        {
+          "voice": 0,
+          "label": "prime",
+          "frequency": 557.070272,
+          "amplitude": 0.018525,
+          "energy": 0.218407,
+          "active": 1,
+          "alignment": 0.53747,
+          "bridgeProjection": 0.677516,
+          "hopfProjection": 0.739164
+        },
+        {
+          "voice": 0,
+          "label": "hyper",
+          "frequency": 1723.238369,
+          "amplitude": 0.017334,
+          "energy": 0.204367,
+          "active": 1,
+          "alignment": 0.53747,
+          "bridgeProjection": 0.677516,
+          "hopfProjection": 0.739164
+        },
+        {
+          "voice": 1,
+          "label": "sub",
+          "frequency": 147.766979,
+          "amplitude": 0.01869,
+          "energy": 0.284486,
+          "active": 1,
+          "alignment": 0.680509,
+          "bridgeProjection": 0.633886,
+          "hopfProjection": 0.788102
+        },
+        {
+          "voice": 1,
+          "label": "prime",
+          "frequency": 257.797652,
+          "amplitude": 0.014514,
+          "energy": 0.220926,
+          "active": 1,
+          "alignment": 0.680509,
+          "bridgeProjection": 0.633886,
+          "hopfProjection": 0.788102
+        },
+        {
+          "voice": 1,
+          "label": "hyper",
+          "frequency": 632.731186,
+          "amplitude": 0.011826,
+          "energy": 0.157367,
+          "active": 1,
+          "alignment": 0.680509,
+          "bridgeProjection": 0.633886,
+          "hopfProjection": 0.788102
+        },
+        {
+          "voice": 2,
+          "label": "sub",
+          "frequency": 128.808337,
+          "amplitude": 0.019066,
+          "energy": 0.286563,
+          "active": 1,
+          "alignment": 0.563923,
+          "bridgeProjection": 0.605484,
+          "hopfProjection": 0.704687
+        },
+        {
+          "voice": 2,
+          "label": "prime",
+          "frequency": 220.406407,
+          "amplitude": 0.01375,
+          "energy": 0.20667,
+          "active": 1,
+          "alignment": 0.563923,
+          "bridgeProjection": 0.605484,
+          "hopfProjection": 0.704687
+        },
+        {
+          "voice": 2,
+          "label": "hyper",
+          "frequency": 515.432066,
+          "amplitude": 0.011976,
+          "energy": 0.126777,
+          "active": 1,
+          "alignment": 0.563923,
+          "bridgeProjection": 0.605484,
+          "hopfProjection": 0.704687
+        },
+        {
+          "voice": 3,
+          "label": "sub",
+          "frequency": 151.068254,
+          "amplitude": 0.023192,
+          "energy": 0.333143,
+          "active": 1,
+          "alignment": 0.674591,
+          "bridgeProjection": 0.650128,
+          "hopfProjection": 0.795885
+        },
+        {
+          "voice": 3,
+          "label": "prime",
+          "frequency": 262.70993,
+          "amplitude": 0.017929,
+          "energy": 0.257541,
+          "active": 1,
+          "alignment": 0.674591,
+          "bridgeProjection": 0.650128,
+          "hopfProjection": 0.795885
+        },
+        {
+          "voice": 3,
+          "label": "hyper",
+          "frequency": 647.458189,
+          "amplitude": 0.012666,
+          "energy": 0.181939,
+          "active": 1,
+          "alignment": 0.674591,
+          "bridgeProjection": 0.650128,
+          "hopfProjection": 0.795885
+        }
+      ]
+    }
+  }
+}
