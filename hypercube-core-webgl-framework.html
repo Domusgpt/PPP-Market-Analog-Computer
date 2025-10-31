@@ -4,6 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HypercubeCore Data Visualization Platform</title>
+    <script>
+        (function () {
+            const params = new URLSearchParams(window.location.search || '');
+            const embedMode = params.get('mode') === 'embed';
+            if (!embedMode) {
+                return;
+            }
+            document.documentElement.dataset.pppEmbed = 'true';
+            const existingConfig = (typeof window !== 'undefined' && window.PPP_CONFIG && typeof window.PPP_CONFIG === 'object')
+                ? { ...window.PPP_CONFIG }
+                : {};
+            const existingSonic = existingConfig.sonicGeometry && typeof existingConfig.sonicGeometry === 'object'
+                ? existingConfig.sonicGeometry
+                : {};
+            window.PPP_CONFIG = {
+                ...existingConfig,
+                embed: true,
+                exposeApi: false,
+                autoStream: existingConfig.autoStream !== undefined ? existingConfig.autoStream : true,
+                sonicGeometry: {
+                    ...existingSonic,
+                    autoEnable: existingSonic.autoEnable ?? false,
+                    mode: existingSonic.mode || existingSonic.outputMode || 'analysis'
+                }
+            };
+            if (typeof document !== 'undefined') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    if (document.body) {
+                        document.body.dataset.embed = 'true';
+                    }
+                });
+            }
+        })();
+    </script>
     <script type="module" src="./scripts/console-protect.js" defer></script>
     <style>
         :root {
@@ -315,6 +349,15 @@
             flex-direction: column;
             gap: 0.25rem;
             margin-bottom: 0.6rem;
+        }
+        html[data-ppp-embed="true"] #controlPanel,
+        html[data-ppp-embed="true"] .control-panel-toggle {
+            display: none !important;
+        }
+        html[data-ppp-embed="true"] #statusMessage,
+        html[data-ppp-embed="true"] #uniformPreview,
+        html[data-ppp-embed="true"] .small-print {
+            display: none !important;
         }
     </style>
 </head>

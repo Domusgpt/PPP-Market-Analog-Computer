@@ -16,7 +16,7 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #071526;
+            background-color: #06101d;
             color: #d8f5ff;
         }
         body::before {
@@ -24,9 +24,9 @@
             position: fixed;
             inset: 0;
             background:
-                radial-gradient(circle at 20% 20%, rgba(80, 180, 255, 0.15), transparent 55%),
-                radial-gradient(circle at 80% 10%, rgba(120, 90, 255, 0.12), transparent 50%),
-                linear-gradient(180deg, rgba(6, 25, 48, 0.6), rgba(6, 13, 28, 0.9));
+                radial-gradient(circle at 18% 20%, rgba(90, 190, 255, 0.16), transparent 55%),
+                radial-gradient(circle at 82% 10%, rgba(130, 95, 255, 0.12), transparent 52%),
+                linear-gradient(190deg, rgba(4, 16, 32, 0.9), rgba(10, 25, 48, 0.75));
             pointer-events: none;
             z-index: -1;
         }
@@ -38,48 +38,30 @@
             height: 320px;
         }
         .section-card {
-            background: rgba(9, 27, 54, 0.82);
+            background: rgba(6, 20, 40, 0.88);
             border: 1px solid rgba(104, 178, 255, 0.25);
             border-radius: 1rem;
             padding: 1.75rem;
-            box-shadow: 0 22px 50px -30px rgba(0, 89, 190, 0.6);
+            box-shadow: 0 22px 50px -34px rgba(0, 89, 190, 0.65);
         }
         .metric-value {
-            font-size: 2.6rem;
+            font-size: 2.55rem;
             font-weight: 700;
             background: linear-gradient(120deg, #58c5ff, #8a6fff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .cta-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.9rem 1.8rem;
-            border-radius: 999px;
-            border: 1px solid rgba(120, 200, 255, 0.35);
-            background: rgba(12, 36, 64, 0.82);
-            color: #d8f5ff;
-            font-weight: 600;
-            font-size: 0.95rem;
-            letter-spacing: 0.01em;
-            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-        }
-        .cta-button:hover {
-            transform: translateY(-1px);
-            background: rgba(18, 62, 96, 0.92);
-            box-shadow: 0 18px 36px rgba(64, 180, 255, 0.35);
-        }
-        .cta-button:focus-visible {
-            outline: 2px solid rgba(120, 200, 255, 0.65);
-            outline-offset: 3px;
+        .section-title {
+            font-size: 1rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(146, 212, 255, 0.82);
         }
         .embed-shell {
             position: relative;
             border-radius: 1rem;
             border: 1px solid rgba(98, 182, 255, 0.25);
-            background: rgba(6, 18, 38, 0.9);
+            background: rgba(4, 12, 26, 0.94);
             overflow: hidden;
             aspect-ratio: 16 / 9;
         }
@@ -87,133 +69,170 @@
             width: 100%;
             height: 100%;
             border: none;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        .embed-shell iframe[data-loaded="true"] {
-            opacity: 1;
-        }
-        .embed-overlay {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            padding: 2rem;
-            background: linear-gradient(140deg, rgba(8, 24, 52, 0.92), rgba(12, 32, 64, 0.78));
-            text-align: center;
-            transition: opacity 0.4s ease;
-        }
-        .embed-overlay h3 {
-            margin: 0;
-            font-size: 1.4rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: #83d4ff;
-        }
-        .embed-overlay p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: rgba(210, 234, 255, 0.82);
-            max-width: 32rem;
-            line-height: 1.5;
         }
         .discreet-text {
-            font-size: 0.75rem;
-            color: rgba(165, 214, 255, 0.65);
+            font-size: 0.78rem;
+            color: rgba(165, 214, 255, 0.68);
+            line-height: 1.55;
+        }
+        .list-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        @media (min-width: 1024px) {
+            .list-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
     </style>
 </head>
 <body class="antialiased">
-    <div class="max-w-6xl mx-auto px-4 md:px-8 py-12 md:py-16 space-y-20">
+    <div class="max-w-6xl mx-auto px-4 md:px-8 py-12 md:py-16 space-y-24">
         <header class="space-y-6 text-center md:text-left">
-            <p class="uppercase tracking-[0.25em] text-xs font-semibold text-blue-300/80">Engineering Status • PPP Dual-Stream Instrumentation</p>
+            <p class="section-title">PPP Engineering Status • Dual-Stream Instrumentation</p>
             <h1 class="text-4xl md:text-5xl font-extrabold leading-tight text-white">Polytopal Projection Processing Platform</h1>
             <p class="text-base md:text-lg text-blue-100/90 max-w-3xl mx-auto md:mx-0">
-                Production build pairing Hypercube WebGL transport, calibrated quaternion ingest, and spinor sonic geometry. This page summarizes the live release
-                and provides a secured demo surface without exposing the legacy prototype.
+                This build unifies the Hypercube visual transport, quaternion ingest, calibration toolkit, and spinor sonic geometry into a production package.
+                The demo below embeds the live runtime without the operator console while the remainder of the page documents the release scope for partner teams.
             </p>
         </header>
 
         <main class="space-y-24">
-            <section id="release-snapshot" class="space-y-8">
+            <section id="snapshot" class="space-y-8">
                 <h2 class="text-2xl md:text-3xl font-semibold text-white">Release Snapshot</h2>
                 <div class="grid gap-6 md:grid-cols-3">
                     <article class="section-card space-y-2">
-                        <p class="metric-value">PPP Runtime v2025.10</p>
-                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">Hypercube transport stack</p>
+                        <p class="metric-value">Hypercube Runtime v2025.10</p>
+                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">WebGL transport stack</p>
                         <ul class="text-sm space-y-1 text-blue-100/70">
-                            <li>• WebGL renderer with live uniform audit</li>
-                            <li>• Recorder / player parity across 64 channels</li>
-                            <li>• Spinor overlay + performance metrics</li>
+                            <li>• Deterministic renderer with uniform inspector & spinor overlay</li>
+                            <li>• Recorder / player parity across 64 mapped channels</li>
+                            <li>• Auto-stream baseline plus playback + live ingress orchestration</li>
                         </ul>
                     </article>
                     <article class="section-card space-y-2">
                         <p class="metric-value">Calibration Suite</p>
-                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">Dataset automation & telemetry</p>
+                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">Dataset automation</p>
                         <ul class="text-sm space-y-1 text-blue-100/70">
-                            <li>• Sequenced calibration plans with parity scoring</li>
-                            <li>• Manifest export & release insights in UI/API</li>
-                            <li>• Headless runner for CI-grade data capture</li>
+                            <li>• Toolkit sequencing canonical motion plans with parity metrics</li>
+                            <li>• Dataset builder exporting manifests & telemetry bundles</li>
+                            <li>• Insight engine narrating drift, fidelity, and remediation guidance</li>
                         </ul>
                     </article>
                     <article class="section-card space-y-2">
                         <p class="metric-value">Sonic Geometry</p>
-                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">Quaternion-coupled descriptors</p>
+                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">Quaternion-coupled telemetry</p>
                         <ul class="text-sm space-y-1 text-blue-100/70">
-                            <li>• Double-quaternion bridge with Hopf fibers</li>
-                            <li>• Continuum lattice & constellation exports</li>
-                            <li>• Hybrid (audio + data) / analysis-only modes</li>
+                            <li>• Double-quaternion bridge with Hopf fiber analytics</li>
+                            <li>• Signal, transduction, manifold, topology, continuum & lattice exports</li>
+                            <li>• Hybrid (audio + data) or analysis-only modes with cloned payload APIs</li>
                         </ul>
                     </article>
                 </div>
             </section>
 
             <section id="demo" class="space-y-6">
-                <h2 class="text-2xl md:text-3xl font-semibold text-white">Secure Demo Access</h2>
-                <div class="section-card space-y-6">
-                    <div class="embed-shell" id="demoShell">
-                        <div class="embed-overlay" id="demoOverlay">
-                            <h3>PPP Hypercube Control Surface</h3>
-                            <p>The demo runs the production transport stack. Console access remains locked; developer tooling is recorded under the PPP security policy. Activate only from trusted workstations.</p>
-                            <button type="button" class="cta-button" id="activateDemo">
-                                Activate Secure Demo
-                                <span aria-hidden="true">→</span>
-                            </button>
-                            <p class="discreet-text">Launching loads <code>hypercube-core-webgl-framework.html</code> into the sandboxed frame.</p>
-                        </div>
-                        <iframe id="demoFrame" title="PPP Hypercube Demo" data-src="hypercube-core-webgl-framework.html" allow="fullscreen"></iframe>
+                <h2 class="text-2xl md:text-3xl font-semibold text-white">Embedded Demo</h2>
+                <p class="text-sm text-blue-100/80 max-w-3xl">
+                    The iframe streams <code>hypercube-core-webgl-framework.html?mode=embed</code>, hiding the operator console while preserving the security banner and auto-streamed synthetic data.
+                    Developer tooling remains locked; DevTools attempts surface the PPP safeguard overlay.
+                </p>
+                <div class="embed-shell">
+                    <iframe title="PPP Hypercube Demo" src="hypercube-core-webgl-framework.html?mode=embed" allow="fullscreen" loading="lazy"></iframe>
+                </div>
+                <div class="list-grid">
+                    <div class="section-card space-y-3">
+                        <h3 class="text-xl font-semibold text-white">What You Are Seeing</h3>
+                        <ul class="text-sm space-y-2 text-blue-100/75">
+                            <li><strong>Auto-stream transport:</strong> Synthetic channel data drives the renderer and sonic lattice immediately on load.</li>
+                            <li><strong>Spinor overlay:</strong> The QA panel remains visible for parity inspections without the surrounding controls.</li>
+                            <li><strong>Console guard:</strong> Attempts to open DevTools trigger the PPP security overlay and banner messaging.</li>
+                        </ul>
                     </div>
-                    <ul class="text-sm space-y-2 text-blue-100/70">
-                        <li><strong>Live ingress:</strong> WebSocket + Web Serial adapters with reconnect, latency samples, and per-frame telemetry summaries.</li>
-                        <li><strong>Calibration workflow:</strong> Dataset builder orchestrates motion plans, parity scoring, manifest download, and narrative QA guidance.</li>
-                        <li><strong>Sonic exports:</strong> Spinor topology, flux continuum, lattice, and constellation payloads stream through <code>PPP.sonicGeometry</code> helpers.</li>
+                    <div class="section-card space-y-3">
+                        <h3 class="text-xl font-semibold text-white">Operator Console Access</h3>
+                        <p class="text-sm text-blue-100/75">
+                            Analysts requiring the full transport surface can open the console-enabled build directly at
+                            <code>hypercube-core-webgl-framework.html</code> (PPP credentials required). The embed mirrors runtime behaviour but suppresses configuration controls,
+                            calibration triggers, and download actions to keep the public experience read-only.
+                        </p>
+                    </div>
+                </div>
+                <p class="discreet-text">Legacy prototype assets have been withdrawn from deployment; the reference bundle remains offline at <code>archive/legacy-2024-site.tar.gz</code> for audit only.</p>
+            </section>
+
+            <section id="platform" class="space-y-6">
+                <h2 class="text-2xl md:text-3xl font-semibold text-white">Platform Stack</h2>
+                <div class="grid gap-6 md:grid-cols-2">
+                    <article class="section-card space-y-3">
+                        <h3 class="text-xl font-semibold text-white">Transport & Mapping</h3>
+                        <ul class="text-sm space-y-2 text-blue-100/75">
+                            <li><strong>DataMapper</strong> normalises up to 64 channels with smoothing, range remaps, and preset registration (`scripts/DataMapper.js`).</li>
+                            <li><strong>HypercubeRenderer</strong> projects polytopal uniforms with deterministic shader parameters (`scripts/HypercubeRenderer.js`).</li>
+                            <li><strong>DevelopmentTracker</strong> captures session logs surfaced within the console and via <code>PPP.recordDevelopmentEntry()</code>.</li>
+                            <li><strong>Recorder / Player</strong> export and replay channel streams with timeline, loop, and uniform snapshot support.</li>
+                        </ul>
+                    </article>
+                    <article class="section-card space-y-3">
+                        <h3 class="text-xl font-semibold text-white">Live Ingest & Telemetry</h3>
+                        <ul class="text-sm space-y-2 text-blue-100/75">
+                            <li><strong>LiveQuaternionAdapters</strong> manage WebSocket / Web Serial cadence, latencies, and reconnect state (`scripts/LiveQuaternionAdapters.js`).</li>
+                            <li><strong>liveTelemetry</strong> aggregates per-frame metrics and status narratives for dashboards (`scripts/liveTelemetry.js`).</li>
+                            <li><strong>Headless runner</strong> reproduces sonic telemetry without DOM / audio dependencies for CI pipelines (`scripts/headlessRunner.js`).</li>
+                            <li><strong>Telemetry schemas</strong> are versioned in `docs/telemetry-schemas.md` with JSON exemplars under `samples/`.</li>
+                        </ul>
+                    </article>
+                </div>
+            </section>
+
+            <section id="calibration" class="space-y-6">
+                <h2 class="text-2xl md:text-3xl font-semibold text-white">Calibration Lifecycle</h2>
+                <div class="section-card space-y-3">
+                    <p class="text-sm text-blue-100/80">The calibration toolkit converts canonical motion plans into reproducible datasets, preserving parity across the visual transport and sonic geometry engines.</p>
+                    <ul class="text-sm space-y-2 text-blue-100/75">
+                        <li><strong>CalibrationToolkit</strong> executes scripted sequences, captures spinor overlays, and funnels samples to the dataset builder.</li>
+                        <li><strong>CalibrationDatasetBuilder</strong> aggregates manifests with per-sequence scores, carrier gate ratios, and drift deltas.</li>
+                        <li><strong>CalibrationInsightEngine</strong> produces operator narratives highlighting deviations, regressions, and follow-up actions.</li>
+                        <li><strong>Release checks</strong> land as Node tests (`npm test`) covering the builder, insight engine, live telemetry, and sonic geometry modules.</li>
                     </ul>
-                    <p class="discreet-text">Legacy demo assets are packaged offline in <code>archive/legacy-2024-site.tar.gz</code> and excluded from deployment.</p>
+                    <p class="discreet-text">Reference artefacts: `samples/calibration/ppp-calibration-dataset-summary.json`, `samples/calibration/ppp-calibration-insights.json`.</p>
+                </div>
+            </section>
+
+            <section id="sonic" class="space-y-6">
+                <h2 class="text-2xl md:text-3xl font-semibold text-white">Sonic Geometry Telemetry</h2>
+                <div class="section-card space-y-3">
+                    <p class="text-sm text-blue-100/80">Quaternion spinor analysis mirrors the visual transport, enabling robotics and multimodal teams to ingest harmonic descriptors even when audio is muted.</p>
+                    <ul class="text-sm space-y-2 text-blue-100/75">
+                        <li><strong>SonicGeometryEngine</strong> synthesises carriers, adaptive gating, and performance metrics (`scripts/SonicGeometryEngine.js`).</li>
+                        <li><strong>Resonance & signal fabrics</strong> supply `PPP.sonicGeometry.get*` helpers across resonance, signal, transduction, and manifold payloads.</li>
+                        <li><strong>Topology, continuum, lattice, constellation</strong> builders expose higher-order harmonic diagnostics for downstream automation.</li>
+                        <li><strong>APIs</strong> clone payloads to prevent mutation; listeners are available via `onAnalysis`, `onSignal`, `onTopology`, etc.</li>
+                    </ul>
+                    <p class="discreet-text">Sample payloads ship in `samples/telemetry/*.json`; refer to `tests/sonicGeometryEngine.test.js` for regression coverage.</p>
+                </div>
+            </section>
+
+            <section id="governance" class="space-y-6">
+                <h2 class="text-2xl md:text-3xl font-semibold text-white">Operational Guidance</h2>
+                <div class="section-card space-y-4">
+                    <ul class="text-sm space-y-2 text-blue-100/75">
+                        <li><strong>Security posture:</strong> Console access remains gated; DevTools invocation raises the PPP overlay with contact instructions for authorized keys.</li>
+                        <li><strong>Runtime configuration:</strong> Inject <code>window.PPP_CONFIG</code> before loading the bundle to register callbacks, presets, or telemetry hooks.</li>
+                        <li><strong>Testing discipline:</strong> Execute <code>npm test</code> to validate calibration, sonic, and telemetry suites before distributing artifacts.</li>
+                        <li><strong>Dataset workflow:</strong> Run the calibration plan prior to export so manifests, parity scores, insights, and recorder payloads remain synchronized.</li>
+                    </ul>
+                    <p class="discreet-text">Contact: Paul Phillips · Clear Seas Solutions — for sandbox credentials, dataset publishing, and live ingest coordination.</p>
                 </div>
             </section>
 
             <section id="dimensionality" class="space-y-6">
                 <h2 class="text-2xl md:text-3xl font-semibold text-white">Dimensional Workload Comparison</h2>
                 <p class="text-sm text-blue-100/75 max-w-3xl">
-                    PPP operates across six rotational planes simultaneously. Quantifying the delta versus conventional 3D pipelines clarifies why the sonic lattice and calibration tooling are required for parity.
+                    PPP processes rotations across six planes simultaneously, doubling the degrees of freedom compared with conventional 3D stacks while sustaining synchronized visual and sonic transport.
                 </p>
                 <div class="chart-container">
                     <canvas id="dimensionsChart"></canvas>
-                </div>
-            </section>
-
-            <section id="safeguards" class="space-y-6">
-                <h2 class="text-2xl md:text-3xl font-semibold text-white">Operating Notes & Safeguards</h2>
-                <div class="section-card space-y-4">
-                    <ul class="text-sm space-y-3 text-blue-100/70">
-                        <li><strong>Console lock:</strong> DevTools trigger the PPP security overlay; sandbox keys are issued by Paul Phillips or Clear Seas Solutions.</li>
-                        <li><strong>Telemetry APIs:</strong> Register <code>window.PPP_CONFIG</code> before loading the bundle to capture recorder updates, sonic payload clones, and calibration events.</li>
-                        <li><strong>Dataset discipline:</strong> Run the calibration plan before exporting benchmark artifacts so manifests, parity scores, and insights ship together.</li>
-                        <li><strong>Testing:</strong> Node-based regression suites cover sonic geometry, live telemetry, and calibration builders. Execute <code>npm test</code> before distribution.</li>
-                    </ul>
                 </div>
             </section>
         </main>
@@ -225,105 +244,10 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const canvas = document.getElementById('polytopeCanvas');
-    if (canvas) {
-        const ctx = canvas.getContext('2d');
-        let width, height;
-
-        const vertices = [
-            [-1, -1, -1, -1], [-1, -1, -1, 1], [-1, -1, 1, -1], [-1, -1, 1, 1],
-            [-1, 1, -1, -1], [-1, 1, -1, 1], [-1, 1, 1, -1], [-1, 1, 1, 1],
-            [1, -1, -1, -1], [1, -1, -1, 1], [1, -1, 1, -1], [1, -1, 1, 1],
-            [1, 1, -1, -1], [1, 1, -1, 1], [1, 1, 1, -1], [1, 1, 1, 1]
-        ];
-
-        const edges = [
-            [0, 1], [0, 2], [0, 4], [0, 8], [1, 3], [1, 5], [1, 9], [2, 3], [2, 6],
-            [2, 10], [3, 7], [3, 11], [4, 5], [4, 6], [4, 12], [5, 7], [5, 13],
-            [6, 7], [6, 14], [7, 15], [8, 9], [8, 10], [8, 12], [9, 11], [9, 13],
-            [10, 11], [10, 14], [11, 15], [12, 13], [12, 14], [13, 15], [14, 15]
-        ];
-
-        let angleXY = 0, angleZW = 0, angleXW = 0, angleYZ = 0;
-
-        function resizeCanvas() {
-            width = canvas.clientWidth;
-            height = canvas.clientHeight;
-            canvas.width = width;
-            canvas.height = height;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        function rotate4D(vertex, angles) {
-            let [x, y, z, w] = vertex;
-            let d;
-            d = Math.cos(angles.xy) * y - Math.sin(angles.xy) * x;
-            x = Math.cos(angles.xy) * x + Math.sin(angles.xy) * y;
-            y = d;
-            d = Math.cos(angles.zw) * w - Math.sin(angles.zw) * z;
-            z = Math.cos(angles.zw) * z + Math.sin(angles.zw) * w;
-            w = d;
-            d = Math.cos(angles.xw) * w - Math.sin(angles.xw) * x;
-            x = Math.cos(angles.xw) * x + Math.sin(angles.xw) * w;
-            w = d;
-            d = Math.cos(angles.yz) * z - Math.sin(angles.yz) * y;
-            y = Math.cos(angles.yz) * y + Math.sin(angles.yz) * z;
-            z = d;
-            return [x, y, z, w];
-        }
-
-        function projectTo3D(vertex) {
-            const distance = 4;
-            const wProj = 1 / (distance - vertex[3]);
-            return [vertex[0] * wProj, vertex[1] * wProj, vertex[2] * wProj];
-        }
-
-        function projectTo2D(vertex) {
-            const angle = Math.PI / 4;
-            const x = vertex[0] * Math.cos(angle) - vertex[2] * Math.sin(angle);
-            const y = vertex[1];
-            return [x, y];
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, width, height);
-            ctx.save();
-            ctx.translate(width / 2, height / 2);
-            const scale = Math.min(width, height) * 0.8;
-
-            const projectedPoints2D = vertices.map((vertex) => {
-                const rotated = rotate4D(vertex, { xy: angleXY, zw: angleZW, xw: angleXW, yz: angleYZ });
-                const p3d = projectTo3D(rotated);
-                return projectTo2D(p3d);
-            });
-
-            ctx.strokeStyle = '#7ccfff';
-            ctx.lineWidth = 1.2;
-
-            edges.forEach((edge) => {
-                const p1 = projectedPoints2D[edge[0]];
-                const p2 = projectedPoints2D[edge[1]];
-                ctx.beginPath();
-                ctx.moveTo(p1[0] * scale, p1[1] * scale);
-                ctx.lineTo(p2[0] * scale, p2[1] * scale);
-                ctx.stroke();
-            });
-
-            ctx.restore();
-            angleXY += 0.0045;
-            angleZW += 0.0065;
-            angleXW += 0.002;
-            angleYZ += 0.0035;
-            requestAnimationFrame(draw);
-        }
-        draw();
-    }
-
     const chartCanvas = document.getElementById('dimensionsChart');
     if (chartCanvas) {
-        const chartContext = chartCanvas.getContext('2d');
-        new Chart(chartContext, {
+        const ctx = chartCanvas.getContext('2d');
+        new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: ['3D Spatial Computation', '4D PPP Kernel'],
@@ -370,28 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-        });
-    }
-
-    const activateButton = document.getElementById('activateDemo');
-    const demoFrame = document.getElementById('demoFrame');
-    const demoOverlay = document.getElementById('demoOverlay');
-    if (activateButton && demoFrame && demoOverlay) {
-        activateButton.addEventListener('click', () => {
-            if (!demoFrame.getAttribute('src')) {
-                const src = demoFrame.dataset.src;
-                if (src) {
-                    demoFrame.src = src;
-                    demoFrame.addEventListener('load', () => {
-                        demoFrame.dataset.loaded = 'true';
-                    }, { once: true });
-                }
-            }
-            demoOverlay.style.opacity = '0';
-            demoOverlay.style.pointerEvents = 'none';
-            setTimeout(() => {
-                demoOverlay.style.display = 'none';
-            }, 400);
         });
     }
 });
