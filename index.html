@@ -44,6 +44,30 @@
             padding: 1.75rem;
             box-shadow: 0 22px 50px -34px rgba(0, 89, 190, 0.65);
         }
+        .info-card {
+            position: relative;
+            outline: none;
+        }
+        .info-card:focus-visible {
+            outline: 2px solid rgba(134, 214, 255, 0.75);
+            outline-offset: 6px;
+        }
+        .info-more {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem 1.25rem;
+            border-radius: 0.85rem;
+            background: rgba(12, 40, 72, 0.9);
+            border: 1px solid rgba(126, 207, 255, 0.35);
+            color: rgba(200, 230, 255, 0.85);
+            font-size: 0.82rem;
+            line-height: 1.5;
+            box-shadow: 0 18px 34px -26px rgba(0, 140, 255, 0.65);
+        }
+        .info-card:hover .info-more,
+        .info-card:focus-within .info-more {
+            display: block;
+        }
         .metric-value {
             font-size: 2.55rem;
             font-weight: 700;
@@ -138,20 +162,36 @@
                     They are not guarantees—performance depends on the dataset, browser, and GPU configuration.
                 </p>
                 <div class="grid gap-6 md:grid-cols-3">
-                    <article class="section-card space-y-2">
+                    <article class="section-card info-card space-y-2" tabindex="0">
                         <p class="metric-value">≈60 FPS</p>
                         <p class="text-blue-100/80 text-sm uppercase tracking-wide">Visual transport</p>
-                        <p class="text-sm text-blue-100/75">Hypercube renders six-plane rotations and spinor overlays at ≈60 frames per second during auto-stream playback on the reference hardware.</p>
+                        <p class="text-sm text-blue-100/75">Hypercube aims for VSync-limited playback. On an RTX 3070 auto-stream scenes held ≈60 FPS while rendering six-plane rotations and the spinor overlay.</p>
+                        <div class="info-more">
+                            <p><strong>Validate it yourself:</strong></p>
+                            <ul>
+                                <li>Toggle the auto stream, open DevTools Performance panel, and record a short run to inspect frame pacing.</li>
+                                <li>In the full console build (with <code>PPP_CONFIG.exposeApi !== false</code>) call <code>PPP.sonicGeometry.engine?.getPerformanceMetrics()</code> while playback is active.</li>
+                                <li>Document measurements in <a href="DEV_TRACK.md">DEV_TRACK.md</a> to keep the observation current.</li>
+                            </ul>
+                        </div>
                     </article>
-                    <article class="section-card space-y-2">
+                    <article class="section-card info-card space-y-2" tabindex="0">
                         <p class="metric-value">64 Channels</p>
                         <p class="text-blue-100/80 text-sm uppercase tracking-wide">Synchronized ingest</p>
-                        <p class="text-sm text-blue-100/75">DataMapper and the recorder pipeline accept 64 scalar channels—the cap exposed by <code>DATA_CHANNEL_COUNT</code>—and mirror them into shader uniforms and sonic telemetry.</p>
+                        <p class="text-sm text-blue-100/75">DataMapper and the recorder pipeline accept 64 scalar channels—the limit defined in <code>scripts/constants.js</code>—and mirror them into shader uniforms and sonic telemetry.</p>
+                        <div class="info-more">
+                            <p><strong>Where it is defined:</strong> see <code>DATA_CHANNEL_COUNT</code> in <a href="scripts/constants.js">scripts/constants.js</a> and the mapping loop in <a href="scripts/app.js">scripts/app.js</a>.</p>
+                            <p><strong>Watch for:</strong> exceeding the limit will truncate values; update the constant and shader uniforms together if you need more streams.</p>
+                        </div>
                     </article>
-                    <article class="section-card space-y-2">
+                    <article class="section-card info-card space-y-2" tabindex="0">
                         <p class="metric-value">Multi-context</p>
                         <p class="text-blue-100/80 text-sm uppercase tracking-wide">WebGL fan-out</p>
-                        <p class="text-sm text-blue-100/75">The renderer and recorder have been exercised in 20+ concurrent WebGL contexts when running lab capture scripts; memory pressure scales with dataset size.</p>
+                        <p class="text-sm text-blue-100/75">Local load tests spawned 20+ contexts for calibration capture without renderer crashes; memory footprint grows with recorder buffers.</p>
+                        <div class="info-more">
+                            <p><strong>Reproduce:</strong> launch multiple console tabs or embed instances while monitoring GPU memory in the browser task manager.</p>
+                            <p><strong>Notes:</strong> document multi-context findings in <a href="DEV_TRACK.md">DEV_TRACK.md</a>; throttle recorder retention if you notice slowdowns.</p>
+                        </div>
                     </article>
                 </div>
             </section>
@@ -159,37 +199,53 @@
             <section id="use-cases" class="space-y-6">
                 <h2 class="text-2xl md:text-3xl font-semibold text-white">Operational Use Cases</h2>
                 <div class="list-grid">
-                    <article class="section-card space-y-3">
+                    <article class="section-card info-card space-y-3" tabindex="0">
                         <h3 class="text-xl font-semibold text-white">Autonomous & Defense Systems</h3>
                         <ul class="text-sm space-y-2 text-blue-100/75">
                             <li>GPS-denied navigation experiments can reuse the WebSocket/Serial adapters and spinor parity metrics to cross-check IMU feeds against visual projections.</li>
                             <li>Sensor-fusion dashboards can consume recorder exports plus sonic telemetry for remote QA without relying solely on logs.</li>
                             <li>Swarm coordination research gains a common parity manifest that keeps visual state, channel telemetry, and sonic descriptors aligned frame-by-frame.</li>
                         </ul>
+                        <div class="info-more">
+                            <p><strong>Relevant modules:</strong> <a href="scripts/LiveQuaternionAdapters.js">LiveQuaternionAdapters.js</a>, <a href="scripts/liveTelemetry.js">liveTelemetry.js</a>, <a href="docs/telemetry-schemas.md">telemetry schemas</a>.</p>
+                            <p><strong>Try this:</strong> feed a recorded IMU dataset through the recorder/player pair, then compare spinor overlays against INS ground truth to evaluate drift.</p>
+                        </div>
                     </article>
-                    <article class="section-card space-y-3">
+                    <article class="section-card info-card space-y-3" tabindex="0">
                         <h3 class="text-xl font-semibold text-white">Quantum & High-Dimensional Analytics</h3>
                         <ul class="text-sm space-y-2 text-blue-100/75">
                             <li>Geometric quantum error tracking prototypes can visualise syndrome evolution via PPP rotations while logging manifold and topology payloads for regression.</li>
                             <li>Continuum and lattice telemetry provide robotics-grade ingestion even when resonance audio is disabled.</li>
                             <li>Manifold/topology logs can highlight drift and harmonic anomalies inside CI without requiring access to the renderer.</li>
                         </ul>
+                        <div class="info-more">
+                            <p><strong>Relevant modules:</strong> <a href="scripts/SonicGeometryEngine.js">SonicGeometryEngine.js</a>, <a href="scripts/SpinorTopologyWeave.js">SpinorTopologyWeave.js</a>, <a href="samples/telemetry/topology.json">topology sample</a>.</p>
+                            <p><strong>Try this:</strong> replay a calibration manifest in headless mode (<a href="scripts/headlessRunner.js">headlessRunner.js</a>) and feed the topology stream into your CI regression harness.</p>
+                        </div>
                     </article>
-                    <article class="section-card space-y-3">
+                    <article class="section-card info-card space-y-3" tabindex="0">
                         <h3 class="text-xl font-semibold text-white">Industrial & Scientific Platforms</h3>
                         <ul class="text-sm space-y-2 text-blue-100/75">
                             <li>Manufacturing QA teams can script mapping presets, capture recorder snapshots, and compare spinor overlays to detect variance.</li>
                             <li>Climate, biomedical, and materials modelling pipelines can archive calibration datasets and replay them with consistent parity manifests.</li>
                             <li>API exposure (<code>window.PPP</code> when enabled) supports automated reporting and dataset packaging for downstream analytics.</li>
                         </ul>
+                        <div class="info-more">
+                            <p><strong>Relevant modules:</strong> <a href="scripts/mappingPresets.js">mappingPresets.js</a>, <a href="scripts/CalibrationDatasetBuilder.js">CalibrationDatasetBuilder.js</a>, <a href="samples/calibration/ppp-calibration-dataset-summary.json">calibration summary</a>.</p>
+                            <p><strong>Try this:</strong> define presets in <code>PPP_CONFIG.mappingPresets</code>, run the calibration toolkit, and snapshot overlays to compare variations between production lots.</p>
+                        </div>
                     </article>
-                    <article class="section-card space-y-3">
+                    <article class="section-card info-card space-y-3" tabindex="0">
                         <h3 class="text-xl font-semibold text-white">Hierarchical Agentic Systems</h3>
                         <ul class="text-sm space-y-2 text-blue-100/75">
                             <li>PPP can provide the “System 1” geometric substrate within a Hierarchical Agentic Operating System, feeding shadow projections into symbolic planners and vision transformers.</li>
                             <li>Topology, continuum, and constellation telemetry let multimodal agents consume geometric state alongside text or audio streams.</li>
                             <li>Calibration manifests act as deterministic checkpoints for multi-agent alignment and regression testing.</li>
                         </ul>
+                        <div class="info-more">
+                            <p><strong>Relevant modules:</strong> <a href="scripts/SpinorContinuumConstellation.js">SpinorContinuumConstellation.js</a>, <a href="samples/telemetry/constellation.json">constellation sample</a>, <a href="tests/liveTelemetry.test.js">live telemetry tests</a>.</p>
+                            <p><strong>Try this:</strong> export a manifest, load it within an agent sandbox, and map the continuum payload into your policy embeddings to evaluate multi-agent coordination.</p>
+                        </div>
                     </article>
                 </div>
             </section>
