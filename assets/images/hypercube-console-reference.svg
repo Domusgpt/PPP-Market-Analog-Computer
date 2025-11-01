@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Hypercube Control Surface Reference</title>
+  <desc id="desc">Annotated schematic indicating the primary regions of the PPP Hypercube console.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#08162c"/>
+      <stop offset="100%" stop-color="#040b18"/>
+    </linearGradient>
+    <style>
+      text { font-family: 'Inter', 'Segoe UI', sans-serif; fill: #d6f2ff; }
+      .label { font-size: 18px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+      .body { font-size: 16px; fill: #9fcaf2; }
+      rect.panel { fill: rgba(20, 52, 96, 0.58); stroke: rgba(126, 207, 255, 0.45); stroke-width: 3; rx: 16; ry: 16; }
+      rect.overlay { fill: rgba(32, 80, 140, 0.45); stroke: rgba(126, 207, 255, 0.25); stroke-dasharray: 8 10; stroke-width: 2; rx: 10; ry: 10; }
+      line.arrow { stroke: #7fd6ff; stroke-width: 2.5; marker-end: url(#arrow-head); }
+    </style>
+    <marker id="arrow-head" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <polygon points="0 0, 8 4, 0 8" fill="#7fd6ff"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1280" height="720" fill="url(#bg)"/>
+
+  <rect class="panel" x="40" y="80" width="440" height="560" opacity="0.82"/>
+  <text class="label" x="60" y="120">Data Input & Mapping</text>
+  <text class="body" x="60" y="150">#dataInput · presets · auto-stream controls</text>
+
+  <rect class="panel" x="520" y="80" width="320" height="240" opacity="0.82"/>
+  <text class="label" x="540" y="120">Recorder</text>
+  <text class="body" x="540" y="150">Start/stop · download · clear</text>
+
+  <rect class="panel" x="880" y="80" width="360" height="240" opacity="0.82"/>
+  <text class="label" x="900" y="120">Playback & Timeline</text>
+  <text class="body" x="900" y="150">Load JSON · play/pause · scrub</text>
+
+  <rect class="panel" x="520" y="360" width="320" height="140" opacity="0.82"/>
+  <text class="label" x="540" y="400">Live Ingest</text>
+  <text class="body" x="540" y="430">WebSocket · Web Serial · metrics</text>
+
+  <rect class="panel" x="880" y="360" width="360" height="140" opacity="0.82"/>
+  <text class="label" x="900" y="400">Sonic Geometry</text>
+  <text class="body" x="900" y="430">Toggle · mode · helper text</text>
+
+  <rect class="panel" x="520" y="540" width="720" height="100" opacity="0.82"/>
+  <text class="label" x="540" y="580">Calibration & Dataset Builder</text>
+  <text class="body" x="540" y="610">Sequences · capture status · manifest export · insight list</text>
+
+  <rect class="overlay" x="60" y="420" width="400" height="180"/>
+  <text class="label" x="80" y="460">Channel Monitor</text>
+  <text class="body" x="80" y="490">Average / peak traces · smoothing · highlight indices</text>
+
+  <line class="arrow" x1="260" y1="360" x2="260" y2="410"/>
+  <line class="arrow" x1="680" y1="320" x2="680" y2="350"/>
+  <line class="arrow" x1="1060" y1="320" x2="1060" y2="350"/>
+
+  <text class="label" x="40" y="48">PPP Hypercube Console Overview</text>
+  <text class="body" x="40" y="72">Annotate with real screenshots for release handoffs. This schematic highlights the regions referenced in the documentation.</text>
+</svg>

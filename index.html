@@ -132,22 +132,26 @@
             </section>
 
             <section id="metrics" class="space-y-6">
-                <h2 class="text-2xl md:text-3xl font-semibold text-white">Capability Metrics</h2>
+                <h2 class="text-2xl md:text-3xl font-semibold text-white">Capability Observations</h2>
+                <p class="text-sm text-blue-100/75 max-w-3xl">
+                    The figures below summarise what the current toolchain has demonstrated during internal QA on a 2025 workstation-class laptop with an RTX 3070.
+                    They are not guarantees—performance depends on the dataset, browser, and GPU configuration.
+                </p>
                 <div class="grid gap-6 md:grid-cols-3">
                     <article class="section-card space-y-2">
-                        <p class="metric-value">60 FPS</p>
+                        <p class="metric-value">≈60 FPS</p>
                         <p class="text-blue-100/80 text-sm uppercase tracking-wide">Visual transport</p>
-                        <p class="text-sm text-blue-100/75">Hypercube renderer sustains 60 frames per second with six-plane rotations, deterministic uniforms, and spinor QA overlays on commodity GPUs.</p>
+                        <p class="text-sm text-blue-100/75">Hypercube renders six-plane rotations and spinor overlays at ≈60 frames per second during auto-stream playback on the reference hardware.</p>
                     </article>
                     <article class="section-card space-y-2">
                         <p class="metric-value">64 Channels</p>
                         <p class="text-blue-100/80 text-sm uppercase tracking-wide">Synchronized ingest</p>
-                        <p class="text-sm text-blue-100/75">DataMapper normalises and maps up to 64 sensor or analytic streams in parallel, feeding both the WebGL kernel and sonic lattice.</p>
+                        <p class="text-sm text-blue-100/75">DataMapper and the recorder pipeline accept 64 scalar channels—the cap exposed by <code>DATA_CHANNEL_COUNT</code>—and mirror them into shader uniforms and sonic telemetry.</p>
                     </article>
                     <article class="section-card space-y-2">
-                        <p class="metric-value">20+ Contexts</p>
-                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">WebGL concurrency</p>
-                        <p class="text-sm text-blue-100/75">Renderer and recorder are validated across large context fan-outs for lab clusters and robotics capture rigs.</p>
+                        <p class="metric-value">Multi-context</p>
+                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">WebGL fan-out</p>
+                        <p class="text-sm text-blue-100/75">The renderer and recorder have been exercised in 20+ concurrent WebGL contexts when running lab capture scripts; memory pressure scales with dataset size.</p>
                     </article>
                 </div>
             </section>
@@ -158,66 +162,141 @@
                     <article class="section-card space-y-3">
                         <h3 class="text-xl font-semibold text-white">Autonomous & Defense Systems</h3>
                         <ul class="text-sm space-y-2 text-blue-100/75">
-                            <li>GPS-denied navigation using quaternion ingest and spinor telemetry alignment.</li>
-                            <li>Sensor fusion dashboards share identical polytopal states with sonic diagnostics for remote operators.</li>
-                            <li>Swarm coordination through shared lattice descriptors and parity manifests.</li>
+                            <li>GPS-denied navigation experiments can reuse the WebSocket/Serial adapters and spinor parity metrics to cross-check IMU feeds against visual projections.</li>
+                            <li>Sensor-fusion dashboards can consume recorder exports plus sonic telemetry for remote QA without relying solely on logs.</li>
+                            <li>Swarm coordination research gains a common parity manifest that keeps visual state, channel telemetry, and sonic descriptors aligned frame-by-frame.</li>
                         </ul>
                     </article>
                     <article class="section-card space-y-3">
                         <h3 class="text-xl font-semibold text-white">Quantum & High-Dimensional Analytics</h3>
                         <ul class="text-sm space-y-2 text-blue-100/75">
-                            <li>Geometric quantum error tracking by projecting syndrome data into PPP rotations.</li>
-                            <li>Continuum and lattice telemetry power robotics-grade ingestion without audio channels.</li>
-                            <li>Manifold + topology logs surface drift and harmonic anomalies for CI pipelines.</li>
+                            <li>Geometric quantum error tracking prototypes can visualise syndrome evolution via PPP rotations while logging manifold and topology payloads for regression.</li>
+                            <li>Continuum and lattice telemetry provide robotics-grade ingestion even when resonance audio is disabled.</li>
+                            <li>Manifold/topology logs can highlight drift and harmonic anomalies inside CI without requiring access to the renderer.</li>
                         </ul>
                     </article>
                     <article class="section-card space-y-3">
                         <h3 class="text-xl font-semibold text-white">Industrial & Scientific Platforms</h3>
                         <ul class="text-sm space-y-2 text-blue-100/75">
-                            <li>Manufacturing QA through multi-channel mapping presets and spinor performance metrics.</li>
-                            <li>Climate, biomedical, and materials modelling benefit from reproducible calibration datasets.</li>
-                            <li>API exposure enables automated reporting and dataset packaging for partner teams.</li>
+                            <li>Manufacturing QA teams can script mapping presets, capture recorder snapshots, and compare spinor overlays to detect variance.</li>
+                            <li>Climate, biomedical, and materials modelling pipelines can archive calibration datasets and replay them with consistent parity manifests.</li>
+                            <li>API exposure (<code>window.PPP</code> when enabled) supports automated reporting and dataset packaging for downstream analytics.</li>
                         </ul>
                     </article>
                     <article class="section-card space-y-3">
                         <h3 class="text-xl font-semibold text-white">Hierarchical Agentic Systems</h3>
                         <ul class="text-sm space-y-2 text-blue-100/75">
-                            <li>PPP acts as System 1 within HAOS, streaming shadow projections into symbolic AI and vision transformers.</li>
-                            <li>Topology, continuum, and constellation telemetry give multimodal agents real-time geometric awareness.</li>
-                            <li>Calibration manifests provide deterministic checkpoints for model alignment and regression testing.</li>
+                            <li>PPP can provide the “System 1” geometric substrate within a Hierarchical Agentic Operating System, feeding shadow projections into symbolic planners and vision transformers.</li>
+                            <li>Topology, continuum, and constellation telemetry let multimodal agents consume geometric state alongside text or audio streams.</li>
+                            <li>Calibration manifests act as deterministic checkpoints for multi-agent alignment and regression testing.</li>
                         </ul>
                     </article>
                 </div>
             </section>
 
             <section id="demo" class="space-y-6">
-                <h2 class="text-2xl md:text-3xl font-semibold text-white">Embedded Demo</h2>
+                <h2 class="text-2xl md:text-3xl font-semibold text-white">Control Surface & Output Reference</h2>
                 <p class="text-sm text-blue-100/80 max-w-3xl">
-                    The iframe streams <code>hypercube-core-webgl-framework.html?mode=embed</code>, hiding the operator console while preserving the security banner and auto-streamed synthetic data.
-                    Developer tooling remains locked; DevTools attempts surface the PPP safeguard overlay.
+                    The iframe streams <code>hypercube-core-webgl-framework.html?mode=embed</code>. In embed mode PPP auto-streams synthetic data, keeps the console lock active, and hides the operator controls.
+                    Use the expandable reference items below to understand what the full console exposes when launched directly.
                 </p>
                 <div class="embed-shell">
                     <iframe title="PPP Hypercube Demo" src="hypercube-core-webgl-framework.html?mode=embed" allow="fullscreen" loading="lazy"></iframe>
                 </div>
-                <div class="list-grid">
-                    <div class="section-card space-y-3">
-                        <h3 class="text-xl font-semibold text-white">What You Are Seeing</h3>
-                        <ul class="text-sm space-y-2 text-blue-100/75">
-                            <li><strong>Auto-stream transport:</strong> Synthetic channel data drives the renderer and sonic lattice immediately on load.</li>
-                            <li><strong>Spinor overlay:</strong> The QA panel remains visible for parity inspections without the surrounding controls.</li>
-                            <li><strong>Console guard:</strong> Attempts to open DevTools trigger the PPP security overlay and banner messaging.</li>
-                        </ul>
-                    </div>
-                    <div class="section-card space-y-3">
-                        <h3 class="text-xl font-semibold text-white">Operator Console Access</h3>
+                <figure class="section-card space-y-3">
+                    <img src="assets/images/hypercube-console-reference.svg" alt="Annotated diagram of the Hypercube control surface" loading="lazy" class="w-full">
+                    <figcaption class="discreet-text">
+                        Reference diagram matching the live console layout. Capture fresh screenshots per release by opening the full console and exporting from the browser dev tools.
+                    </figcaption>
+                </figure>
+                <div class="section-card space-y-4">
+                    <details open>
+                        <summary class="text-white text-lg font-semibold">Data input & mapping (left column)</summary>
                         <p class="text-sm text-blue-100/75">
-                            Analysts requiring the full transport surface can open the console-enabled build directly at
-                            <code>hypercube-core-webgl-framework.html</code> (PPP credentials required). The embed mirrors runtime behaviour but suppresses configuration controls,
-                            calibration triggers, and download actions to keep the public experience read-only.
+                            The textarea (<code>#dataInput</code>) accepts JSON arrays. Imported values pass through <code>DataMapper</code>, which normalises length, clamps ranges, and maps channels to shader uniforms.
+                            Mapping presets live in <code>scripts/mappingPresets.js</code>; the selector (<code>#mappingSelect</code>) swaps between them without reloading.
                         </p>
-                    </div>
+                        <ul class="text-sm text-blue-100/70 space-y-2">
+                            <li><strong>Apply / Randomise:</strong> Buttons call <code>applyDataArray</code> with the provided values or generate a seeded pattern.</li>
+                            <li><strong>Auto-stream toggle:</strong> Runs the synthetic generator every ~140 ms; stop before loading recorder payloads to avoid mixing sources.</li>
+                            <li><strong>Status message & uniform preview:</strong> <code>#statusMessage</code> and <code>#uniformPreview</code> mirror the renderer uniforms for auditing.</li>
+                        </ul>
+                    </details>
+                    <details>
+                        <summary class="text-white text-lg font-semibold">Recorder & playback</summary>
+                        <p class="text-sm text-blue-100/75">
+                            <code>DataRecorder</code> captures channel arrays plus uniform snapshots. <code>DataPlayer</code> replays them with timeline scrubbing, loop control, and optional uniform reapplication.
+                        </p>
+                        <ul class="text-sm text-blue-100/70 space-y-2">
+                            <li><strong>Recorder buttons:</strong> Start/stop capture, download JSON, or clear the buffer. Recordings include metadata for parity manifests.</li>
+                            <li><strong>Playback controls:</strong> Load a JSON export, play/pause/step frames, and select whether recorded uniforms override the current mapping.</li>
+                            <li><strong>Timeline slider:</strong> Seek to precise percentages; <code>setTimelineDisplay</code> keeps elapsed time and total duration visible.</li>
+                        </ul>
+                    </details>
+                    <details>
+                        <summary class="text-white text-lg font-semibold">Live ingest adapters</summary>
+                        <p class="text-sm text-blue-100/75">
+                            The WebSocket and Web Serial adapters live in <code>scripts/LiveQuaternionAdapters.js</code>. Buttons flip connection state; status labels report latency, reconnect attempts, and dropped frames.
+                        </p>
+                        <ul class="text-sm text-blue-100/70 space-y-2">
+                            <li>Adapters sanitise quaternion frames before sending them to <code>applyLiveFrame</code>, ensuring channel counts do not exceed the configured limit.</li>
+                            <li>Metrics propagate into <code>liveTelemetry</code>, which aggregates min/max latency and frame counts for dashboards.</li>
+                        </ul>
+                    </details>
+                    <details>
+                        <summary class="text-white text-lg font-semibold">Sonic geometry controls</summary>
+                        <p class="text-sm text-blue-100/75">
+                            <code>SonicGeometryEngine</code> derives resonance, signal, transduction, manifold, topology, continuum, lattice, and constellation payloads. Toggle analysis/audio via <code>#sonicGeometryToggle</code>.
+                        </p>
+                        <ul class="text-sm text-blue-100/70 space-y-2">
+                            <li><strong>Mode selector:</strong> Chooses between hybrid (audio+data) or analysis-only. Both modes maintain telemetry callbacks.</li>
+                            <li><strong>Helper text:</strong> Summaries pull from <code>getLastSummary()</code> to share coherence, gate, and drift status at a glance.</li>
+                            <li><strong>API access:</strong> <code>PPP.sonicGeometry.on*</code> listeners clone payloads so consumers cannot mutate shared state.</li>
+                        </ul>
+                    </details>
+                    <details>
+                        <summary class="text-white text-lg font-semibold">Calibration toolkit & dataset builder</summary>
+                        <p class="text-sm text-blue-100/75">
+                            Calibration components orchestrate scripted motion plans. Use the sequence selector to run canonical captures; dataset builder compiles parity manifests and narrative insights.
+                        </p>
+                        <ul class="text-sm text-blue-100/70 space-y-2">
+                            <li>Toolkit captures spinor overlays via <code>renderer.captureFrame()</code> while recording calibrated channel frames.</li>
+                            <li>Dataset builder exports <code>PPP.calibration.dataset</code> manifests and enables a download button once generation completes.</li>
+                            <li>Insights list highlights frames with low fidelity or notable drift using <code>CalibrationInsightEngine</code>.</li>
+                        </ul>
+                    </details>
+                    <details>
+                        <summary class="text-white text-lg font-semibold">Channel monitor & development log</summary>
+                        <p class="text-sm text-blue-100/75">
+                            The monitor canvas charts live averages and peaks; <code>DevelopmentTracker</code> records annotated milestones. Both surfaces help QA runs remain auditable.
+                        </p>
+                        <ul class="text-sm text-blue-100/70 space-y-2">
+                            <li>Highlight ranges and smoothing factors can be set via <code>PPP.setMonitorHighlight</code> and <code>PPP.setMonitorSmoothing</code> while the API is exposed.</li>
+                            <li>The development log supports custom commentary through <code>PPP.recordDevelopmentEntry()</code>, keeping release notes co-located with the runtime.</li>
+                        </ul>
+                    </details>
                 </div>
-                <p class="discreet-text">Legacy prototype assets have been withdrawn from deployment; the reference bundle remains offline at <code>archive/legacy-2024-site.tar.gz</code> for audit only.</p>
+                <p class="discreet-text">Need the full operator surface? Open <code>hypercube-core-webgl-framework.html</code> directly. The embed mode remains read-only by design.</p>
+            </section>
+
+            <section id="purpose" class="space-y-6">
+                <h2 class="text-2xl md:text-3xl font-semibold text-white">Intent: PPP as a Perception Rosetta</h2>
+                <div class="section-card space-y-3">
+                    <p class="text-sm text-blue-100/80">
+                        PPP is being shaped as an intermediate language for machine perception—something that lets synthetic agents translate between raw sensor feeds,
+                        geometric intuition, and symbolic policy. The stack aims to make geometric cognition as accessible as language-based reasoning.
+                    </p>
+                    <ul class="text-sm text-blue-100/75 space-y-2">
+                        <li><strong>4D ↔ 3D correspondence:</strong> The renderer works in 4D with six-plane rotations while sonic telemetry deals in 3D six-degree-of-freedom bodies. Mapping policies between the spaces offers a common frame for world awareness and robotic actuation.</li>
+                        <li><strong>Spinor double rotations:</strong> Dual-quaternion bridges expose left/right components, Hopf fibres, and carrier lattices that multi-agent systems can ingest to understand shared orientation states without relying purely on language tokens.</li>
+                        <li><strong>Topological wayfinding:</strong> Research is underway into how 120/600-cell relationships, Clifford rotations, and convex inverse dual rotations can support error correction, dead reckoning, and drift mitigation inside INS pipelines. These explorations are speculative but grounded in the geometry PPP already models.</li>
+                        <li><strong>Fractal and non-Euclidean extensions:</strong> PPP’s mapping layer and telemetry builders make it feasible to experiment with fractal regressions or non-Euclidean polytopes; identifying niches where those structures match sensor behaviour remains an open research thread.</li>
+                    </ul>
+                    <p class="text-sm text-blue-100/75">
+                        The long-term goal is ubiquity: a toolchain that any data-driven system—LLM-based agents, swarm controllers, or scientific workflows—can use to translate between raw measurements and an adaptable, stereoscopic understanding of environment and intent.
+                        Everything shipped here is a step toward that Rosetta stone; documented capabilities reflect what exists today, and speculative items are clearly marked for ongoing validation.
+                    </p>
+                </div>
             </section>
 
             <section id="platform" class="space-y-6">
