@@ -12,6 +12,11 @@ Impairments modeled:
 - OAM mode crosstalk
 - Atmospheric turbulence (FSO)
 - Phase noise
+
+IMPORTANT NOTE ON FAIRNESS:
+The channel does NOT normalize signals to unit sphere after adding noise.
+Such normalization would unfairly benefit CSPM by removing the noise
+magnitude component. The receiver handles normalization as part of decoding.
 """
 
 import numpy as np
@@ -122,9 +127,18 @@ class FiberChannel(OpticalChannel):
         Apply Polarization Mode Dispersion.
 
         PMD causes random rotation of the polarization state.
+
+        Physical model: PMD (in ps) causes differential group delay between
+        polarization modes. For narrowband signals, this manifests as a
+        random rotation on the Poincaré sphere proportional to the DGD.
+
+        Conversion: angle (rad) = 2π × DGD × symbol_rate
+        For ~10 Gbaud and typical PMD, this gives small rotations.
+        We use: angle_std ≈ PMD_ps × 0.001 rad/ps (empirical for 10 Gbaud)
         """
         # Random rotation in the Stokes subspace (coords[1:4])
-        angle = self.rng.normal(0, self.pmd_ps * 0.01)  # Scale to radians
+        # Physical basis: DGD causes SOP rotation on Poincaré sphere
+        angle = self.rng.normal(0, self.pmd_ps * 0.001)  # ~0.1° per ps of PMD
 
         # Random rotation axis on the Poincare sphere
         axis = self.rng.standard_normal(3)
@@ -173,7 +187,15 @@ class FiberChannel(OpticalChannel):
         return result
 
     def transmit(self, symbol: OpticalSymbol) -> OpticalSymbol:
-        """Transmit symbol through fiber channel."""
+        """
+        Transmit symbol through fiber channel.
+
+        NOTE: We do NOT normalize to unit sphere here. That would unfairly
+        benefit CSPM by removing the noise magnitude component. The receiver
+        is responsible for normalization during geometric quantization.
+        This ensures fair comparison with QAM which also receives unnormalized
+        noisy symbols.
+        """
         coords = symbol.coords.copy()
 
         # Apply impairments in order
@@ -182,8 +204,8 @@ class FiberChannel(OpticalChannel):
         coords = self._apply_phase_noise(coords)
         coords = self._add_awgn(coords, self.snr_db)
 
-        # Re-normalize to unit sphere
-        coords = coords / np.linalg.norm(coords)
+        # DO NOT normalize here - let receiver handle it
+        # This is crucial for fair comparison
 
         self._symbol_count += 1
 
@@ -291,7 +313,12 @@ class FreespaceChannel(OpticalChannel):
         return coords * atten_linear
 
     def transmit(self, symbol: OpticalSymbol) -> OpticalSymbol:
-        """Transmit symbol through free-space channel."""
+        """
+        Transmit symbol through free-space channel.
+
+        NOTE: We do NOT normalize to unit sphere here for fair comparison.
+        The receiver handles normalization during geometric quantization.
+        """
         coords = symbol.coords.copy()
 
         # Apply impairments
@@ -300,12 +327,7 @@ class FreespaceChannel(OpticalChannel):
         coords = self._apply_weather_attenuation(coords)
         coords = self._add_awgn(coords, self.snr_db)
 
-        # Re-normalize
-        norm = np.linalg.norm(coords)
-        if norm > 1e-10:
-            coords = coords / norm
-        else:
-            coords = np.array([1.0, 0.0, 0.0, 0.0])
+        # DO NOT normalize here - let receiver handle it
 
         self._symbol_count += 1
 

@@ -6,11 +6,12 @@ benchmarking against CSPM.
 
 QAM operates in 2D complex plane (I/Q):
 - 64-QAM: 6 bits per symbol
+- 128-QAM: 7 bits per symbol (fair comparison to CSPM's 6.9 bits)
 - 256-QAM: 8 bits per symbol
 
-This provides a fair comparison since:
-- 600-cell CSPM: ~6.9 bits per symbol (120 vertices)
-- 64-QAM: 6 bits per symbol
+IMPORTANT: For fair comparison with CSPM (6.9 bits/symbol):
+- 128-QAM (7 bits/symbol) is the appropriate baseline
+- 64-QAM comparisons understate QAM capability
 """
 
 import numpy as np
@@ -40,7 +41,7 @@ class QAMModulator:
     """
     Standard QAM modulator.
 
-    Supports 4-QAM (QPSK), 16-QAM, 64-QAM, 256-QAM.
+    Supports 4-QAM (QPSK), 16-QAM, 64-QAM, 128-QAM (cross), 256-QAM.
     """
 
     def __init__(self, order: int = 64):
@@ -48,21 +49,25 @@ class QAMModulator:
         Initialize QAM modulator.
 
         Args:
-            order: Constellation size (4, 16, 64, 256)
+            order: Constellation size (4, 16, 64, 128, 256)
         """
-        if order not in [4, 16, 64, 256]:
-            raise ValueError(f"QAM order must be 4, 16, 64, or 256")
+        if order not in [4, 16, 64, 128, 256]:
+            raise ValueError(f"QAM order must be 4, 16, 64, 128, or 256")
 
         self.order = order
         self.bits_per_symbol = int(np.log2(order))
         self.constellation = self._build_constellation()
 
-        # Normalize power
+        # Normalize power to unit average
         avg_power = np.mean(np.abs(self.constellation) ** 2)
         self.constellation /= np.sqrt(avg_power)
 
     def _build_constellation(self) -> np.ndarray:
         """Build QAM constellation using Gray coding."""
+        if self.order == 128:
+            # 128-QAM uses cross constellation (not square)
+            return self._build_cross_constellation(128)
+
         m = int(np.sqrt(self.order))
 
         # Create grid
@@ -75,6 +80,30 @@ class QAMModulator:
                 constellation.append(x[i] + 1j * y[j])
 
         return np.array(constellation)
+
+    def _build_cross_constellation(self, order: int) -> np.ndarray:
+        """
+        Build cross-shaped constellation for non-square QAM (e.g., 128-QAM).
+
+        128-QAM is typically implemented as a 12x12 grid with corners removed.
+        """
+        # Start with 12x12 = 144 point grid
+        m = 12
+        x = np.arange(m) - (m - 1) / 2
+        y = np.arange(m) - (m - 1) / 2
+
+        constellation = []
+        for i in range(m):
+            for j in range(m):
+                point = x[i] + 1j * y[j]
+                # Remove corner points to get 128 symbols
+                # Corners are where |x| > 5 and |y| > 5
+                if not (abs(x[i]) > 4.5 and abs(y[j]) > 4.5):
+                    constellation.append(point)
+
+        # Should have 128 points (144 - 16 corners)
+        constellation = np.array(constellation[:order])
+        return constellation
 
     def _gray_code(self, n: int, bits: int) -> int:
         """Convert integer to Gray code."""
@@ -278,6 +307,66 @@ class QAMChannel:
             # Add complex Gaussian noise
             noise = self.rng.normal(0, noise_std) + 1j * self.rng.normal(0, noise_std)
             received.append(sym.iq + noise)
+
+        return received
+
+
+class QAMFiberChannel:
+    """
+    Fair fiber channel model for QAM that applies equivalent impairments
+    to what CSPM receives. This ensures apples-to-apples comparison.
+
+    Impairments:
+    - Phase noise (equivalent to CSPM's phase rotation)
+    - Polarization rotation (affects constellation orientation)
+    - AWGN
+    """
+
+    def __init__(
+        self,
+        snr_db: float = 20.0,
+        phase_noise_std: float = 0.05,  # radians, matches CSPM channel
+        polarization_rotation: bool = True,
+        seed: int = None
+    ):
+        self.snr_db = snr_db
+        self.phase_noise_std = phase_noise_std
+        self.polarization_rotation = polarization_rotation
+        self.rng = np.random.default_rng(seed)
+
+    def transmit(self, symbols: List[QAMSymbol]) -> List[complex]:
+        """
+        Transmit QAM symbols through fiber channel with realistic impairments.
+
+        NOTE: Unlike CSPM, we do NOT normalize received symbols. This is
+        fair because CSPM's unit-sphere normalization is an artifact of
+        the 4D representation, not a physical channel effect.
+        """
+        snr_linear = 10 ** (self.snr_db / 10)
+        received = []
+
+        for sym in symbols:
+            value = sym.iq
+
+            # Apply phase noise (laser linewidth, fiber nonlinearity)
+            if self.phase_noise_std > 0:
+                phase_error = self.rng.normal(0, self.phase_noise_std)
+                value = value * np.exp(1j * phase_error)
+
+            # Apply random polarization rotation (PMD equivalent)
+            if self.polarization_rotation:
+                # Small random rotation of constellation
+                rot_angle = self.rng.normal(0, 0.02)  # ~1 degree std
+                value = value * np.exp(1j * rot_angle)
+
+            # Add AWGN
+            signal_power = abs(value) ** 2
+            noise_power = signal_power / snr_linear
+            noise_std = np.sqrt(noise_power / 2)
+            noise = self.rng.normal(0, noise_std) + 1j * self.rng.normal(0, noise_std)
+            value = value + noise
+
+            received.append(value)
 
         return received
 

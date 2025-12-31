@@ -10,12 +10,39 @@ The 600-cell (hexacosichoron) is a regular 4-polytope with:
 Its vertices form an optimal sphere packing in 4D, making it ideal
 for a signal constellation with maximum noise margin.
 
-Physical Encoding:
-- 3 dimensions: Polarization state on the Poincare sphere (S1, S2, S3)
-- 1 dimension: Orbital Angular Momentum (OAM) topological charge
+=== PHYSICAL ENCODING (Addressing OAM Discreteness) ===
 
-This gives us 120 distinct symbols = 6.9 bits per symbol.
-Compare to 64-QAM = 6 bits per symbol, but with better noise immunity.
+IMPORTANT: Raw OAM modes (ℓ = -2, -1, 0, 1, 2...) are DISCRETE integers.
+You cannot create a continuous 4D signal space using discrete OAM channels.
+
+SOLUTION: We use COHERENT SUPERPOSITION STATES, not pure OAM modes.
+
+Physical Signal Space (4D Hilbert Space on S³):
+- Dimensions 1-2: Polarization Bloch Sphere (Poincaré Sphere)
+    |ψ_pol⟩ = α|H⟩ + β|V⟩  where |α|² + |β|² = 1
+    Creates continuous S² via relative phase and amplitude ratio
+
+- Dimensions 3-4: OAM Superposition Sphere (OAM Bloch Sphere)
+    |ψ_OAM⟩ = γ|ℓ₁⟩ + δ|ℓ₂⟩  where |γ|² + |δ|² = 1
+    By varying γ/δ phase and amplitude, creates continuous S²
+
+Combined: The tensor product of two S² spaces (with proper phase coupling)
+creates a 4D manifold homeomorphic to S³, where the 600-cell can naturally
+embed via the Hopf Fibration.
+
+Mapping: The 120 vertices correspond to specific (α, β, γ, δ) values that:
+1. Maximize minimum angular distance between symbols
+2. Respect the I₂ × I₂ symmetry group of the 600-cell
+3. Are distinguishable by coherent detection
+
+This is NOT treating OAM as "integer axis" - we use the PHASE SPACE
+of coupled OAM modes to create a continuous manifold.
+
+Reference: Berry phase, geometric phase in topological photonics,
+Majorana sphere representation of OAM states.
+
+Spectral Efficiency: 120 distinct symbols = 6.9 bits per symbol
+Compare to 64-QAM = 6 bits per symbol, but with geometric noise margin.
 """
 
 import numpy as np
@@ -31,21 +58,47 @@ def _golden_ratio() -> float:
 
 @dataclass
 class Vertex4D:
-    """A vertex in 4D space with physical interpretation."""
+    """
+    A vertex in 4D space with physical interpretation.
 
-    coords: np.ndarray  # [w, x, y, z] - unit 4-vector
+    Physical Mapping (via Hopf Fibration):
+    The 4D coordinates [w, x, y, z] map to coupled optical states:
+
+    coords[0:2] → Polarization Bloch vector components
+        Re(α·β*), Im(α·β*) where |ψ_pol⟩ = α|H⟩ + β|V⟩
+
+    coords[2:4] → OAM Superposition Bloch vector components
+        Re(γ·δ*), Im(γ·δ*) where |ψ_OAM⟩ = γ|ℓ₁⟩ + δ|ℓ₂⟩
+
+    Note: This is NOT treating OAM as a discrete integer index.
+    We encode into the continuous phase space of OAM superpositions.
+    """
+
+    coords: np.ndarray  # [w, x, y, z] - unit 4-vector on S³
     index: int  # Vertex index (0-119 for 600-cell)
     symbol: int  # Data symbol this vertex represents
 
     @property
-    def polarization(self) -> np.ndarray:
-        """Stokes parameters S1, S2, S3 (normalized)."""
-        return self.coords[1:4]
+    def polarization_bloch(self) -> np.ndarray:
+        """
+        Polarization Bloch vector components.
+        Maps to Stokes parameters via Poincaré sphere.
+        """
+        return self.coords[0:2]
 
     @property
-    def oam_phase(self) -> float:
-        """OAM topological charge encoded as phase."""
-        return self.coords[0]
+    def oam_superposition_bloch(self) -> np.ndarray:
+        """
+        OAM superposition Bloch vector components.
+        Represents phase/amplitude ratio between ℓ₁ and ℓ₂ modes.
+        This is CONTINUOUS (not discrete OAM index).
+        """
+        return self.coords[2:4]
+
+    @property
+    def full_bloch_state(self) -> np.ndarray:
+        """Full 4D state on Poincaré-OAM hypersphere."""
+        return self.coords
 
     def distance_to(self, other: 'Vertex4D') -> float:
         """Euclidean distance in 4D."""
