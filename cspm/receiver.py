@@ -162,10 +162,11 @@ class CSPMReceiver:
         3. Look up symbol index
         4. Convert to bits
         """
-        # Un-rotate the received coordinates
+        # Un-rotate the received coordinates (with safe normalization)
         rotation_inv = self.constellation._rotation_matrix.T
         unrotated = rotation_inv @ rx_symbol.coords
-        unrotated = unrotated / np.linalg.norm(unrotated)
+        norm = np.linalg.norm(unrotated)
+        unrotated = unrotated / norm if norm > 1e-10 else rx_symbol.coords
 
         # Quantize to nearest vertex
         vertex, distance = self.quantizer.quantize(unrotated)

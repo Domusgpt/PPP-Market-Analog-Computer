@@ -339,13 +339,15 @@ class PolychoralConstellation:
         # Extract 8 floats from 32 bytes
         floats = np.frombuffer(hash_bytes, dtype=np.float32)
 
-        # First quaternion from first 4 values
+        # First quaternion from first 4 values (safe normalization)
         q1 = floats[:4].copy()
-        q1 = q1 / np.linalg.norm(q1)
+        norm1 = np.linalg.norm(q1)
+        q1 = q1 / norm1 if norm1 > 1e-10 else np.array([1.0, 0.0, 0.0, 0.0])
 
-        # Second quaternion from last 4 values
+        # Second quaternion from last 4 values (safe normalization)
         q2 = floats[4:8].copy()
-        q2 = q2 / np.linalg.norm(q2)
+        norm2 = np.linalg.norm(q2)
+        q2 = q2 / norm2 if norm2 > 1e-10 else np.array([1.0, 0.0, 0.0, 0.0])
 
         # Construct SO(4) rotation from two quaternions
         # R(v) = q1 * v * q2^* (quaternion sandwich)
@@ -412,7 +414,8 @@ class PolychoralConstellation:
         """
         vertex = self.base_cell.get_vertex(symbol)
         rotated = self._rotation_matrix @ vertex.coords
-        return rotated / np.linalg.norm(rotated)
+        norm = np.linalg.norm(rotated)
+        return rotated / norm if norm > 1e-10 else vertex.coords
 
     def decode_symbol(self, received: np.ndarray) -> Tuple[int, float]:
         """
@@ -422,7 +425,8 @@ class PolychoralConstellation:
         """
         # Un-rotate (inverse = transpose for orthogonal matrix)
         unrotated = self._rotation_matrix.T @ received
-        unrotated = unrotated / np.linalg.norm(unrotated)
+        norm = np.linalg.norm(unrotated)
+        unrotated = unrotated / norm if norm > 1e-10 else received
 
         # Find nearest vertex
         nearest, distance = self.base_cell.nearest_vertex(unrotated)
