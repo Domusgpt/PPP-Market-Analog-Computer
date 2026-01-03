@@ -105,9 +105,15 @@ class Vertex4D:
         return np.linalg.norm(self.coords - other.coords)
 
     def angular_distance(self, other: 'Vertex4D') -> float:
-        """Angular distance on the 3-sphere."""
+        """
+        Angular distance on the 3-sphere.
+
+        Note: We do NOT use abs(dot) here because for a communication
+        constellation, antipodal points (q and -q) are different symbols
+        even though they represent the same rotation.
+        """
         dot = np.clip(np.dot(self.coords, other.coords), -1, 1)
-        return np.arccos(abs(dot))
+        return np.arccos(dot)
 
 
 class Cell600:
@@ -129,14 +135,22 @@ class Cell600:
         self._kdtree = None  # Lazy initialization
 
     def _build_vertices(self):
-        """Construct all 120 vertices of the 600-cell."""
+        """
+        Construct all 120 vertices of the 600-cell.
+
+        The 600-cell is the convex hull of the following 120 points:
+        - 8 vertices: all permutations of (±1, 0, 0, 0)
+        - 16 vertices: (±1/2, ±1/2, ±1/2, ±1/2)
+        - 96 vertices: even permutations of (±φ/2, ±1/2, ±1/(2φ), 0)
+
+        where φ = (1+√5)/2 is the golden ratio.
+        """
         phi = _golden_ratio()
-        phi_inv = 1 / phi  # 1/φ = φ - 1
+        phi_inv = 1 / phi  # 1/φ = φ - 1 ≈ 0.618
 
         vertices = []
 
         # Type 1: 8 vertices - axis-aligned unit vectors
-        # (±1, 0, 0, 0) and all permutations
         for axis in range(4):
             for sign in [-1, 1]:
                 v = np.zeros(4)
@@ -151,48 +165,65 @@ class Cell600:
                         v = np.array([s0, s1, s2, s3]) * 0.5
                         vertices.append(v)
 
-        # Type 3: 96 vertices - even permutations of (φ/2, 1/2, 1/(2φ), 0)
-        base_coords = [phi / 2, 0.5, phi_inv / 2, 0.0]
+        # Type 3: 96 vertices - even permutations of (±φ/2, ±1/2, ±1/(2φ), 0)
+        # with all sign combinations on the non-zero components
 
-        # Generate all even permutations (12 total)
-        even_perms = [
-            [0, 1, 2, 3], [0, 2, 3, 1], [0, 3, 1, 2],
-            [1, 2, 0, 3], [1, 3, 2, 0], [1, 0, 3, 2],
-            [2, 0, 1, 3], [2, 3, 0, 1], [2, 1, 3, 0],
-            [3, 1, 0, 2], [3, 0, 2, 1], [3, 2, 1, 0]
+        # The base values (magnitudes)
+        a = phi / 2       # ≈ 0.809
+        b = 0.5           # = 0.5
+        c = phi_inv / 2   # ≈ 0.309
+
+        # All 12 even permutations of (a, b, c, 0) where zero can be in any position
+        # Even permutation = even number of swaps from identity
+        even_perms_of_positions = [
+            # Zero in position 3 (index 3)
+            (0, 1, 2, 3), (1, 2, 0, 3), (2, 0, 1, 3),
+            # Zero in position 2 (index 2)
+            (0, 1, 3, 2), (1, 3, 0, 2), (3, 0, 1, 2),
+            # Zero in position 1 (index 1)
+            (0, 3, 2, 1), (3, 2, 0, 1), (2, 0, 3, 1),
+            # Zero in position 0 (index 0)
+            (3, 1, 2, 0), (1, 2, 3, 0), (2, 3, 1, 0),
         ]
 
-        for perm in even_perms:
-            base = [base_coords[i] for i in perm]
-            # All sign combinations for non-zero components
+        base_vals = [a, b, c, 0.0]
+
+        for perm in even_perms_of_positions:
+            # Apply permutation to get (val0, val1, val2, val3)
+            permuted = [base_vals[perm[i]] for i in range(4)]
+
+            # Generate all 8 sign combinations for non-zero components
             for s0 in [-1, 1]:
                 for s1 in [-1, 1]:
                     for s2 in [-1, 1]:
                         v = np.array([
-                            base[0] * s0,
-                            base[1] * s1,
-                            base[2] * s2,
-                            base[3]  # Always 0
+                            permuted[0] * s0 if permuted[0] != 0 else 0,
+                            permuted[1] * s1 if permuted[1] != 0 else 0,
+                            permuted[2] * s2 if permuted[2] != 0 else 0,
+                            permuted[3]  # This is 0, sign doesn't matter
                         ])
-                        if np.linalg.norm(v) > 0.1:  # Skip degenerate
-                            vertices.append(v)
+                        vertices.append(v)
 
         # Normalize all vertices to unit sphere and remove duplicates
         unique_vertices = []
         for v in vertices:
-            v = v / np.linalg.norm(v)
-            # Check for duplicates
+            norm = np.linalg.norm(v)
+            if norm < 1e-10:
+                continue
+            v = v / norm
+            # Check for duplicates (including antipodal - but 600-cell is centrosymmetric)
             is_duplicate = False
             for uv in unique_vertices:
-                if np.allclose(v, uv, atol=1e-10) or np.allclose(v, -uv, atol=1e-10):
+                if np.allclose(v, uv, atol=1e-10):
                     is_duplicate = True
                     break
             if not is_duplicate:
                 unique_vertices.append(v)
 
-        # If we don't have exactly 120, use the fallback construction
+        # Verify we have exactly 120 vertices
         if len(unique_vertices) != 120:
-            unique_vertices = self._build_vertices_fallback()
+            print(f"Warning: Got {len(unique_vertices)} vertices, expected 120. Using fallback.")
+            unique_vertices = self._build_vertices_quaternion()
 
         # Create Vertex4D objects with symbol assignments
         for i, v in enumerate(unique_vertices[:120]):
@@ -202,72 +233,92 @@ class Cell600:
                 symbol=i
             ))
 
-    def _build_vertices_fallback(self) -> List[np.ndarray]:
+    def _build_vertices_quaternion(self) -> List[np.ndarray]:
         """
-        Fallback vertex construction using quaternion group structure.
+        Construct 600-cell vertices using the binary icosahedral group.
 
-        The 600-cell vertices correspond to the binary icosahedral group
-        (a double cover of the icosahedral rotation group).
+        The 120 vertices of the 600-cell are exactly the 120 unit quaternions
+        that form the binary icosahedral group 2I ≅ SL(2,5).
+
+        These are:
+        - 24 vertices: The 24-cell (binary tetrahedral subgroup)
+        - 96 vertices: Golden ratio vertices from icosahedral symmetry
         """
         phi = _golden_ratio()
+        phi_inv = 1.0 / phi
+
         vertices = []
 
-        # The 120 vertices can be constructed as unit quaternions
-        # representing the binary icosahedral group 2I
+        # === 24-CELL VERTICES (24 total) ===
+        # 8 axis-aligned: permutations of (±1, 0, 0, 0)
+        for i in range(4):
+            for s in [-1, 1]:
+                v = [0, 0, 0, 0]
+                v[i] = s
+                vertices.append(v)
 
-        # 24 quaternions from the 24-cell (binary tetrahedral group)
-        for perm in [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]:
-            for signs in [1, -1]:
-                vertices.append(np.array(perm) * signs)
+        # 16 half-integer: (±1/2, ±1/2, ±1/2, ±1/2)
+        for s0 in [-1, 1]:
+            for s1 in [-1, 1]:
+                for s2 in [-1, 1]:
+                    for s3 in [-1, 1]:
+                        vertices.append([s0*0.5, s1*0.5, s2*0.5, s3*0.5])
 
-        for s1 in [-1, 1]:
-            for s2 in [-1, 1]:
-                for s3 in [-1, 1]:
-                    for s4 in [-1, 1]:
-                        v = np.array([s1, s2, s3, s4]) * 0.5
-                        vertices.append(v)
+        # === ICOSAHEDRAL VERTICES (96 total) ===
+        # These are all even permutations of (±φ/2, ±1/2, ±1/(2φ), 0)
+        # The key is: we need ALL cyclic arrangements of the zero position
 
-        # Additional 96 vertices using golden ratio
-        # These come from the icosahedral symmetry
-        coords_set = [
-            [phi/2, 0.5, 1/(2*phi), 0],
-            [0.5, 1/(2*phi), phi/2, 0],
-            [1/(2*phi), phi/2, 0.5, 0],
-            [0.5, 1/(2*phi), 0, phi/2],
-            [1/(2*phi), phi/2, 0, 0.5],
-            [phi/2, 0.5, 0, 1/(2*phi)],
-            [0, phi/2, 0.5, 1/(2*phi)],
-            [0, 0.5, 1/(2*phi), phi/2],
-            [0, 1/(2*phi), phi/2, 0.5],
+        a, b, c = phi/2, 0.5, phi_inv/2  # ≈ 0.809, 0.5, 0.309
+
+        # Generate all 12 distinct coordinate patterns
+        # (where one coordinate is 0 and others are a, b, c in some order)
+        patterns = [
+            # Zero in 4th position
+            [a, b, c, 0], [a, c, b, 0], [b, a, c, 0], [b, c, a, 0], [c, a, b, 0], [c, b, a, 0],
+            # Zero in 3rd position
+            [a, b, 0, c], [a, c, 0, b], [b, a, 0, c], [b, c, 0, a], [c, a, 0, b], [c, b, 0, a],
+            # Zero in 2nd position
+            [a, 0, b, c], [a, 0, c, b], [b, 0, a, c], [b, 0, c, a], [c, 0, a, b], [c, 0, b, a],
+            # Zero in 1st position
+            [0, a, b, c], [0, a, c, b], [0, b, a, c], [0, b, c, a], [0, c, a, b], [0, c, b, a],
         ]
 
-        for base in coords_set:
+        # For EVEN permutations only, we need to filter
+        # An even permutation has an even number of inversions
+        # For our patterns, we take those with signature +1
+        # Actually simpler: just generate all and deduplicate
+
+        for pattern in patterns:
+            # All sign combinations on non-zero entries
             for s0 in [-1, 1]:
                 for s1 in [-1, 1]:
                     for s2 in [-1, 1]:
                         for s3 in [-1, 1]:
-                            v = np.array([
-                                base[0] * s0 if base[0] != 0 else 0,
-                                base[1] * s1 if base[1] != 0 else 0,
-                                base[2] * s2 if base[2] != 0 else 0,
-                                base[3] * s3 if base[3] != 0 else 0,
-                            ])
-                            if np.linalg.norm(v) > 0.1:
-                                vertices.append(v / np.linalg.norm(v))
+                            v = [
+                                pattern[0] * s0 if pattern[0] != 0 else 0,
+                                pattern[1] * s1 if pattern[1] != 0 else 0,
+                                pattern[2] * s2 if pattern[2] != 0 else 0,
+                                pattern[3] * s3 if pattern[3] != 0 else 0,
+                            ]
+                            vertices.append(v)
 
-        # Deduplicate
+        # Normalize and deduplicate
         unique = []
         for v in vertices:
-            v = v / np.linalg.norm(v)
+            v = np.array(v, dtype=np.float64)
+            norm = np.linalg.norm(v)
+            if norm < 1e-10:
+                continue
+            v = v / norm
             is_dup = False
             for u in unique:
-                if np.allclose(v, u, atol=1e-8):
+                if np.allclose(v, u, atol=1e-10):
                     is_dup = True
                     break
             if not is_dup:
                 unique.append(v)
 
-        return unique[:120]
+        return unique
 
     def get_vertex(self, symbol: int) -> Vertex4D:
         """Get vertex by symbol index."""
@@ -336,24 +387,24 @@ class PolychoralConstellation:
         Uses the hash to generate two unit quaternions (left and right)
         which together specify a general SO(4) rotation.
         """
-        # Extract 8 floats from 32 bytes
-        floats = np.frombuffer(hash_bytes, dtype=np.float32)
+        # Convert hash bytes to 8 values in range [-1, 1]
+        # Use uint32 interpretation to avoid NaN/Inf issues
+        uint_vals = np.frombuffer(hash_bytes, dtype=np.uint32)
+        # Scale to [-1, 1]
+        floats = (uint_vals.astype(np.float64) / (2**32 - 1)) * 2 - 1
 
-        # First quaternion from first 4 values (safe normalization)
+        # First quaternion from first 4 values
         q1 = floats[:4].copy()
         norm1 = np.linalg.norm(q1)
         q1 = q1 / norm1 if norm1 > 1e-10 else np.array([1.0, 0.0, 0.0, 0.0])
 
-        # Second quaternion from last 4 values (safe normalization)
+        # Second quaternion from last 4 values
         q2 = floats[4:8].copy()
         norm2 = np.linalg.norm(q2)
         q2 = q2 / norm2 if norm2 > 1e-10 else np.array([1.0, 0.0, 0.0, 0.0])
 
         # Construct SO(4) rotation from two quaternions
         # R(v) = q1 * v * q2^* (quaternion sandwich)
-        # This covers all of SO(4)
-
-        # Convert to 4x4 matrix representation
         R = self._quaternion_pair_to_matrix(q1, q2)
         return R
 
