@@ -56,19 +56,19 @@ export const mergeLiveAdapterMetrics = (state, metrics = {}) => {
         return state;
     }
     if (Number.isFinite(metrics.frames)) {
-        state.frames = Math.max(state.frames, metrics.frames);
+        state.frames += metrics.frames;
     }
     if (Number.isFinite(metrics.drops)) {
-        state.drops = Math.max(state.drops, metrics.drops);
+        state.drops += metrics.drops;
     }
     if (Number.isFinite(metrics.parseErrors)) {
-        state.parseErrors = Math.max(state.parseErrors, metrics.parseErrors);
+        state.parseErrors += metrics.parseErrors;
     }
     if (Number.isFinite(metrics.connectAttempts)) {
-        state.connectAttempts = Math.max(state.connectAttempts, metrics.connectAttempts);
+        state.connectAttempts += metrics.connectAttempts;
     }
     if (Number.isFinite(metrics.reconnectAttempts)) {
-        state.reconnectAttempts = Math.max(state.reconnectAttempts, metrics.reconnectAttempts);
+        state.reconnectAttempts += metrics.reconnectAttempts;
     }
     if (metrics.latency) {
         const { last, min, max, avg, samples } = metrics.latency;
@@ -142,10 +142,10 @@ export const mergeLiveAdapterMetrics = (state, metrics = {}) => {
         state.checksum = {
             status: metrics.checksum.status || state.checksum.status,
             validated: Number.isFinite(metrics.checksum.validated)
-                ? Math.max(state.checksum.validated, metrics.checksum.validated)
+                ? state.checksum.validated + metrics.checksum.validated
                 : state.checksum.validated,
             failures: Number.isFinite(metrics.checksum.failures)
-                ? Math.max(state.checksum.failures, metrics.checksum.failures)
+                ? state.checksum.failures + metrics.checksum.failures
                 : state.checksum.failures,
             lastReported: metrics.checksum.last ?? state.checksum.lastReported,
             lastComputed: metrics.checksum.computed ?? state.checksum.lastComputed
