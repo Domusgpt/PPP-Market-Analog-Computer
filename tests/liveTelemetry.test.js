@@ -44,6 +44,17 @@ test('registerLiveFrameMetrics updates latency, saturation, and checksum counter
 
 test('mergeLiveAdapterMetrics merges counters and latency aggregates', () => {
     const state = createLiveStreamState();
+    Object.assign(state, {
+        frames: 5,
+        drops: 1,
+        parseErrors: 1,
+        connectAttempts: 2,
+        reconnectAttempts: 2,
+        checksum: { status: 'valid', validated: 1, failures: 1 },
+        latencySamples: 4,
+        latencySum: 100,
+        avgLatency: 25
+    });
     mergeLiveAdapterMetrics(state, {
         frames: 10,
         drops: 2,
@@ -53,27 +64,30 @@ test('mergeLiveAdapterMetrics merges counters and latency aggregates', () => {
         latency: { last: 40, min: 22, max: 75, avg: 47.5, samples: 6 },
         interFrameGap: { last: 110, peak: 240 },
         channelSaturation: { latest: 0.75, peak: 0.9 },
-        checksum: { status: 'mismatch', validated: 4, failures: 1, last: 'abcd', computed: 'abcd' },
+        checksum: { status: 'mismatch', validated: 4, failures: 1, last: 'abcd', computed: 'dcba' },
         lastErrorCode: 'serial-invalid-frame'
     });
 
-    assert.equal(state.frames, 10);
-    assert.equal(state.drops, 2);
-    assert.equal(state.parseErrors, 1);
-    assert.equal(state.connectAttempts, 3);
-    assert.equal(state.reconnectAttempts, 1);
+    assert.equal(state.frames, 15);
+    assert.equal(state.drops, 3);
+    assert.equal(state.parseErrors, 2);
+    assert.equal(state.connectAttempts, 5);
+    assert.equal(state.reconnectAttempts, 3);
     assert.equal(state.lastLatency, 40);
     assert.equal(state.minLatency, 22);
     assert.equal(state.maxLatency, 75);
-    assert.equal(state.avgLatency, 47.5);
-    assert.equal(state.latencySamples, 6);
+    assert.equal(state.latencySum, 385);
+    assert.equal(state.latencySamples, 10);
+    assert.equal(state.avgLatency, 38.5);
     assert.equal(state.interFrameGap, 110);
     assert.equal(state.peakInterFrameGap, 240);
     assert.equal(state.channelSaturation.latest, 0.75);
     assert.equal(state.channelSaturation.peak, 0.9);
     assert.equal(state.checksum.status, 'mismatch');
-    assert.equal(state.checksum.validated, 4);
-    assert.equal(state.checksum.failures, 1);
+    assert.equal(state.checksum.validated, 5);
+    assert.equal(state.checksum.failures, 2);
+    assert.equal(state.checksum.lastReported, 'abcd');
+    assert.equal(state.checksum.lastComputed, 'dcba');
     assert.equal(state.lastErrorCode, 'serial-invalid-frame');
 });
 
