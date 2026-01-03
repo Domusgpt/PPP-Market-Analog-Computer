@@ -22,6 +22,7 @@ const createAdapterMetrics = () => ({
     lastInterFrameGap: null,
     peakInterFrameGap: null,
     lastChecksum: null,
+    lastChecksumComputed: null,
     lastChecksumStatus: 'absent',
     lastErrorCode: null,
     connected: false
@@ -37,6 +38,7 @@ const snapshotAdapterMetrics = (metrics) => ({
         validated: metrics.checksumValidated,
         failures: metrics.checksumFailures,
         last: metrics.lastChecksum,
+        computed: metrics.lastChecksumComputed,
         status: metrics.lastChecksumStatus
     },
     channelSaturation: {
@@ -119,6 +121,7 @@ export const evaluateChecksumStatus = (frame) => {
 
 const applyChecksumMetrics = (metrics, status) => {
     metrics.lastChecksum = status.reported || null;
+    metrics.lastChecksumComputed = status.computed || null;
     metrics.lastChecksumStatus = status.status;
     if (status.status === 'valid') {
         metrics.checksumValidated += 1;
