@@ -55,20 +55,23 @@ export const mergeLiveAdapterMetrics = (state, metrics = {}) => {
     if (!state || typeof state !== 'object' || !metrics || typeof metrics !== 'object') {
         return state;
     }
+    if (typeof metrics.connected === 'boolean') {
+        state.connected = metrics.connected;
+    }
     if (Number.isFinite(metrics.frames)) {
-        state.frames = Math.max(state.frames, metrics.frames);
+        state.frames += metrics.frames;
     }
     if (Number.isFinite(metrics.drops)) {
-        state.drops = Math.max(state.drops, metrics.drops);
+        state.drops += metrics.drops;
     }
     if (Number.isFinite(metrics.parseErrors)) {
-        state.parseErrors = Math.max(state.parseErrors, metrics.parseErrors);
+        state.parseErrors += metrics.parseErrors;
     }
     if (Number.isFinite(metrics.connectAttempts)) {
-        state.connectAttempts = Math.max(state.connectAttempts, metrics.connectAttempts);
+        state.connectAttempts += metrics.connectAttempts;
     }
     if (Number.isFinite(metrics.reconnectAttempts)) {
-        state.reconnectAttempts = Math.max(state.reconnectAttempts, metrics.reconnectAttempts);
+        state.reconnectAttempts += metrics.reconnectAttempts;
     }
     if (metrics.latency) {
         const { last, min, max, avg, samples } = metrics.latency;
@@ -81,11 +84,22 @@ export const mergeLiveAdapterMetrics = (state, metrics = {}) => {
         if (Number.isFinite(max)) {
             state.maxLatency = state.maxLatency == null ? max : Math.max(state.maxLatency, max);
         }
-        if (Number.isFinite(avg)) {
+        const hasSamples = Number.isFinite(samples);
+        const metricsLatencySum = Number.isFinite(avg) && hasSamples ? avg * samples : null;
+        if (hasSamples) {
+            const baseSamples = Number.isFinite(state.latencySamples) ? state.latencySamples : 0;
+            const baseSum = Number.isFinite(state.latencySum) ? state.latencySum : 0;
+            state.latencySamples = baseSamples + samples;
+            if (metricsLatencySum !== null) {
+                state.latencySum = baseSum + metricsLatencySum;
+                state.avgLatency = state.latencySamples > 0
+                    ? state.latencySum / state.latencySamples
+                    : state.avgLatency ?? null;
+            } else if (Number.isFinite(avg)) {
+                state.avgLatency = avg;
+            }
+        } else if (Number.isFinite(avg)) {
             state.avgLatency = avg;
-        }
-        if (Number.isFinite(samples)) {
-            state.latencySamples = Math.max(state.latencySamples, samples);
         }
     } else {
         if (Number.isFinite(metrics.lastLatency)) {
@@ -103,11 +117,24 @@ export const mergeLiveAdapterMetrics = (state, metrics = {}) => {
                 metrics.maxLatency
             );
         }
-        if (Number.isFinite(metrics.avgLatency)) {
+        const hasSamples = Number.isFinite(metrics.latencySamples);
+        const metricsLatencySum = Number.isFinite(metrics.avgLatency) && hasSamples
+            ? metrics.avgLatency * metrics.latencySamples
+            : null;
+        if (hasSamples) {
+            const baseSamples = Number.isFinite(state.latencySamples) ? state.latencySamples : 0;
+            const baseSum = Number.isFinite(state.latencySum) ? state.latencySum : 0;
+            state.latencySamples = baseSamples + metrics.latencySamples;
+            if (metricsLatencySum !== null) {
+                state.latencySum = baseSum + metricsLatencySum;
+                state.avgLatency = state.latencySamples > 0
+                    ? state.latencySum / state.latencySamples
+                    : state.avgLatency ?? null;
+            } else if (Number.isFinite(metrics.avgLatency)) {
+                state.avgLatency = metrics.avgLatency;
+            }
+        } else if (Number.isFinite(metrics.avgLatency)) {
             state.avgLatency = metrics.avgLatency;
-        }
-        if (Number.isFinite(metrics.latencySamples)) {
-            state.latencySamples = Math.max(state.latencySamples, metrics.latencySamples);
         }
     }
     const channelMetrics = metrics.channelSaturation;
@@ -142,10 +169,10 @@ export const mergeLiveAdapterMetrics = (state, metrics = {}) => {
         state.checksum = {
             status: metrics.checksum.status || state.checksum.status,
             validated: Number.isFinite(metrics.checksum.validated)
-                ? Math.max(state.checksum.validated, metrics.checksum.validated)
+                ? state.checksum.validated + metrics.checksum.validated
                 : state.checksum.validated,
             failures: Number.isFinite(metrics.checksum.failures)
-                ? Math.max(state.checksum.failures, metrics.checksum.failures)
+                ? state.checksum.failures + metrics.checksum.failures
                 : state.checksum.failures,
             lastReported: metrics.checksum.last ?? state.checksum.lastReported,
             lastComputed: metrics.checksum.computed ?? state.checksum.lastComputed
@@ -183,6 +210,7 @@ export const registerLiveFrameMetrics = (
         state.lastLatency = null;
         state.lastTimestamp = now;
     }
+    state.connected = true;
     if (typeof state.lastReceiveAt === 'number') {
         const gap = Math.max(0, now - state.lastReceiveAt);
         state.interFrameGap = gap;
