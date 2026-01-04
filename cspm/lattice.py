@@ -138,92 +138,10 @@ class Cell600:
         """
         Construct all 120 vertices of the 600-cell.
 
-        The 600-cell is the convex hull of the following 120 points:
-        - 8 vertices: all permutations of (±1, 0, 0, 0)
-        - 16 vertices: (±1/2, ±1/2, ±1/2, ±1/2)
-        - 96 vertices: even permutations of (±φ/2, ±1/2, ±1/(2φ), 0)
-
-        where φ = (1+√5)/2 is the golden ratio.
+        Uses the binary icosahedral group construction which reliably
+        produces exactly 120 vertices.
         """
-        phi = _golden_ratio()
-        phi_inv = 1 / phi  # 1/φ = φ - 1 ≈ 0.618
-
-        vertices = []
-
-        # Type 1: 8 vertices - axis-aligned unit vectors
-        for axis in range(4):
-            for sign in [-1, 1]:
-                v = np.zeros(4)
-                v[axis] = sign
-                vertices.append(v)
-
-        # Type 2: 16 vertices - all sign combinations of (1/2, 1/2, 1/2, 1/2)
-        for s0 in [-1, 1]:
-            for s1 in [-1, 1]:
-                for s2 in [-1, 1]:
-                    for s3 in [-1, 1]:
-                        v = np.array([s0, s1, s2, s3]) * 0.5
-                        vertices.append(v)
-
-        # Type 3: 96 vertices - even permutations of (±φ/2, ±1/2, ±1/(2φ), 0)
-        # with all sign combinations on the non-zero components
-
-        # The base values (magnitudes)
-        a = phi / 2       # ≈ 0.809
-        b = 0.5           # = 0.5
-        c = phi_inv / 2   # ≈ 0.309
-
-        # All 12 even permutations of (a, b, c, 0) where zero can be in any position
-        # Even permutation = even number of swaps from identity
-        even_perms_of_positions = [
-            # Zero in position 3 (index 3)
-            (0, 1, 2, 3), (1, 2, 0, 3), (2, 0, 1, 3),
-            # Zero in position 2 (index 2)
-            (0, 1, 3, 2), (1, 3, 0, 2), (3, 0, 1, 2),
-            # Zero in position 1 (index 1)
-            (0, 3, 2, 1), (3, 2, 0, 1), (2, 0, 3, 1),
-            # Zero in position 0 (index 0)
-            (3, 1, 2, 0), (1, 2, 3, 0), (2, 3, 1, 0),
-        ]
-
-        base_vals = [a, b, c, 0.0]
-
-        for perm in even_perms_of_positions:
-            # Apply permutation to get (val0, val1, val2, val3)
-            permuted = [base_vals[perm[i]] for i in range(4)]
-
-            # Generate all 8 sign combinations for non-zero components
-            for s0 in [-1, 1]:
-                for s1 in [-1, 1]:
-                    for s2 in [-1, 1]:
-                        v = np.array([
-                            permuted[0] * s0 if permuted[0] != 0 else 0,
-                            permuted[1] * s1 if permuted[1] != 0 else 0,
-                            permuted[2] * s2 if permuted[2] != 0 else 0,
-                            permuted[3]  # This is 0, sign doesn't matter
-                        ])
-                        vertices.append(v)
-
-        # Normalize all vertices to unit sphere and remove duplicates
-        unique_vertices = []
-        for v in vertices:
-            norm = np.linalg.norm(v)
-            if norm < 1e-10:
-                continue
-            v = v / norm
-            # Check for duplicates (including antipodal - but 600-cell is centrosymmetric)
-            is_duplicate = False
-            for uv in unique_vertices:
-                if np.allclose(v, uv, atol=1e-10):
-                    is_duplicate = True
-                    break
-            if not is_duplicate:
-                unique_vertices.append(v)
-
-        # Verify we have exactly 120 vertices
-        if len(unique_vertices) != 120:
-            print(f"Warning: Got {len(unique_vertices)} vertices, expected 120. Using fallback.")
-            unique_vertices = self._build_vertices_quaternion()
+        unique_vertices = self._build_vertices_quaternion()
 
         # Create Vertex4D objects with symbol assignments
         for i, v in enumerate(unique_vertices[:120]):
@@ -302,20 +220,19 @@ class Cell600:
                             ]
                             vertices.append(v)
 
-        # Normalize and deduplicate
+        # Normalize and deduplicate using rounded tuple keys for O(n) performance
         unique = []
+        seen = set()
         for v in vertices:
             v = np.array(v, dtype=np.float64)
             norm = np.linalg.norm(v)
             if norm < 1e-10:
                 continue
             v = v / norm
-            is_dup = False
-            for u in unique:
-                if np.allclose(v, u, atol=1e-10):
-                    is_dup = True
-                    break
-            if not is_dup:
+            # Use rounded tuple as hash key (6 decimal places for precision)
+            key = tuple(np.round(v, 6))
+            if key not in seen:
+                seen.add(key)
                 unique.append(v)
 
         return unique
