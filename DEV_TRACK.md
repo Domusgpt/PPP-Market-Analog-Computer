@@ -108,3 +108,8 @@ This log captures the iterative development of the Polytopal Projection Platform
 - Fused flux continua, topology axes, manifold voices, and carrier matrices into a SpinorContinuumLattice payload with orientation residuals, synergy metrics, and carrier-weighted projections for robotics-grade telemetry.
 - Wired the continuum lattice through SonicGeometryEngine analysis/transmission payloads alongside new PPP APIs (`getLattice`, `onLattice`) and `PPP_CONFIG.onSonicLattice` callbacks.
 - Updated sonic helper copy, control panel messaging, README guidance, DEV_TRACK history, and development logs to document the continuum lattice channel beside analysis, signal, transduction, manifold, topology, and continuum streams.
+
+## Session 24 – Geometric audit telemetry chain
+- Introduced geometric audit scaffolding: canonical polytopal state normalization, constellation/topology/quaternion hashing, and evidence creation with linked hashes for CRA/TRACE ingestion.
+- Added Merkle root/proof helpers and deterministic stringification utilities to support compact verification of geometric telemetry batches.
+- Next: bind PPP runtime emitters to generate evidence items per frame, anchor batched hashes in TRACE, and expose governance queries that map ISpec constraints onto the polytopal fingerprint schema.
