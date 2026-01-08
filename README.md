@@ -66,6 +66,8 @@ For a chronological view of the build-out, review [DEV_TRACK.md](./DEV_TRACK.md)
 - Spinor topology weave correlating quaternion axes with spinor, resonance, signal, and manifold flux to surface bridge/hopf braiding analytics via `PPP.sonicGeometry.getTopology()`, `PPP.sonicGeometry.onTopology`, and `PPP_CONFIG.onSonicTopology`
 - Spinor flux continuum distilling topology braids, manifold aggregates, spinor weights, and signal fabrics into alignment vectors accessible through `PPP.sonicGeometry.getContinuum()`, `PPP.sonicGeometry.onContinuum`, and `PPP_CONFIG.onSonicContinuum`
 - Spinor continuum lattice weaving flux continua, topology axes, manifold voices, and carrier matrices into weighted orientation lattices accessible through `PPP.sonicGeometry.getLattice()`, `PPP.sonicGeometry.onLattice`, and `PPP_CONFIG.onSonicLattice`
+- Geometric audit bridge piping constellation telemetry into hash-linked audit sessions when `PPP_CONFIG.geometricAudit.enabled` is set, exposing `PPP.geometricAudit` helpers for evidence and batch verification
+- OpenTelemetry-ready adapter layer for exporting live telemetry and audit events via `PPP_CONFIG.otel` (see `docs/otel-adapter.md`)
 
 ### Sonic Geometry Transmission Matrix
 
@@ -118,6 +120,59 @@ The complementary `manifold` payload (mirrored as `transmission.manifold`) fuses
 - `voices` align each harmonic voice with its gate, spinor, quaternion, resonance, signal, and transduction metrics for cross-modality diagnostics.
 
 Subscribe via `PPP.sonicGeometry.onManifold` (or `PPP_CONFIG.onSonicManifold`) or pull the latest snapshot through `PPP.sonicGeometry.getManifold()` to keep multimodal or robotics pipelines synchronized with the aggregated manifold telemetry.
+
+### Geometric Audit Telemetry
+
+Enable hash-linked audit evidence for constellation telemetry by configuring the geometric audit bridge:
+
+```js
+window.PPP_CONFIG = {
+  geometricAudit: {
+    enabled: true,
+    batchSize: 10,
+    maxChainLength: 500,
+    maxBatches: 20,
+    onEvidence: (evidence) => {
+      // stream evidence to TRACE or a governance service
+      console.log('audit evidence', evidence);
+    },
+    exporter: (event) => {
+      // event.type: audit.evidence | audit.batch.sealed | audit.batch.anchored | audit.batch.anchor_error
+      console.log('audit export', event);
+    },
+    onBatchSealed: (batch) => {
+      // seal batch roots in a Merkle anchor
+      console.log('audit batch sealed', batch.root);
+    },
+    anchorBatch: async (batch) => {
+      // return an anchor hash after persisting the batch root
+      return await traceAnchorService(batch.root);
+    },
+    onBatchAnchored: (batch) => {
+      console.log('audit batch anchored', batch.anchored);
+    },
+    onBatchAnchorError: ({ batch, error }) => {
+      console.warn('audit batch anchor failed', batch.index, error);
+    }
+  }
+};
+```
+
+When enabled, the runtime emits `CONSTELLATION_SNAPSHOT` evidence for every SonicGeometry constellation frame and exposes inspection helpers via `PPP.geometricAudit`:
+
+- `PPP.geometricAudit.getState()` returns the current chain, pending events, and sealed batches.
+- `PPP.geometricAudit.ingestConstellation(constellation, overrides)` appends a manual snapshot.
+- `PPP.geometricAudit.sealPendingBatch()` seals the pending Merkle batch immediately.
+- `PPP.geometricAudit.anchorBatch(index, hash, timestamp)` records an external anchor hash against a sealed batch.
+- `PPP.geometricAudit.verifyChainIntegrity()` validates the hash-linked evidence chain.
+- `PPP.geometricAudit.verifyBatchIntegrity(index)` validates Merkle proofs for a sealed batch.
+
+The `anchorBatch` callback may return a string hash or an object of the form `{ hash, anchoredAt }` to override the anchoring timestamp. Use `onBatchAnchorError` to respond to persistence failures. Evidence/batch events can be forwarded through the optional `exporter` callback for OpenTelemetry or TRACE ingestion.
+
+Reference material:
+- `docs/geometric-audit-schema.md` defines the evidence, batch, and anchoring payload shapes.
+- `docs/otel-adapter.md` shows how to map PPP telemetry into OpenTelemetry metrics/logs.
+- `scripts/traceAnchorClient.js` provides a minimal retrying anchor helper.
 
 ### Spinor Topology Weave
 
