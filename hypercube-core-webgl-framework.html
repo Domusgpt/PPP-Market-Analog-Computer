@@ -534,6 +534,20 @@
         </div>
 
         <div class="control-group">
+            <label>
+                Geometric Audit Telemetry
+                <span id="geometricAuditMode" class="status-indicator idle">disabled</span>
+            </label>
+            <div class="status-stack">
+                <p id="geometricAuditSummary" class="small-print">Geometric audit pipeline disabled.</p>
+                <p id="geometricAuditAnchor" class="small-print">No batches sealed.</p>
+            </div>
+            <p class="small-print">
+                Enable <code>PPP_CONFIG.geometricAudit</code> to emit hash-linked evidence and Merkle batch summaries from live constellation telemetry.
+            </p>
+        </div>
+
+        <div class="control-group">
             <label class="toggle-label" for="sonicGeometryToggle">
                 <input id="sonicGeometryToggle" type="checkbox">
                 Sonic Geometry Resonance
