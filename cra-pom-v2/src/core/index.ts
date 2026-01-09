@@ -63,3 +63,62 @@ export {
   type LatticeAnalysis,
   type TrajectoryQuality,
 } from './analysis';
+
+// ============================================
+// PPP (Polytopal Projection Processing) Modules
+// ============================================
+
+// Hyperdimensional Computing (HDC)
+export {
+  Hypervector,
+  VSA,
+  SemanticMemory,
+  DEFAULT_DIMENSION,
+} from './hdc';
+
+// Fourier Holographic Reduced Representations (FHRR)
+export {
+  PhasorVector,
+  FHRR_VSA,
+  ResonatorNetwork,
+  polar,
+  phasor,
+  type Complex,
+} from './fhrr';
+
+// Concept Polytopes
+export {
+  ConvexPolytope,
+  VoronoiCell,
+  VoronoiTessellation,
+  PolytopeBundle,
+  type HalfSpace,
+  type ContainmentResult,
+} from './polytope';
+
+// Rules as Rotors (Clifford Algebra)
+export {
+  Rotor,
+  RuleLibrary,
+  InferenceChain,
+  type Rule,
+  type InferenceStep,
+} from './rotor';
+
+// Garden of Forking Paths (Multi-Future Prediction)
+export {
+  GardenOfForkingPaths,
+  TimeHorizon,
+  type FuturePath,
+  type Fork,
+  type FutureBundle,
+  type FutureConstraint,
+} from './garden';
+
+// PPP Reasoning Engine
+export {
+  PPPReasoningEngine,
+  type Concept,
+  type ReasoningQuery,
+  type ReasoningResult,
+} from './reasoner';
