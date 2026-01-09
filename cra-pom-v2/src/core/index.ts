@@ -122,3 +122,38 @@ export {
   type ReasoningQuery,
   type ReasoningResult,
 } from './reasoner';
+
+// PPP System State (Machine API)
+export {
+  PPPStateManager,
+  // Serialization functions
+  serializeHypervector,
+  deserializeHypervector,
+  serializePhasorVector,
+  deserializePhasorVector,
+  serializePolytope,
+  deserializePolytope,
+  serializeRotor,
+  deserializeRotor,
+  serializeRule,
+  deserializeRule,
+  serializeInferenceChain,
+  serializeFutureBundle,
+  serializeReasoningResult,
+  // JSON Schema for validation
+  PPP_SYSTEM_STATE_SCHEMA,
+  // Types
+  type SerializedHypervector,
+  type SerializedPhasorVector,
+  type SerializedPolytope,
+  type SerializedRotor,
+  type SerializedRule,
+  type SerializedConcept,
+  type SerializedInferenceChain,
+  type SerializedFuturePath,
+  type SerializedFutureBundle,
+  type SerializedReasoningResult,
+  type PPPSystemState,
+  type MachineAPIRequest,
+  type MachineAPIResponse,
+} from './state';
