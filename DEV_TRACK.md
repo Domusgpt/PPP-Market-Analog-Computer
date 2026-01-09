@@ -211,7 +211,7 @@ Dedicated module for cognitive validity checking (formalizes logic in Lattice24)
 
 **Use Case:** AI safety auditing - can verify if a reasoning trajectory stays within valid bounds.
 
-## CPE Phase 5 – HDCEncoder.ts (Neural-Geometric Bridge)
+## CPE Phase 5 ✅ – HDCEncoder.ts (Neural-Geometric Bridge)
 Maps semantic input (text, embeddings) into 4D force vectors that drive the engine:
 
 **Architecture:**
@@ -225,10 +225,18 @@ Text Input → Tokenizer → HDC Encoder → 4D Force Vector → CPE
 - `embeddingToForce(embedding: Float32Array): Force` - Map neural embeddings to 4D
 - `conceptToVertex(concept: string): number` - Map concepts to lattice vertices
 
+**Implementation Details:**
+- Johnson-Lindenstrauss random projection for dimensionality reduction
+- 24 concept archetypes mapped to 24-cell vertices
+- Softmax-based concept activation with configurable temperature
+- Seeded PRNG (Mulberry32) for reproducible projections
+- Simple tokenization with TF-style weighting
+- Hash-based deterministic embeddings for vocabulary
+
 **Key Insight:** The 24 vertices of the 24-Cell can represent 24 "concept archetypes" - the encoder learns to map semantic content to combinations of these basis concepts.
 
 **Integration Points:**
-- Compatible with OpenAI/Anthropic embeddings
+- Compatible with OpenAI/Anthropic embeddings (configurable dimension)
 - Can ingest from existing PPP data channels
 - Force magnitude = semantic intensity
 - Force direction = concept blend
@@ -265,5 +273,5 @@ Wire the CPE physics to the existing visualization system:
 | 2 | Lattice24.ts | 24-Cell topology | types, Geometric | ✅ Complete |
 | 3 | CausalReasoningEngine.ts | Physics loop | types, Geometric, Lattice24 | ✅ Complete |
 | 4 | Epistaorthognition.ts | Validity validation | Lattice24, CausalReasoning | ✅ Complete |
-| 5 | HDCEncoder.ts | Text → Force mapping | CausalReasoning | ⏳ Pending |
+| 5 | HDCEncoder.ts | Text → Force mapping | CausalReasoning | ✅ Complete |
 | 6 | CPERendererBridge.js | WebGL integration | All above + Hypercube | ⏳ Pending |
