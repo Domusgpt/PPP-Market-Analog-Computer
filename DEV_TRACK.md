@@ -177,12 +177,17 @@ bringing rigorous geometric algebra and topological constraints to AI reasoning 
 - Projection/clamping to convex hull boundary for state correction.
 - Geodesic distance via BFS, singleton factory, and k-nearest caching.
 
-## CPE Phase 3 🔄 – CausalReasoningEngine.ts (Physics Loop)
-- Core physics simulation loop with deterministic timestep.
-- Force application generating torque via wedge product.
+## CPE Phase 3 ✅ – CausalReasoningEngine.ts (Physics Loop)
+- Core physics simulation loop with deterministic/variable timestep support.
+- Force application generating torque via wedge product (Force ∧ State = Torque).
+- Rotor derivation from angular velocity for unitary transformations.
 - State integration with inertia, damping, and velocity limits.
-- Automatic topology validation per update cycle.
-- Telemetry emission for observability integration.
+- Sandwich product update: S' = R·S·R~ preserving norm (truth value).
+- Automatic topology validation per update cycle via Lattice24.
+- Telemetry emission with subscriber pattern for observability.
+- Force queue with accumulation and consolidation.
+- Lattice transition and coherence change detection.
+- Snapshot/restore for serialization support.
 
 ## CPE Phase 4 – Epistaorthognition.ts (Validation Module)
 Dedicated module for cognitive validity checking (formalizes logic in Lattice24):
@@ -253,7 +258,7 @@ Wire the CPE physics to the existing visualization system:
 |-------|--------|---------|--------------|--------|
 | 1 | GeometricAlgebra.ts | Clifford Algebra Cl(4,0) | types | ✅ Complete |
 | 2 | Lattice24.ts | 24-Cell topology | types, Geometric | ✅ Complete |
-| 3 | CausalReasoningEngine.ts | Physics loop | types, Geometric, Lattice24 | 🔄 In Progress |
+| 3 | CausalReasoningEngine.ts | Physics loop | types, Geometric, Lattice24 | ✅ Complete |
 | 4 | Epistaorthognition.ts | Validity validation | Lattice24, CausalReasoning | ⏳ Pending |
 | 5 | HDCEncoder.ts | Text → Force mapping | CausalReasoning | ⏳ Pending |
 | 6 | CPERendererBridge.js | WebGL integration | All above + Hypercube | ⏳ Pending |
