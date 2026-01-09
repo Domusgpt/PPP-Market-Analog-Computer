@@ -157,3 +157,15 @@ export {
   type MachineAPIRequest,
   type MachineAPIResponse,
 } from './state';
+
+// PPP LLM Integration (Agentic Tools + Verification)
+export {
+  PPPIntegration,
+  PPP_TOOLS,
+  PPP_SYSTEM_PROMPT,
+  GROUNDING_PROTOCOL,
+  type VerificationProof,
+  type VerifiedResponse,
+  type GroundingCitation,
+  type ToolDefinition,
+} from './llm-integration';
