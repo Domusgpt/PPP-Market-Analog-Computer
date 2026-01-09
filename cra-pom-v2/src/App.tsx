@@ -10,6 +10,8 @@ import {
   Sparkline,
   ChatPanel,
   ChatToggleButton,
+  V3DemoPanel,
+  V3StatusPanel,
   type TrajectoryPoint2D,
   type TrajectoryMode,
   type SparklineDataPoint,
@@ -44,6 +46,7 @@ import {
   useTouchControls,
   clearAllStoredData,
   DEFAULT_SESSION_SETTINGS,
+  useVerifiedReasoning,
 } from './hooks';
 
 /**
@@ -60,6 +63,7 @@ const KEYBOARD_SHORTCUTS = {
   d: 'Download data',
   ',': 'Open settings',
   c: 'Toggle chat',
+  v: 'PPP v3 Demo',
   '?': 'Show shortcuts',
 };
 
@@ -114,6 +118,10 @@ function App() {
     model: 'demo',
     baseUrl: '',
   });
+
+  // PPP v3 state
+  const [showV3Demo, setShowV3Demo] = useState(false);
+  const v3Reasoning = useVerifiedReasoning();
 
   /**
    * Touch controls for canvas rotation
@@ -456,6 +464,9 @@ function App() {
         case 'c':
           setShowChat((prev) => !prev);
           break;
+        case 'v':
+          setShowV3Demo((prev) => !prev);
+          break;
         case '?':
           setShowShortcuts((prev) => !prev);
           break;
@@ -463,6 +474,7 @@ function App() {
           setShowShortcuts(false);
           setShowSettings(false);
           setShowChat(false);
+          setShowV3Demo(false);
           break;
       }
     };
@@ -880,6 +892,26 @@ function App() {
         hasUnread={false}
         onClick={() => setShowChat(true)}
       />
+
+      {/* PPP v3 Demo Panel */}
+      <V3DemoPanel isOpen={showV3Demo} onClose={() => setShowV3Demo(false)} />
+
+      {/* PPP v3 Status Indicator */}
+      {!showV3Demo && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '60px',
+            left: '10px',
+            zIndex: 100,
+            cursor: 'pointer',
+          }}
+          onClick={() => setShowV3Demo(true)}
+          title="Press 'v' or click to open PPP v3 Demo"
+        >
+          <V3StatusPanel state={v3Reasoning.state} compact />
+        </div>
+      )}
     </div>
   );
 }
