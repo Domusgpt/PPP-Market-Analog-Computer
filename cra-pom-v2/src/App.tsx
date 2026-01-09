@@ -2,8 +2,16 @@
 // Main application - Orchestrates the Geometric Cognition Engine
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { PolytopeCanvas, ControlPanel, AuditLog } from './components';
-import type { TrajectoryPoint2D } from './components/PolytopeCanvas';
+import {
+  PolytopeCanvas,
+  ControlPanel,
+  AuditLog,
+  SettingsPanel,
+  Sparkline,
+  type TrajectoryPoint2D,
+  type TrajectoryMode,
+  type SparklineDataPoint,
+} from './components';
 import {
   CognitiveManifold,
   Quaternion,
@@ -13,6 +21,7 @@ import {
   projectLattice,
   projectQuaternionTo2D,
   computeCoherenceMetrics,
+  PHI,
   type ProjectionResult,
   type ConvexityResult,
   type LogEntryCompact,
@@ -20,19 +29,26 @@ import {
   type AuditEventType,
   type CoherenceMetrics,
 } from './core';
+import {
+  useSessionSettings,
+  useTouchControls,
+  clearAllStoredData,
+  DEFAULT_SESSION_SETTINGS,
+} from './hooks';
 
 /**
  * Keyboard shortcuts configuration
  */
 const KEYBOARD_SHORTCUTS = {
   ' ': 'Toggle run/pause',
-  's': 'Single step',
-  'r': 'Toggle auto-rotate',
-  'e': 'Inject entropy',
-  'x': 'Reset system',
-  't': 'Toggle trajectory',
-  'g': 'Toggle grid',
-  'd': 'Download data',
+  s: 'Single step',
+  r: 'Toggle auto-rotate',
+  e: 'Inject entropy',
+  x: 'Reset system',
+  t: 'Toggle trajectory',
+  g: 'Toggle grid',
+  d: 'Download data',
+  ',': 'Open settings',
   '?': 'Show shortcuts',
 };
 
@@ -40,18 +56,21 @@ const KEYBOARD_SHORTCUTS = {
  * Main App Component
  */
 function App() {
-  // Core engine instances (refs to persist across renders)
+  // Persistent settings
+  const [settings, setSettings, clearSettings] = useSessionSettings();
+
+  // Core engine instances
   const manifoldRef = useRef<CognitiveManifold | null>(null);
   const auditChainRef = useRef<AuditChain | null>(null);
   const projectionAnimatorRef = useRef<ProjectionAnimator | null>(null);
   const trajectoryRef = useRef<TrajectoryHistory | null>(null);
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
 
   // UI state
   const [isRunning, setIsRunning] = useState(false);
-  const [autoRotate, setAutoRotate] = useState(true);
-  const [showTrajectory, setShowTrajectory] = useState(true);
-  const [showGrid, setShowGrid] = useState(true);
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [trajectoryMode, setTrajectoryMode] = useState<TrajectoryMode>('free');
   const [canvasSize, setCanvasSize] = useState({ width: 600, height: 400 });
 
   // Geometric state
@@ -60,6 +79,7 @@ function App() {
   const [stepCount, setStepCount] = useState(0);
   const [trajectoryPoints, setTrajectoryPoints] = useState<TrajectoryPoint2D[]>([]);
   const [coherenceMetrics, setCoherenceMetrics] = useState<CoherenceMetrics | null>(null);
+  const [coherenceHistory, setCoherenceHistory] = useState<SparklineDataPoint[]>([]);
 
   // Audit state
   const [auditEntries, setAuditEntries] = useState<LogEntryCompact[]>([]);
@@ -67,34 +87,103 @@ function App() {
   const [chainStats, setChainStats] = useState<ChainStatistics | null>(null);
   const [isChainValid, setIsChainValid] = useState(true);
 
-  // Animation frame reference
+  // Animation state
   const animationFrameRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(0);
   const stepAccumulatorRef = useRef<number>(0);
+  const modeStepCountRef = useRef<number>(0);
+
+  /**
+   * Touch controls for canvas rotation
+   */
+  useTouchControls(canvasContainerRef, {
+    onRotate: (deltaX, deltaY) => {
+      if (projectionAnimatorRef.current) {
+        const animator = projectionAnimatorRef.current;
+        animator.setTarget({
+          rotationY: animator.params.rotationY + deltaX,
+          rotationX: animator.params.rotationX + deltaY,
+        });
+      }
+    },
+    onZoom: (delta) => {
+      if (projectionAnimatorRef.current) {
+        const animator = projectionAnimatorRef.current;
+        const newDistance = Math.max(2, Math.min(10, animator.params.cameraDistance - delta * 10));
+        animator.setTarget({ cameraDistance: newDistance });
+      }
+    },
+    onTap: () => {
+      // Single tap = single step
+      performStep();
+    },
+  });
+
+  /**
+   * Apply trajectory mode modifiers
+   */
+  const getTrajectoryModifiers = useCallback((): {
+    entropy?: [number, number, number, number];
+    delta: number;
+  } => {
+    const step = modeStepCountRef.current;
+
+    switch (trajectoryMode) {
+      case 'spiral': {
+        // Spiral outward with increasing delta
+        const spiralFactor = 1 + (step % 100) * 0.01;
+        return { delta: spiralFactor };
+      }
+      case 'boundary': {
+        // Stay near boundary by adding outward entropy
+        if (convexity && convexity.penetrationDepth < -0.3) {
+          const outward: [number, number, number, number] = [0.2, 0.2, 0.2, 0.2];
+          return { entropy: outward, delta: 1 };
+        }
+        return { delta: 0.5 };
+      }
+      case 'ergodic': {
+        // Periodic entropy injection for coverage
+        if (step % 20 === 0) {
+          const randomEntropy: [number, number, number, number] = [
+            (Math.random() - 0.5) * 0.5,
+            (Math.random() - 0.5) * 0.5,
+            (Math.random() - 0.5) * 0.5,
+            (Math.random() - 0.5) * 0.5,
+          ];
+          return { entropy: randomEntropy, delta: 1 };
+        }
+        return { delta: 1 };
+      }
+      case 'oscillate': {
+        // Oscillate with sine wave modulation
+        const oscillation = Math.sin(step * PHI * 0.1);
+        return { delta: 0.5 + oscillation * 0.5 };
+      }
+      default:
+        return { delta: 1 };
+    }
+  }, [trajectoryMode, convexity]);
 
   /**
    * Initialize the engine
    */
   const initializeEngine = useCallback(async () => {
-    // Create manifold
     manifoldRef.current = new CognitiveManifold();
-
-    // Create audit chain
     auditChainRef.current = new AuditChain();
+    projectionAnimatorRef.current = new ProjectionAnimator({
+      ...DEFAULT_SESSION_SETTINGS,
+      rotationX: 0.4,
+      rotationY: 0.3,
+      rotationZ: 0,
+    });
+    trajectoryRef.current = new TrajectoryHistory(settings.trajectoryLength);
 
-    // Create projection animator
-    projectionAnimatorRef.current = new ProjectionAnimator();
-
-    // Create trajectory history
-    trajectoryRef.current = new TrajectoryHistory(200);
-
-    // Log system init
     const initialState = manifoldRef.current.getGeometricState();
     await auditChainRef.current.initialize(initialState);
 
-    // Update UI
     updateUIState();
-  }, []);
+  }, [settings.trajectoryLength]);
 
   /**
    * Update all UI state from engine
@@ -114,7 +203,13 @@ function App() {
     setConvexity(newConvexity);
     setStepCount(manifold.stepCount);
 
-    // Update projection
+    // Update projection with current settings
+    animator.setTarget({
+      projectionW: settings.projectionW,
+      cameraDistance: settings.cameraDistance,
+      fov: settings.fov,
+    });
+
     const newProjection = projectLattice(
       manifold.lattice,
       manifold.position,
@@ -125,7 +220,7 @@ function App() {
     setProjection(newProjection);
 
     // Update trajectory points for visualization
-    if (trajectory && showTrajectory) {
+    if (trajectory && settings.showTrajectory) {
       const recentPoints = trajectory.getRecent(100);
       const projectedTrajectory: TrajectoryPoint2D[] = recentPoints.map((p, i) => {
         const projected = projectQuaternionTo2D(
@@ -142,22 +237,34 @@ function App() {
         };
       });
       setTrajectoryPoints(projectedTrajectory);
+    } else {
+      setTrajectoryPoints([]);
     }
 
     // Update coherence metrics
+    const geoState = manifold.getGeometricState();
     const metrics = computeCoherenceMetrics(
       manifold.position,
-      Quaternion.fromArray(manifold.getGeometricState().leftRotor as unknown as [number, number, number, number]),
-      Quaternion.fromArray(manifold.getGeometricState().rightRotor as unknown as [number, number, number, number]),
+      new Quaternion(geoState.leftRotor.w, geoState.leftRotor.x, geoState.leftRotor.y, geoState.leftRotor.z),
+      new Quaternion(geoState.rightRotor.w, geoState.rightRotor.x, geoState.rightRotor.y, geoState.rightRotor.z),
       trajectory ?? undefined
     );
     setCoherenceMetrics(metrics);
+
+    // Update coherence history for sparkline
+    setCoherenceHistory((prev) => {
+      const newHistory = [
+        ...prev.slice(-99),
+        { value: metrics.overallCoherence, timestamp: Date.now() },
+      ];
+      return newHistory;
+    });
 
     // Update audit log
     setAuditEntries(chain.getRecentCompact(20));
     setChainHead(chain.chainHead);
     setChainStats(chain.getStatistics());
-  }, [canvasSize, showTrajectory]);
+  }, [canvasSize, settings]);
 
   /**
    * Log an event to the audit chain
@@ -169,7 +276,6 @@ function App() {
       const state = manifoldRef.current.getGeometricState();
       await auditChainRef.current.logEvent(state, eventType, metadata);
 
-      // Update audit UI
       const chain = auditChainRef.current;
       setAuditEntries(chain.getRecentCompact(20));
       setChainHead(chain.chainHead);
@@ -187,19 +293,25 @@ function App() {
 
       const manifold = manifoldRef.current;
       const trajectory = trajectoryRef.current;
-      const result = manifold.inferenceStep(1.0, entropy);
+
+      // Get mode modifiers
+      const modifiers = getTrajectoryModifiers();
+      const effectiveEntropy = entropy ?? modifiers.entropy;
+
+      modeStepCountRef.current++;
+      const result = manifold.inferenceStep(modifiers.delta, effectiveEntropy);
 
       // Add to trajectory
       trajectory.addPoint(
         manifold.position,
         manifold.stepCount,
         result.convexityAfter.status,
-        entropy !== undefined
+        effectiveEntropy !== undefined
       );
 
-      // Determine event type based on state change
+      // Determine event type
       let eventType: AuditEventType = 'INFERENCE_STEP';
-      if (entropy) {
+      if (effectiveEntropy) {
         eventType = 'ENTROPY_INJECT';
       } else if (result.convexityAfter.status === 'VIOLATION') {
         eventType = 'CONVEXITY_VIOLATION';
@@ -207,7 +319,7 @@ function App() {
         eventType = 'CONVEXITY_WARNING';
       }
 
-      await logEvent(eventType, { delta: result.delta });
+      await logEvent(eventType, { delta: modifiers.delta, mode: trajectoryMode });
 
       // Auto-constrain if violation
       if (result.convexityAfter.status === 'VIOLATION') {
@@ -217,7 +329,7 @@ function App() {
 
       updateUIState();
     },
-    [logEvent, updateUIState]
+    [logEvent, updateUIState, getTrajectoryModifiers, trajectoryMode]
   );
 
   /**
@@ -228,18 +340,17 @@ function App() {
       const deltaTime = (timestamp - lastTimeRef.current) / 1000;
       lastTimeRef.current = timestamp;
 
-      if (projectionAnimatorRef.current && autoRotate) {
-        projectionAnimatorRef.current.autoRotate(deltaTime, 0.3);
-      }
-
       if (projectionAnimatorRef.current) {
+        if (settings.autoRotate && !isRunning) {
+          projectionAnimatorRef.current.autoRotate(deltaTime, 0.3);
+        }
         projectionAnimatorRef.current.update();
       }
 
-      // If running, perform inference steps at ~10 Hz
+      // Run inference steps
       if (isRunning && manifoldRef.current) {
         stepAccumulatorRef.current += deltaTime;
-        const stepInterval = 0.1; // 10 steps per second
+        const stepInterval = 1 / settings.stepRate;
 
         while (stepAccumulatorRef.current >= stepInterval) {
           stepAccumulatorRef.current -= stepInterval;
@@ -248,15 +359,12 @@ function App() {
       }
 
       updateUIState();
-
       animationFrameRef.current = requestAnimationFrame(animate);
     },
-    [isRunning, autoRotate, performStep, updateUIState]
+    [isRunning, settings.autoRotate, settings.stepRate, performStep, updateUIState]
   );
 
-  /**
-   * Start/stop animation loop
-   */
+  // Start animation loop
   useEffect(() => {
     lastTimeRef.current = performance.now();
     animationFrameRef.current = requestAnimationFrame(animate);
@@ -268,13 +376,10 @@ function App() {
     };
   }, [animate]);
 
-  /**
-   * Initialize engine on mount
-   */
+  // Initialize engine on mount
   useEffect(() => {
     initializeEngine();
 
-    // Handle window resize
     const handleResize = () => {
       const container = document.getElementById('canvas-container');
       if (container) {
@@ -287,18 +392,12 @@ function App() {
 
     handleResize();
     window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, [initializeEngine]);
 
-  /**
-   * Keyboard shortcuts
-   */
+  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if typing in an input
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
       }
@@ -312,7 +411,7 @@ function App() {
           performStep();
           break;
         case 'r':
-          setAutoRotate((prev) => !prev);
+          setSettings((prev) => ({ ...prev, autoRotate: !prev.autoRotate }));
           break;
         case 'e':
           handleInjectEntropy();
@@ -321,30 +420,32 @@ function App() {
           handleReset();
           break;
         case 't':
-          setShowTrajectory((prev) => !prev);
+          setSettings((prev) => ({ ...prev, showTrajectory: !prev.showTrajectory }));
           break;
         case 'g':
-          setShowGrid((prev) => !prev);
+          setSettings((prev) => ({ ...prev, showGrid: !prev.showGrid }));
           break;
         case 'd':
           handleDownload();
+          break;
+        case ',':
+          setShowSettings((prev) => !prev);
           break;
         case '?':
           setShowShortcuts((prev) => !prev);
           break;
         case 'escape':
           setShowShortcuts(false);
+          setShowSettings(false);
           break;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [performStep]);
+  }, [performStep, setSettings]);
 
-  /**
-   * Validate chain periodically
-   */
+  // Validate chain periodically
   useEffect(() => {
     const validateChain = async () => {
       if (auditChainRef.current) {
@@ -357,32 +458,15 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-  /**
-   * Toggle running state
-   */
-  const handleToggleRun = useCallback(() => {
-    setIsRunning((prev) => !prev);
-  }, []);
+  // Handlers
+  const handleToggleRun = useCallback(() => setIsRunning((prev) => !prev), []);
+  const handleToggleRotate = useCallback(
+    () => setSettings((prev) => ({ ...prev, autoRotate: !prev.autoRotate })),
+    [setSettings]
+  );
+  const handleStep = useCallback(() => performStep(), [performStep]);
 
-  /**
-   * Toggle auto-rotate
-   */
-  const handleToggleRotate = useCallback(() => {
-    setAutoRotate((prev) => !prev);
-  }, []);
-
-  /**
-   * Single step
-   */
-  const handleStep = useCallback(() => {
-    performStep();
-  }, [performStep]);
-
-  /**
-   * Inject entropy
-   */
   const handleInjectEntropy = useCallback(() => {
-    // Generate random entropy values
     const entropy: [number, number, number, number] = [
       (Math.random() - 0.5) * 2,
       (Math.random() - 0.5) * 2,
@@ -392,38 +476,35 @@ function App() {
     performStep(entropy);
   }, [performStep]);
 
-  /**
-   * Reset system
-   */
   const handleReset = useCallback(async () => {
     if (manifoldRef.current && auditChainRef.current && trajectoryRef.current) {
       manifoldRef.current.reset();
       auditChainRef.current.clear();
       trajectoryRef.current.clear();
+      modeStepCountRef.current = 0;
+      setCoherenceHistory([]);
       await auditChainRef.current.initialize(manifoldRef.current.getGeometricState());
       await logEvent('POSITION_RESET');
       updateUIState();
     }
   }, [logEvent, updateUIState]);
 
-  /**
-   * Download data export
-   */
   const handleDownload = useCallback(() => {
     if (!auditChainRef.current || !trajectoryRef.current || !manifoldRef.current) return;
 
     const exportData = {
       timestamp: new Date().toISOString(),
       version: '2.0.0',
+      settings,
+      trajectoryMode,
       geometricState: manifoldRef.current.getGeometricState(),
       trajectory: trajectoryRef.current.export(),
       auditChain: JSON.parse(auditChainRef.current.exportChain()),
       coherenceMetrics,
+      coherenceHistory,
     };
 
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-      type: 'application/json',
-    });
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -432,7 +513,13 @@ function App() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  }, [coherenceMetrics]);
+  }, [settings, trajectoryMode, coherenceMetrics, coherenceHistory]);
+
+  const handleClearData = useCallback(() => {
+    clearAllStoredData();
+    clearSettings();
+    handleReset();
+  }, [clearSettings, handleReset]);
 
   return (
     <div
@@ -450,7 +537,7 @@ function App() {
       <ControlPanel
         convexity={convexity}
         isRunning={isRunning}
-        autoRotate={autoRotate}
+        autoRotate={settings.autoRotate}
         stepCount={stepCount}
         chainStats={chainStats}
         coherenceMetrics={coherenceMetrics}
@@ -465,45 +552,100 @@ function App() {
       {/* Center - Canvas */}
       <div
         id="canvas-container"
+        ref={canvasContainerRef}
         style={{
           flex: 1,
           height: '100%',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          flexDirection: 'column',
           backgroundColor: '#0a0a0f',
           position: 'relative',
         }}
       >
-        <PolytopeCanvas
-          projection={projection}
-          status={convexity?.status ?? 'SAFE'}
-          width={canvasSize.width}
-          height={canvasSize.height}
-          trajectory={trajectoryPoints}
-          showGrid={showGrid}
-          showLabels={false}
-          showTrajectory={showTrajectory}
-          isAnimating={isRunning || autoRotate}
-        />
+        <div style={{ flex: 1, position: 'relative' }}>
+          <PolytopeCanvas
+            projection={projection}
+            status={convexity?.status ?? 'SAFE'}
+            width={canvasSize.width}
+            height={canvasSize.height}
+            trajectory={trajectoryPoints}
+            showGrid={settings.showGrid}
+            showLabels={false}
+            showTrajectory={settings.showTrajectory}
+            isAnimating={isRunning || settings.autoRotate}
+          />
+        </div>
 
-        {/* Keyboard shortcut hint */}
+        {/* Coherence Sparkline */}
+        <div
+          style={{
+            padding: '12px 16px',
+            backgroundColor: '#0d0d15',
+            borderTop: '1px solid #1a1a2e',
+          }}
+        >
+          <Sparkline
+            data={coherenceHistory}
+            width={canvasSize.width - 32}
+            height={40}
+            color="#00ffff"
+            label="Coherence"
+            showValue={true}
+            showRange={true}
+          />
+        </div>
+
+        {/* Hints */}
         <div
           style={{
             position: 'absolute',
-            bottom: '10px',
+            bottom: '70px',
             right: '10px',
             fontSize: '10px',
             color: 'rgba(255, 255, 255, 0.3)',
             fontFamily: 'monospace',
+            textAlign: 'right',
           }}
         >
-          Press ? for shortcuts
+          <div>Drag to rotate • Scroll to zoom</div>
+          <div>Press ? for shortcuts • , for settings</div>
         </div>
+
+        {/* Mode indicator */}
+        {trajectoryMode !== 'free' && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              backgroundColor: 'rgba(0, 255, 255, 0.1)',
+              border: '1px solid rgba(0, 255, 255, 0.3)',
+              borderRadius: '4px',
+              padding: '6px 10px',
+              fontSize: '10px',
+              color: '#00ffff',
+              fontFamily: 'monospace',
+              textTransform: 'uppercase',
+            }}
+          >
+            Mode: {trajectoryMode}
+          </div>
+        )}
       </div>
 
       {/* Right Panel - Audit Log */}
       <AuditLog entries={auditEntries} chainHead={chainHead} isValid={isChainValid} />
+
+      {/* Settings Panel */}
+      <SettingsPanel
+        settings={settings}
+        trajectoryMode={trajectoryMode}
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+        onSettingsChange={(newSettings) => setSettings((prev) => ({ ...prev, ...newSettings }))}
+        onTrajectoryModeChange={setTrajectoryMode}
+        onClearData={handleClearData}
+      />
 
       {/* Keyboard shortcuts modal */}
       {showShortcuts && (
@@ -579,7 +721,7 @@ function App() {
                 fontSize: '10px',
               }}
             >
-              Press Escape or click outside to close
+              Press Escape to close
             </div>
           </div>
         </div>
