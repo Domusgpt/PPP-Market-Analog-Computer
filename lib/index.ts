@@ -4,4 +4,5 @@
  * Re-exports all core modules for the Chronomorphic Polytopal Engine.
  */
 
-export * from './geometric-algebra.js';
+export * from './math/index.js';
+export * from './topology/index.js';
