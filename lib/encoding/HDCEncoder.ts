@@ -57,7 +57,7 @@ import {
 /**
  * Embedding provider types supported out of the box.
  */
-export type EmbeddingProvider = 'openai' | 'anthropic' | 'cohere' | 'local' | 'custom';
+export type EmbeddingProvider = 'gemini' | 'anthropic' | 'openai' | 'cohere' | 'voyage' | 'local' | 'custom';
 
 /**
  * Configuration for external embedding API.
@@ -519,6 +519,53 @@ async function fetchEmbedding(
     let body: string;
 
     switch (config.provider) {
+        case 'gemini':
+            // Google Gemini/Vertex AI Embeddings
+            // Model: text-embedding-004 (768 dims) or text-embedding-005
+            const geminiModel = config.model || 'text-embedding-004';
+            endpoint = config.endpoint ||
+                `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:embedContent?key=${config.apiKey}`;
+            headers = {
+                'Content-Type': 'application/json'
+            };
+            body = JSON.stringify({
+                model: `models/${geminiModel}`,
+                content: {
+                    parts: [{ text }]
+                },
+                taskType: 'RETRIEVAL_DOCUMENT'
+            });
+            break;
+
+        case 'anthropic':
+            // Anthropic recommends Voyage AI for embeddings
+            // Using Voyage AI as the Anthropic-recommended solution
+            endpoint = config.endpoint || 'https://api.voyageai.com/v1/embeddings';
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${config.apiKey}`
+            };
+            body = JSON.stringify({
+                model: config.model || 'voyage-3',  // Anthropic-recommended model
+                input: text,
+                input_type: 'document'
+            });
+            break;
+
+        case 'voyage':
+            // Voyage AI (standalone, also used by Anthropic)
+            endpoint = config.endpoint || 'https://api.voyageai.com/v1/embeddings';
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${config.apiKey}`
+            };
+            body = JSON.stringify({
+                model: config.model || 'voyage-3',
+                input: text,
+                input_type: 'document'
+            });
+            break;
+
         case 'openai':
             endpoint = config.endpoint || 'https://api.openai.com/v1/embeddings';
             headers = {
@@ -530,11 +577,6 @@ async function fetchEmbedding(
                 input: text
             });
             break;
-
-        case 'anthropic':
-            // Anthropic doesn't have a direct embeddings API yet
-            // This is a placeholder for future support
-            throw new Error('Anthropic embeddings API not yet available');
 
         case 'cohere':
             endpoint = config.endpoint || 'https://api.cohere.ai/v1/embed';
@@ -596,6 +638,14 @@ async function fetchEmbedding(
         let tokenCount: number | undefined;
 
         switch (config.provider) {
+            case 'gemini':
+                embedding = data.embedding?.values || data.embedding;
+                break;
+            case 'anthropic':
+            case 'voyage':
+                embedding = data.data[0].embedding;
+                tokenCount = data.usage?.total_tokens;
+                break;
             case 'openai':
                 embedding = data.data[0].embedding;
                 tokenCount = data.usage?.total_tokens;
@@ -1590,6 +1640,44 @@ export function createAPIEncoder(
         embeddingAPI: {
             provider,
             apiKey
+        }
+    });
+}
+
+/**
+ * Create an encoder with Google Gemini embeddings.
+ * Uses text-embedding-004 (768 dimensions) by default.
+ */
+export function createGeminiEncoder(
+    apiKey: string,
+    config?: Partial<HDCEncoderConfig>
+): HDCEncoder {
+    return new HDCEncoder({
+        inputDimension: 768,  // Gemini text-embedding-004 output dimension
+        ...config,
+        embeddingAPI: {
+            provider: 'gemini',
+            apiKey,
+            model: config?.embeddingAPI?.model || 'text-embedding-004'
+        }
+    });
+}
+
+/**
+ * Create an encoder with Anthropic-recommended embeddings (Voyage AI).
+ * Uses voyage-3 (1024 dimensions) by default.
+ */
+export function createAnthropicEncoder(
+    voyageApiKey: string,
+    config?: Partial<HDCEncoderConfig>
+): HDCEncoder {
+    return new HDCEncoder({
+        inputDimension: 1024,  // Voyage-3 output dimension
+        ...config,
+        embeddingAPI: {
+            provider: 'anthropic',
+            apiKey: voyageApiKey,
+            model: config?.embeddingAPI?.model || 'voyage-3'
         }
     });
 }

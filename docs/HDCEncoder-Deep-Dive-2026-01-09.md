@@ -4,7 +4,7 @@
 **Version:** 2.0.0
 
 > **v2.0 Update:** This document has been updated to reflect the enhanced HDCEncoder with:
-> - Real embedding API integration (OpenAI/Cohere/Custom)
+> - Real embedding API integration (**Gemini**, **Anthropic/Voyage**, OpenAI, Cohere, Custom)
 > - Positional encoding for word order preservation
 > - Multi-head self-attention aggregation
 > - Configurable/domain-specific archetypes
@@ -421,17 +421,31 @@ The following improvements have been implemented in v2.0:
 
 ### 7.1 Real Embedding API Integration ✅
 
-**Solution:** Added async methods with multi-provider support.
+**Solution:** Added async methods with multi-provider support, prioritizing **Gemini** and **Anthropic**.
 
 ```typescript
-// Create encoder with OpenAI embeddings
-const encoder = createAPIEncoder('openai', process.env.OPENAI_API_KEY);
+// Google Gemini embeddings (768 dimensions)
+const geminiEncoder = createGeminiEncoder(process.env.GOOGLE_API_KEY);
+const force = await geminiEncoder.textToForceAsync("reasoning about causality");
 
-// Async encoding with real semantic embeddings
-const force = await encoder.textToForceAsync("reasoning about causality");
+// Anthropic-recommended embeddings via Voyage AI (1024 dimensions)
+const anthropicEncoder = createAnthropicEncoder(process.env.VOYAGE_API_KEY);
+const force = await anthropicEncoder.textToForceAsync("reasoning about causality");
 
-// Supported providers: 'openai', 'cohere', 'local', 'custom'
+// Generic API encoder (also supports 'openai', 'cohere', 'local', 'custom')
+const encoder = createAPIEncoder('gemini', process.env.GOOGLE_API_KEY);
 ```
+
+**Supported providers (priority order):**
+| Provider | Model | Dimensions | Notes |
+|----------|-------|------------|-------|
+| `gemini` | text-embedding-004 | 768 | Google's latest |
+| `anthropic` | voyage-3 | 1024 | Anthropic-recommended (Voyage AI) |
+| `voyage` | voyage-3 | 1024 | Direct Voyage AI |
+| `openai` | text-embedding-3-small | 1536 | OpenAI |
+| `cohere` | embed-english-v3.0 | 1024 | Cohere |
+| `local` | - | varies | Local endpoint |
+| `custom` | - | varies | Custom endpoint |
 
 **Benefits achieved:**
 - True semantic similarity ("dog" ≈ "canine")
