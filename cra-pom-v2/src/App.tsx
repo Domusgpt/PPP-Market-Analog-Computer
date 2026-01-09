@@ -8,6 +8,8 @@ import {
   AuditLog,
   SettingsPanel,
   Sparkline,
+  ChatPanel,
+  ChatToggleButton,
   type TrajectoryPoint2D,
   type TrajectoryMode,
   type SparklineDataPoint,
@@ -30,6 +32,14 @@ import {
   type CoherenceMetrics,
 } from './core';
 import {
+  DemoLLMService,
+  LLMService,
+  buildGeometricContext,
+  type LLMProviderConfig,
+  type ChatMessage,
+  type SimulationCommand,
+} from './services';
+import {
   useSessionSettings,
   useTouchControls,
   clearAllStoredData,
@@ -49,6 +59,7 @@ const KEYBOARD_SHORTCUTS = {
   g: 'Toggle grid',
   d: 'Download data',
   ',': 'Open settings',
+  c: 'Toggle chat',
   '?': 'Show shortcuts',
 };
 
@@ -92,6 +103,17 @@ function App() {
   const lastTimeRef = useRef<number>(0);
   const stepAccumulatorRef = useRef<number>(0);
   const modeStepCountRef = useRef<number>(0);
+
+  // LLM Chat state
+  const llmServiceRef = useRef<LLMService | DemoLLMService | null>(null);
+  const [showChat, setShowChat] = useState(false);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [isChatLoading, setIsChatLoading] = useState(false);
+  const [llmConfig, setLlmConfig] = useState<LLMProviderConfig>({
+    provider: 'custom',
+    model: 'demo',
+    baseUrl: '',
+  });
 
   /**
    * Touch controls for canvas rotation
@@ -431,12 +453,16 @@ function App() {
         case ',':
           setShowSettings((prev) => !prev);
           break;
+        case 'c':
+          setShowChat((prev) => !prev);
+          break;
         case '?':
           setShowShortcuts((prev) => !prev);
           break;
         case 'escape':
           setShowShortcuts(false);
           setShowSettings(false);
+          setShowChat(false);
           break;
       }
     };
@@ -520,6 +546,115 @@ function App() {
     clearSettings();
     handleReset();
   }, [clearSettings, handleReset]);
+
+  /**
+   * Initialize or update LLM service
+   */
+  useEffect(() => {
+    if (llmConfig.model === 'demo' && llmConfig.provider === 'custom') {
+      llmServiceRef.current = new DemoLLMService();
+    } else {
+      llmServiceRef.current = new LLMService(llmConfig);
+    }
+    // Sync history
+    setChatMessages(llmServiceRef.current.getHistory());
+  }, [llmConfig]);
+
+  /**
+   * Execute simulation command from LLM
+   */
+  const executeCommand = useCallback(
+    async (command: SimulationCommand) => {
+      switch (command.type) {
+        case 'set_mode':
+          setTrajectoryMode(command.payload as TrajectoryMode);
+          break;
+        case 'inject_entropy':
+          if (command.payload === 'random') {
+            handleInjectEntropy();
+          } else if (Array.isArray(command.payload)) {
+            performStep(command.payload as [number, number, number, number]);
+          }
+          break;
+        case 'reset':
+          await handleReset();
+          break;
+        case 'toggle_run':
+          setIsRunning(command.payload as boolean);
+          break;
+        case 'step':
+          await performStep();
+          break;
+      }
+    },
+    [handleInjectEntropy, handleReset, performStep]
+  );
+
+  /**
+   * Send message to LLM
+   */
+  const handleSendMessage = useCallback(
+    async (message: string) => {
+      if (!llmServiceRef.current || !manifoldRef.current) return;
+
+      setIsChatLoading(true);
+
+      try {
+        // Build geometric context
+        const geoState = manifoldRef.current.getGeometricState();
+        const context = buildGeometricContext(
+          geoState,
+          convexity,
+          coherenceMetrics,
+          trajectoryMode,
+          stepCount
+        );
+
+        // Send to LLM
+        const response = await llmServiceRef.current.sendMessage(message, context);
+
+        // Update messages
+        setChatMessages(llmServiceRef.current.getHistory());
+
+        // Execute any commands
+        if (response.commands) {
+          for (const cmd of response.commands) {
+            await executeCommand(cmd);
+          }
+        }
+      } catch (error) {
+        console.error('LLM error:', error);
+        // Add error message to chat
+        if (llmServiceRef.current) {
+          llmServiceRef.current.addMessage({
+            role: 'assistant',
+            content: `Error: ${error instanceof Error ? error.message : 'Failed to get response'}`,
+          });
+          setChatMessages(llmServiceRef.current.getHistory());
+        }
+      } finally {
+        setIsChatLoading(false);
+      }
+    },
+    [convexity, coherenceMetrics, trajectoryMode, stepCount, executeCommand]
+  );
+
+  /**
+   * Update LLM provider config
+   */
+  const handleLlmConfigChange = useCallback((config: Partial<LLMProviderConfig>) => {
+    setLlmConfig((prev) => ({ ...prev, ...config }));
+  }, []);
+
+  /**
+   * Clear chat history
+   */
+  const handleClearChat = useCallback(() => {
+    if (llmServiceRef.current) {
+      llmServiceRef.current.clearHistory();
+      setChatMessages([]);
+    }
+  }, []);
 
   return (
     <div
@@ -726,6 +861,25 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* LLM Chat Panel */}
+      <ChatPanel
+        messages={chatMessages}
+        isLoading={isChatLoading}
+        isOpen={showChat}
+        provider={llmConfig}
+        onSendMessage={handleSendMessage}
+        onProviderChange={handleLlmConfigChange}
+        onClearHistory={handleClearChat}
+        onClose={() => setShowChat(false)}
+      />
+
+      {/* Chat Toggle Button */}
+      <ChatToggleButton
+        isOpen={showChat}
+        hasUnread={false}
+        onClick={() => setShowChat(true)}
+      />
     </div>
   );
 }
