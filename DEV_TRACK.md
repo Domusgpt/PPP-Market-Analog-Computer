@@ -189,7 +189,7 @@ bringing rigorous geometric algebra and topological constraints to AI reasoning 
 - Lattice transition and coherence change detection.
 - Snapshot/restore for serialization support.
 
-## CPE Phase 4 – Epistaorthognition.ts (Validation Module)
+## CPE Phase 4 ✅ – Epistaorthognition.ts (Validation Module)
 Dedicated module for cognitive validity checking (formalizes logic in Lattice24):
 
 **Core Functions:**
@@ -200,9 +200,14 @@ Dedicated module for cognitive validity checking (formalizes logic in Lattice24)
 
 **Epistaorthognition Metrics:**
 - **Coherence**: Distance-weighted alignment with k-nearest lattice vertices
-- **Stability**: Rate of change of coherence over time
-- **Boundary Proximity**: How close to leaving the Orthocognitum
-- **Concept Membership**: Which Voronoi region(s) the state occupies
+- **Stability**: Rate of change of coherence over time (variance-based)
+- **Boundary Proximity**: How close to leaving the Orthocognitum (0=center, 1=boundary)
+- **Concept Membership**: Which Voronoi region(s) the state occupies with weights
+
+**Anomaly Detection:**
+- COHERENCE_DROP, BOUNDARY_VIOLATION, DISCONTINUITY
+- INSTABILITY, STAGNATION, VELOCITY_SPIKE, ROTATION_SPIKE
+- Trajectory statistics and automated recommendations
 
 **Use Case:** AI safety auditing - can verify if a reasoning trajectory stays within valid bounds.
 
@@ -259,6 +264,6 @@ Wire the CPE physics to the existing visualization system:
 | 1 | GeometricAlgebra.ts | Clifford Algebra Cl(4,0) | types | ✅ Complete |
 | 2 | Lattice24.ts | 24-Cell topology | types, Geometric | ✅ Complete |
 | 3 | CausalReasoningEngine.ts | Physics loop | types, Geometric, Lattice24 | ✅ Complete |
-| 4 | Epistaorthognition.ts | Validity validation | Lattice24, CausalReasoning | ⏳ Pending |
+| 4 | Epistaorthognition.ts | Validity validation | Lattice24, CausalReasoning | ✅ Complete |
 | 5 | HDCEncoder.ts | Text → Force mapping | CausalReasoning | ⏳ Pending |
 | 6 | CPERendererBridge.js | WebGL integration | All above + Hypercube | ⏳ Pending |
