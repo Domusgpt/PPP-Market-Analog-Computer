@@ -43,3 +43,23 @@ export {
   type ProjectionParams,
   type ProjectionState,
 } from './projection';
+
+export {
+  TrajectoryHistory,
+  type TrajectoryPoint,
+  type TrajectoryStats,
+  type TrajectoryExport,
+} from './trajectory';
+
+export {
+  computeCoherenceMetrics,
+  computeGeometricInvariants,
+  analyzeLatticePosition,
+  computeTrajectoryQuality,
+  formatMetricValue,
+  getMetricAssessment,
+  type CoherenceMetrics,
+  type GeometricInvariants,
+  type LatticeAnalysis,
+  type TrajectoryQuality,
+} from './analysis';

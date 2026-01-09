@@ -1,9 +1,18 @@
 // File: src/components/PolytopeCanvas.tsx
-// HTML5 Canvas renderer for the 24-cell with thought vector visualization
+// HTML5 Canvas renderer for the 24-cell with thought vector and trajectory visualization
 
 import { useRef, useEffect, useCallback, useState } from 'react';
-import type { ProjectionResult, ProjectedVertex, ProjectedEdge } from '../core/projection';
+import type { ProjectionResult, ProjectedVertex, ProjectedEdge, Point2D } from '../core/projection';
 import type { ConvexityStatus } from '../core/geometry';
+
+/**
+ * Trajectory point for visualization
+ */
+export interface TrajectoryPoint2D {
+  point: Point2D;
+  status: ConvexityStatus;
+  age: number; // 0 = newest, higher = older
+}
 
 /**
  * Color scheme for different states
@@ -30,6 +39,11 @@ const COLORS = {
     warning: 'rgba(255, 255, 0, 0.6)',
     violation: 'rgba(255, 0, 0, 0.6)',
   },
+  trajectory: {
+    safe: 'rgba(0, 255, 255, 0.8)',
+    warning: 'rgba(255, 255, 0, 0.8)',
+    violation: 'rgba(255, 0, 0, 0.8)',
+  },
   grid: 'rgba(255, 255, 255, 0.05)',
 };
 
@@ -42,24 +56,30 @@ export interface PolytopeCanvasProps {
   width: number;
   /** Height of the canvas */
   height: number;
+  /** Trajectory points to render */
+  trajectory?: TrajectoryPoint2D[];
   /** Show grid overlay */
   showGrid?: boolean;
   /** Show vertex indices */
   showLabels?: boolean;
+  /** Show trajectory trail */
+  showTrajectory?: boolean;
   /** Enable auto-rotation visual feedback */
   isAnimating?: boolean;
 }
 
 /**
- * PolytopeCanvas - Renders the 24-cell and thought vector
+ * PolytopeCanvas - Renders the 24-cell, thought vector, and trajectory trail
  */
 export function PolytopeCanvas({
   projection,
   status,
   width,
   height,
+  trajectory = [],
   showGrid = true,
   showLabels = false,
+  showTrajectory = true,
   isAnimating = false,
 }: PolytopeCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -71,14 +91,15 @@ export function PolytopeCanvas({
    * Get color based on status
    */
   const getStatusColor = useCallback(
-    (type: 'vertex' | 'edge' | 'thought' | 'glow') => {
+    (type: 'vertex' | 'edge' | 'thought' | 'glow' | 'trajectory', s: ConvexityStatus = status) => {
       const colorMap = {
         vertex: COLORS.latticeVertex,
         edge: COLORS.latticeEdge,
         thought: COLORS.thoughtVector,
         glow: COLORS.glow,
+        trajectory: COLORS.trajectory,
       };
-      return colorMap[type][status.toLowerCase() as Lowercase<ConvexityStatus>];
+      return colorMap[type][s.toLowerCase() as Lowercase<ConvexityStatus>];
     },
     [status]
   );
@@ -124,6 +145,50 @@ export function PolytopeCanvas({
   );
 
   /**
+   * Draw the trajectory trail
+   */
+  const drawTrajectory = useCallback(
+    (ctx: CanvasRenderingContext2D) => {
+      if (trajectory.length < 2) return;
+
+      // Draw trail segments with gradient opacity
+      for (let i = 1; i < trajectory.length; i++) {
+        const prev = trajectory[i - 1];
+        const curr = trajectory[i];
+
+        // Calculate opacity based on age (newer = more opaque)
+        const opacity = Math.max(0.05, 1 - curr.age / trajectory.length);
+
+        ctx.beginPath();
+        ctx.moveTo(prev.point.x, prev.point.y);
+        ctx.lineTo(curr.point.x, curr.point.y);
+
+        // Color based on status at this point
+        const baseColor = getStatusColor('trajectory', curr.status);
+        ctx.strokeStyle = baseColor.replace(/[\d.]+\)$/, `${opacity})`);
+        ctx.lineWidth = Math.max(1, 3 * opacity);
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      }
+
+      // Draw dots at each trajectory point
+      for (const point of trajectory) {
+        const opacity = Math.max(0.1, 1 - point.age / trajectory.length);
+        const size = Math.max(1, 3 * opacity);
+
+        ctx.beginPath();
+        ctx.arc(point.point.x, point.point.y, size, 0, Math.PI * 2);
+        ctx.fillStyle = getStatusColor('trajectory', point.status).replace(
+          /[\d.]+\)$/,
+          `${opacity})`
+        );
+        ctx.fill();
+      }
+    },
+    [trajectory, getStatusColor]
+  );
+
+  /**
    * Draw an edge between two vertices
    */
   const drawEdge = useCallback(
@@ -151,11 +216,7 @@ export function PolytopeCanvas({
    * Draw a vertex point
    */
   const drawVertex = useCallback(
-    (
-      ctx: CanvasRenderingContext2D,
-      vertex: ProjectedVertex,
-      highlight = false
-    ) => {
+    (ctx: CanvasRenderingContext2D, vertex: ProjectedVertex, highlight = false) => {
       const { point2D, scale, depth, index } = vertex;
 
       // Size based on perspective and depth
@@ -226,41 +287,54 @@ export function PolytopeCanvas({
   );
 
   /**
-   * Draw status indicator
+   * Draw status indicator and HUD
    */
-  const drawStatusIndicator = useCallback(
+  const drawHUD = useCallback(
     (ctx: CanvasRenderingContext2D) => {
-      const statusText = status;
       const padding = 10;
 
+      // Status badge
       ctx.font = 'bold 12px monospace';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
 
-      // Background
+      const statusText = status;
       const textWidth = ctx.measureText(statusText).width;
       ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-      ctx.fillRect(padding - 4, padding - 4, textWidth + 16, 20);
+      ctx.fillRect(padding - 4, padding - 4, textWidth + 20, 22);
 
-      // Status indicator circle
       ctx.beginPath();
-      ctx.arc(padding + 4, padding + 6, 4, 0, Math.PI * 2);
+      ctx.arc(padding + 6, padding + 7, 5, 0, Math.PI * 2);
       ctx.fillStyle = getStatusColor('thought');
       ctx.fill();
 
-      // Text
       ctx.fillStyle = '#ffffff';
-      ctx.fillText(statusText, padding + 14, padding);
+      ctx.fillText(statusText, padding + 16, padding);
 
-      // FPS counter
+      // FPS counter (top right)
       if (isAnimating) {
         const fpsText = `${fps} FPS`;
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        const fpsWidth = ctx.measureText(fpsText).width;
+        ctx.fillRect(width - padding - fpsWidth - 8, padding - 4, fpsWidth + 12, 22);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
         ctx.textAlign = 'right';
         ctx.fillText(fpsText, width - padding, padding);
       }
+
+      // Trajectory info (bottom left)
+      if (showTrajectory && trajectory.length > 0) {
+        const trailText = `Trail: ${trajectory.length} pts`;
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        const trailWidth = ctx.measureText(trailText).width;
+        ctx.fillRect(padding - 4, height - padding - 18, trailWidth + 12, 20);
+        ctx.fillStyle = 'rgba(0, 255, 255, 0.7)';
+        ctx.fillText(trailText, padding, height - padding - 12);
+      }
     },
-    [status, fps, isAnimating, width, getStatusColor]
+    [status, fps, isAnimating, width, height, trajectory.length, showTrajectory, getStatusColor]
   );
 
   /**
@@ -291,15 +365,18 @@ export function PolytopeCanvas({
       return;
     }
 
+    // Draw trajectory first (behind everything)
+    if (showTrajectory) {
+      drawTrajectory(ctx);
+    }
+
     // Draw edges (back to front, already sorted by depth)
     for (const edge of projection.edges) {
       drawEdge(ctx, edge);
     }
 
     // Sort vertices by depth for proper occlusion
-    const sortedVertices = [...projection.vertices].sort(
-      (a, b) => a.depth - b.depth
-    );
+    const sortedVertices = [...projection.vertices].sort((a, b) => a.depth - b.depth);
 
     // Draw vertices
     for (const vertex of sortedVertices) {
@@ -311,8 +388,8 @@ export function PolytopeCanvas({
       drawThoughtVector(ctx, projection.thoughtVector);
     }
 
-    // Draw status
-    drawStatusIndicator(ctx);
+    // Draw HUD
+    drawHUD(ctx);
 
     // FPS calculation
     frameCountRef.current++;
@@ -327,11 +404,13 @@ export function PolytopeCanvas({
     width,
     height,
     showGrid,
+    showTrajectory,
     drawGrid,
+    drawTrajectory,
     drawEdge,
     drawVertex,
     drawThoughtVector,
-    drawStatusIndicator,
+    drawHUD,
   ]);
 
   // Render on projection change
@@ -344,11 +423,9 @@ export function PolytopeCanvas({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Set actual size in memory
     canvas.width = width;
     canvas.height = height;
 
-    // Ensure crisp rendering
     const ctx = canvas.getContext('2d');
     if (ctx) {
       ctx.imageSmoothingEnabled = true;
@@ -366,6 +443,7 @@ export function PolytopeCanvas({
         height: '100%',
         display: 'block',
         backgroundColor: COLORS.background,
+        touchAction: 'none',
       }}
     />
   );

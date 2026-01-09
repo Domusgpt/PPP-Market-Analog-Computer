@@ -285,10 +285,9 @@ export class Lattice24 {
    */
   private generateVertices(): Quaternion[] {
     const vertices: Quaternion[] = [];
-    const values = [1, -1, 0, 0];
 
-    // Generate all unique permutations of [1, -1, 0, 0] and [-1, 1, 0, 0]
-    // and their sign variants
+    // Generate all unique permutations of [±1, ±1, 0, 0]
+    // 6 position pairs × 4 sign combinations = 24 vertices
     const signs = [1, -1];
 
     // For each pair of positions to place ±1

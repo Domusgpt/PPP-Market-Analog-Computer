@@ -1,8 +1,9 @@
 // File: src/components/ControlPanel.tsx
-// Left panel with system status and controls
+// Left panel with system status, metrics, and controls
 
 import type { ConvexityResult } from '../core/geometry';
 import type { ChainStatistics } from '../core/trace';
+import type { CoherenceMetrics } from '../core/analysis';
 
 export interface ControlPanelProps {
   /** Current convexity result */
@@ -15,12 +16,15 @@ export interface ControlPanelProps {
   stepCount: number;
   /** Chain statistics */
   chainStats: ChainStatistics | null;
+  /** Coherence metrics */
+  coherenceMetrics: CoherenceMetrics | null;
   /** Callbacks */
   onToggleRun: () => void;
   onToggleRotate: () => void;
   onStep: () => void;
   onInjectEntropy: () => void;
   onReset: () => void;
+  onDownload: () => void;
 }
 
 /**
@@ -70,10 +74,12 @@ function Metric({
   label,
   value,
   unit,
+  color,
 }: {
   label: string;
   value: string | number;
   unit?: string;
+  color?: string;
 }) {
   return (
     <div
@@ -88,7 +94,13 @@ function Metric({
       <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '11px' }}>
         {label}
       </span>
-      <span style={{ color: '#00ffff', fontSize: '12px', fontFamily: 'monospace' }}>
+      <span
+        style={{
+          color: color ?? '#00ffff',
+          fontSize: '12px',
+          fontFamily: 'monospace',
+        }}
+      >
         {typeof value === 'number' ? value.toFixed(4) : value}
         {unit && (
           <span style={{ color: 'rgba(255, 255, 255, 0.4)', marginLeft: '4px' }}>
@@ -96,6 +108,52 @@ function Metric({
           </span>
         )}
       </span>
+    </div>
+  );
+}
+
+/**
+ * Progress bar for coherence metrics
+ */
+function CoherenceBar({ label, value }: { label: string; value: number }) {
+  const percentage = Math.max(0, Math.min(100, value * 100));
+  const color =
+    value >= 0.7 ? '#00ff88' : value >= 0.4 ? '#ffaa00' : '#ff3366';
+
+  return (
+    <div style={{ marginBottom: '8px' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginBottom: '4px',
+        }}
+      >
+        <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '10px' }}>
+          {label}
+        </span>
+        <span style={{ color, fontSize: '10px', fontFamily: 'monospace' }}>
+          {(value * 100).toFixed(1)}%
+        </span>
+      </div>
+      <div
+        style={{
+          width: '100%',
+          height: '4px',
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          borderRadius: '2px',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            width: `${percentage}%`,
+            height: '100%',
+            backgroundColor: color,
+            transition: 'width 0.3s ease',
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -112,12 +170,13 @@ function Button({
   onClick: () => void;
   children: React.ReactNode;
   active?: boolean;
-  variant?: 'default' | 'danger' | 'success';
+  variant?: 'default' | 'danger' | 'success' | 'info';
 }) {
   const colors = {
     default: { bg: '#1a1a2e', hover: '#2a2a4e', border: '#333366' },
     danger: { bg: '#2e1a1a', hover: '#4e2a2a', border: '#663333' },
     success: { bg: '#1a2e1a', hover: '#2a4e2a', border: '#336633' },
+    info: { bg: '#1a2e2e', hover: '#2a4e4e', border: '#336666' },
   };
 
   const c = colors[variant];
@@ -153,6 +212,25 @@ function Button({
 }
 
 /**
+ * Section header component
+ */
+function SectionHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <h2
+      style={{
+        color: 'rgba(255, 255, 255, 0.7)',
+        fontSize: '10px',
+        textTransform: 'uppercase',
+        letterSpacing: '1px',
+        marginBottom: '12px',
+      }}
+    >
+      {children}
+    </h2>
+  );
+}
+
+/**
  * ControlPanel - System status and controls
  */
 export function ControlPanel({
@@ -161,11 +239,13 @@ export function ControlPanel({
   autoRotate,
   stepCount,
   chainStats,
+  coherenceMetrics,
   onToggleRun,
   onToggleRotate,
   onStep,
   onInjectEntropy,
   onReset,
+  onDownload,
 }: ControlPanelProps) {
   const status = convexity?.status ?? 'unknown';
 
@@ -185,7 +265,7 @@ export function ControlPanel({
       {/* Header */}
       <div
         style={{
-          marginBottom: '20px',
+          marginBottom: '16px',
           paddingBottom: '12px',
           borderBottom: '1px solid #1a1a2e',
         }}
@@ -213,103 +293,80 @@ export function ControlPanel({
       </div>
 
       {/* Convexity Status */}
-      <div style={{ marginBottom: '20px' }}>
-        <h2
-          style={{
-            color: 'rgba(255, 255, 255, 0.7)',
-            fontSize: '10px',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            marginBottom: '12px',
-          }}
-        >
-          Convexity Status
-        </h2>
-        <StatusIndicator status={status as 'SAFE' | 'WARNING' | 'VIOLATION'} label={status} />
+      <div style={{ marginBottom: '16px' }}>
+        <SectionHeader>Convexity Status</SectionHeader>
+        <StatusIndicator
+          status={status as 'SAFE' | 'WARNING' | 'VIOLATION'}
+          label={status}
+        />
       </div>
 
-      {/* Metrics */}
-      <div style={{ marginBottom: '20px' }}>
-        <h2
-          style={{
-            color: 'rgba(255, 255, 255, 0.7)',
-            fontSize: '10px',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            marginBottom: '12px',
-          }}
-        >
-          Geometry Metrics
-        </h2>
-        <Metric label="Step Count" value={stepCount} />
-        <Metric
-          label="Distance (Origin)"
-          value={convexity?.distanceFromOrigin ?? 0}
-        />
-        <Metric
-          label="Penetration"
-          value={convexity?.penetrationDepth ?? 0}
-        />
+      {/* Geometry Metrics */}
+      <div style={{ marginBottom: '16px' }}>
+        <SectionHeader>Geometry</SectionHeader>
+        <Metric label="Step" value={stepCount} />
+        <Metric label="Distance" value={convexity?.distanceFromOrigin ?? 0} />
+        <Metric label="Penetration" value={convexity?.penetrationDepth ?? 0} />
         <Metric
           label="Nearest Vertex"
           value={`#${convexity?.nearestVertex.index ?? '-'}`}
         />
-        <Metric
-          label="Vertex Distance"
-          value={convexity?.nearestVertex.distance ?? 0}
-        />
       </div>
+
+      {/* Coherence Metrics */}
+      {coherenceMetrics && (
+        <div style={{ marginBottom: '16px' }}>
+          <SectionHeader>Coherence</SectionHeader>
+          <CoherenceBar label="Overall" value={coherenceMetrics.overallCoherence} />
+          <CoherenceBar label="Spinor Align" value={coherenceMetrics.spinorAlignment} />
+          <CoherenceBar label="Golden Res" value={coherenceMetrics.goldenResonance} />
+          <CoherenceBar label="Stability" value={coherenceMetrics.stabilityIndex} />
+        </div>
+      )}
 
       {/* Chain Statistics */}
       {chainStats && (
-        <div style={{ marginBottom: '20px' }}>
-          <h2
-            style={{
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: '10px',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              marginBottom: '12px',
-            }}
-          >
-            Audit Chain
-          </h2>
-          <Metric label="Total Entries" value={chainStats.totalEntries} />
-          <Metric label="Safe States" value={chainStats.convexityStats.safe} />
-          <Metric label="Warnings" value={chainStats.convexityStats.warning} />
+        <div style={{ marginBottom: '16px' }}>
+          <SectionHeader>Audit Chain</SectionHeader>
+          <Metric label="Entries" value={chainStats.totalEntries} />
+          <Metric
+            label="Safe"
+            value={chainStats.convexityStats.safe}
+            color="#00ff88"
+          />
+          <Metric
+            label="Warnings"
+            value={chainStats.convexityStats.warning}
+            color="#ffaa00"
+          />
           <Metric
             label="Violations"
             value={chainStats.convexityStats.violation}
+            color="#ff3366"
           />
         </div>
       )}
 
       {/* Controls */}
       <div style={{ marginTop: 'auto' }}>
-        <h2
-          style={{
-            color: 'rgba(255, 255, 255, 0.7)',
-            fontSize: '10px',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            marginBottom: '12px',
-          }}
-        >
-          Controls
-        </h2>
+        <SectionHeader>Controls</SectionHeader>
 
         <Button onClick={onToggleRun} active={isRunning} variant="success">
           {isRunning ? '⏸ Pause' : '▶ Run'}
         </Button>
 
-        <Button onClick={onStep}>⏭ Single Step</Button>
+        <Button onClick={onStep}>⏭ Step</Button>
 
         <Button onClick={onToggleRotate} active={autoRotate}>
-          {autoRotate ? '🔄 Rotating' : '🔄 Auto-Rotate'}
+          {autoRotate ? '🔄 Rotating' : '🔄 Rotate'}
         </Button>
 
         <Button onClick={onInjectEntropy} variant="default">
-          ⚡ Inject Entropy
+          ⚡ Entropy
+        </Button>
+
+        <Button onClick={onDownload} variant="info">
+          ⬇ Export
         </Button>
 
         <Button onClick={onReset} variant="danger">
