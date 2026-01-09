@@ -1,0 +1,181 @@
+﻿Polytopal Projection Processing: A Unified Geometric Framework for Symbolic Reasoning in Hyperdimensional Systems
+1. Introduction: The Geometric Turn in Cognitive Computing
+The trajectory of Artificial Intelligence has reached an inflection point. The "Second Wave" of AI—characterized by deep learning, statistical approximation, and massive dataset ingestion—has achieved remarkable success in pattern recognition and generative tasks. However, it faces a hard ceiling regarding interpretability, energy efficiency, and, most critically, rigorous symbolic reasoning. We are witnessing the emergence of a "Third Wave," one that demands systems capable of contextual adaptation, abstract reasoning, and explainable decision-making.
+This report posits that the solution to these challenges lies in Polytopal Projection Processing (PPP). This computational paradigm does not discard the high-dimensional vector spaces of deep learning but rather structures them. By synthesizing the biological principles of Geometric Cognition (specifically the grid-cell mechanisms of the entorhinal cortex), the algebraic rigor of Hyperdimensional Computing (HDC) (also known as Vector Symbolic Architectures), and the emerging hardware capabilities of Neuromorphic Photonics, PPP offers a coherent framework where "meaning" is a geometric location and "reasoning" is a trajectory through a high-dimensional polytope.
+The central thesis of this analysis is that symbolic reasoning is fundamentally a geometric operation. Concepts are not static labels but convex regions (polytopes) in a high-dimensional semantic space. Logical deduction is the rotation of a state vector from one polytope to another, and inference is the projection of a query vector onto the boundary facets of these shapes. This report provides an exhaustive technical dissection of this framework, its hardware implementation on photonic fabrics, and the strategic landscape for its development.
+2. Theoretical Foundations: The Geometry of Thought
+To engineer a system capable of human-like reasoning, we must first understand the geometric structures that underlie biological cognition. The brain does not process symbols as discrete tokens in a lookup table; it navigates them as locations in a conceptual space.
+2.1 Conceptual Spaces and Convexity
+The theoretical bedrock of PPP is grounded in the work of Peter Gärdenfors and the theory of Conceptual Spaces. Gärdenfors argues that between the sub-conceptual level (neural networks) and the symbolic level (language) lies a geometric level where information is organized by quality dimensions (e.g., color, pitch, spatial coordinates).
+A defining feature of this theory is the Convexity Constraint. A natural concept is represented as a convex region within this space. For instance, if two distinct colors are classified as "Red," any color lying on the line segment connecting them in the color space is also "Red." In high-dimensional spaces, these convex regions take the form of polytopes—geometric objects with flat sides that exist in any number of dimensions.
+In the PPP framework, we formalize this:
+* Property Vectors: An object is defined by a point p in a d-dimensional space.
+* Concept Polytopes: A concept C is a polytope defined by the intersection of finite half-spaces (linear inequalities).
+* Voronoi Tessellations: The space is partitioned into categories based on proximity to prototype vectors, forming a Voronoi diagram where each cell is a convex polytope. This geometric partitioning allows for robust categorization; a query vector need only be projected onto the nearest prototype to determine its class, a process that is naturally robust to noise.
+2.2 The Neuroscience of Navigation: Grid Cells as Basis Vectors
+The biological validity of Polytopal Projection Processing is strongly supported by the discovery of grid cells in the medial entorhinal cortex (MEC). These cells fire at regular spatial intervals, forming a hexagonal lattice that tessellates the environment.
+While originally identified for spatial navigation, recent research indicates that grid cells function as a universal metric for abstract conceptual spaces.
+* The Grid Code: The population activity of grid cells forms a low-dimensional manifold, often modeled as a torus. However, when considering the "convex hull" of grid-like inputs, the representation forms a polytope H_\lambda.
+* Abstract Navigation: Studies have shown that the brain recruits this same grid-cell mechanism to navigate non-spatial dimensions, such as "social value spaces" defined by axes of competence and warmth. Or, in the case of "The Garden of Forking Paths" metaphor, the brain navigates a tree of future possibilities.
+* Polytopal Codes: The firing patterns can be viewed as defining the vertices of a polytope. The "Generalized Grid Code" allows the brain to perform vector algebra—path integration—in semantic space. If "King" is a vector location and "Gender" is a direction, the brain can compute "King" - "Man" + "Woman" = "Queen" by traversing the manifold. PPP explicitly replicates this biological mechanism, using polytopal structures to define the boundaries of allowable vector operations.
+2.3 The Manifold Hypothesis and Latent Space Geometry
+Modern Deep Learning (DL) implicitly relies on geometry. The Manifold Hypothesis states that high-dimensional data (like images) lies on a low-dimensional manifold embedded within the input space.
+* Disentanglement: The goal of a neural network is to map this curved manifold into a flat, Euclidean latent space where linear interpolation is possible. This is the Linear Representation Hypothesis: the idea that well-trained models (like Transformers) represent concepts as linear directions in their residual stream.
+* Polysemanticity and Polytopes: A critical challenge in interpreting these spaces is "polysemanticity," where a single neuron responds to multiple unrelated features. The Polytope Lens framework reinterprets this: the activation space of a network (specifically with ReLU functions) is segmented into polytopes. Within each polytope, the network acts as a linear function. Polysemanticity arises when the network efficiently packs features into the available dimensions by aligning them with the vertices of high-dimensional polytopes (e.g., the simplex or cross-polytope) to minimize interference.
+PPP leverages this insight by explicitly designing the semantic space as a collection of polytopes, rather than hoping they emerge during training. This ensures Geometric Interpretability—we can "see" the boundaries of a concept and audit the reasoning path.
+3. The Computational Engine: Hyperdimensional Computing (HDC)
+While geometry provides the map, Hyperdimensional Computing (HDC), also known as Vector Symbolic Architectures (VSA), provides the algebra to navigate it. HDC operates on vectors of extremely high dimensionality (D > 10,000), utilizing the statistical properties of such spaces—specifically "concentration of measure"—to perform robust, distributed computation.
+3.1 The Algebra of Polytopes
+In the PPP system, standard VSA operations are mapped to geometric transformations on polytopes.
+VSA Operation
+	Mathematical Form
+	Geometric Interpretation in PPP
+	Superposition (Bundling)
+	C = A + B
+	Centroid Calculation: The sum vector C moves to the center of the polytope defined by vertices A and B. It represents the "concept" that encompasses both.
+	Binding (Multiplication)
+	C = A \otimes B (or XOR)
+	Orthogonal Transformation: Binding maps vectors A and B to a new region of the hyperspace, orthogonal to both. This creates a new "product space" or dimension.
+	Permutation (Rotation)
+	C = \Pi(A)
+	Polytopal Rotation: A unitary transformation that rotates the vector/polytope. This encodes sequence or relation (e.g., "A comes before B").
+	3.2 Fourier Holographic Reduced Representations (FHRR)
+Among the various VSA implementations (Binary Spatter Codes, MAP), Fourier Holographic Reduced Representations (FHRR) are uniquely suited for PPP, particularly when implemented on photonic hardware.
+* Frequency Domain: In FHRR, vectors are represented in the frequency domain. The Binding operation becomes element-wise multiplication (Hadamard product), which is computationally efficient.
+* Phasors as Rotations: Each element of an FHRR vector is a complex phasor e^{i\theta}. Binding two vectors involves adding their phase angles. Geometrically, this is a pure rotation in the complex plane. This aligns perfectly with the PPP concept of "reasoning by rotation," where symbolic manipulation is achieved by rotating the phase of the high-dimensional vector.
+3.3 Clifford Algebra and Geometric Products
+To rigorously formalize the construction of higher-order concepts, PPP draws upon Clifford Algebra (Geometric Algebra). This algebra extends vector spaces to include "multivectors"—oriented areas (bivectors), volumes (trivectors), and hypervolumes.
+* The Geometric Product: The fundamental operation is the geometric product ab = a \cdot b + a \wedge b.
+   * Inner Product (a \cdot b): A scalar representing similarity or Projection. This measures how much of concept a is contained in b.
+   * Outer Product (a \wedge b): A bivector representing the plane spanned by a and b. This represents the Construction of a relation or a higher-order polytope.
+* Spinors and Rotors: Clifford Algebra provides a robust formalism for rotations via "rotors" (R = e^{-B\theta/2}). In PPP, applying a rule is equivalent to applying a rotor to a concept vector. This ensures that the transformation is smooth, continuous, and invertible—critical for reversible reasoning and "backtracking" in logic.
+4. Polytopal Projection Processing (PPP): System Architecture
+Having established the biological and algebraic foundations, we define the architecture of the Polytopal Projection Processing system. PPP is a neuro-symbolic hybrid that uses geometric primitives to perform logical inference.
+4.1 Core Mechanism: Symbolic Reasoning via Rotation
+In classical symbolic AI, reasoning is the manipulation of discrete tokens (e.g., Mother(x) :- Female(x) AND Parent(x)). In PPP, this is continuous.
+Mechanism:
+1. State Representation: The current state of knowledge is a vector S residing within a specific polytope P_{start}.
+2. Rule Application (Rotation): A logical rule is encoded as a high-dimensional rotation matrix (or rotor) R. Applying the rule corresponds to rotating the state vector: S' = R \cdot S.
+   * Unitary Transformations: These rotations must be unitary to preserve the vector's norm (energy). This ensures that information is not lost during the reasoning chain, analogous to the conservation of probability in quantum mechanics.
+3. Validation (Projection): To determine if the conclusion is valid, the system projects the rotated vector S' onto the "Target Polytope" P_{target}. If the projection falls within the convex hull (or exceeds a similarity threshold with the centroid), the inference is accepted.
+Example:
+* Premise: "Socrates is a Man." (V_{Soc} \approx V_{Man})
+* Rule: "All Men are Mortal." (Rotation R_{Man \to Mortal})
+* Inference: V_{Result} = R_{Man \to Mortal} \cdot V_{Soc}.
+* Check: Does V_{Result} fall within the polytope of "Mortal Beings"?
+4.2 The "Garden of Forking Paths": Multi-Future Trajectory Prediction
+The user's query references the "Garden of Forking Paths," a concept derived from Borges' literature but applied here to the problem of multi-future trajectory prediction in AI. In autonomous systems or strategic planning, an agent faces a branching tree of possibilities.
+* The Challenge: Traditional recurrent neural networks (RNNs) often collapse these possibilities into a single mean prediction, which is physically invalid (e.g., steering between two paths into a wall).
+* The PPP Solution (Polytopal Bundles): PPP represents the future not as a single vector, but as a Polytope of Possibility.
+   * Superposition: The system maintains a superposition of all potential future vectors. As time (t) progresses, the uncertainty grows, and the volume of the polytope expands.
+   * Forking as Orthogonal Rotation: When a decision point is reached (a "fork"), the trajectory splits. In HDC, this is modeled by applying distinct rotation matrices to the current state, generating multiple orthogonal future vectors.
+   * Collision Detection: To check for safety, the system computes the intersection of the "Future Polytope" with "Obstacle Polytopes." This geometric intersection test is computationally efficient even in high dimensions.
+   * Cultural Resonance: This mathematical model mirrors the literary intuition of Borges, where "all possible outcomes occur; each is the point of departure for other forkings". PPP provides the computational formalism to navigate this infinite labyrinth.
+4.3 Geometric Interpretability and Polysemanticity
+One of the primary advantages of PPP is its ability to demystify the "black box" of neural networks.
+* Polysemanticity Explained: Research into "polysemanticity" reveals that neurons often encode multiple, unrelated concepts. PPP explains this through High-Dimensional Geometry. To pack N nearly orthogonal features into a d-dimensional space (where N \gg d), the optimal arrangement is a regular polytope (e.g., a simplex or cross-polytope). A single neuron (axis) will inevitably have non-zero projections for multiple feature vectors.
+* Reasoning with Polytopes: Instead of viewing this as "interference," PPP uses it. The system can "un-mix" these signals by projecting the activation vector onto the known basis vectors of the polytope. This allows for Linear Disentanglement of complex, overlapping concepts.
+* Residual Stream Geometry: Recent findings show that Transformers represent "belief states" (probability distributions) as geometries in the residual stream. PPP explicitly treats the residual stream as a canvas for polytopal construction, allowing us to visualize the model's "confidence" as the volume or shape of the polytope it is constructing.
+5. Hardware Realization: The Photonic Fabric
+The mathematical operations required for PPP—massive matrix-vector multiplications (MVM), Fourier transforms, and high-dimensional rotations—are computationally expensive on standard CMOS hardware. However, they are native to photonics. Light is the ideal medium for Geometric Cognition.
+5.1 The Physics of Light as Computation
+* Passive Processing: A lens performs a Fourier Transform instantly and passively. A mesh of interferometers performs a unitary matrix rotation (the core operation of PPP) with near-zero energy consumption.
+* Bandwidth Density: Photonic interconnects can transmit data at terabits per second without the heat generation of copper wires. This is critical for HDC, which requires moving massive vectors (D=10,000+) between memory and compute units.
+5.2 Key Hardware Players and Ecosystem
+The realization of PPP relies on a specific ecosystem of hardware innovators who are building the "post-Von Neumann" compute stack.
+Company / Lab
+	Technology
+	Relevance to PPP
+	Financial/Operational Status (2025/26)
+	Celestial AI
+	Photonic Fabric
+	Interconnect & Memory: Decouples compute from memory using light. Creates a "Memory Fabric" where the entire high-dimensional semantic space can be stored and accessed by any chip. This solves the "Memory Wall" for HDC.
+	Major Funding: $175M Series C (2024), $250M Series C1 (2025). High acquisition interest from Marvell.
+	Lightmatter
+	Passage & Envise
+	Wafer-Scale Interconnect & Compute: Their "Passage" technology allows chips to communicate optically. Their processors use Mach-Zehnder Interferometer (MZI) meshes to perform matrix multiplications (rotations) at the speed of light.
+	Valuation: ~$4.4B. Positioning as the "nervous system" for AI clusters.
+	LightOn
+	Optical Processing Unit (OPU)
+	Random Projections: Uses laser speckle (scattering) to perform large-scale random projections. This is the exact hardware equivalent of the "Encoding" step in HDC/PPP.
+	Active in "Neuro-symbolic" research. Competes on energy efficiency for training.
+	EnCharge AI
+	In-Memory Computing
+	Neuromorphic/Analog: Performs computation within the memory array (SRAM/RRAM). Ideal for the "Associative Memory" lookup required to match a query vector to a concept polytope.
+	DARPA funded. Focus on edge efficiency (100+ TOPS/W).
+	Luminous Computing
+	Photonic Supercomputer
+	Attempted to build a monolithic photonic supercomputer.
+	Defunct (Ceased Operations Dec 2025). A cautionary tale favoring the interconnect approach (Celestial) over the monolithic approach.
+	Deep Dive: Celestial AI's Photonic Fabric
+Celestial AI's architecture is particularly pivotal. By using the "Photonic Fabric" to optically interconnect HBM (High Bandwidth Memory) modules, they create a unified memory address space that spans an entire server rack.
+* Implication for PPP: This allows the "Knowledge Polytope" (the sum total of the system's learned concepts) to be massive—terabytes in size—yet accessible with nanosecond latency. An agent can "rotate" a query vector against millions of stored concepts simultaneously, enabling One-Shot Learning and retrieval-augmented generation at a scale impossible with electrical interconnects.
+Deep Dive: LightOn's Optical Projections
+LightOn's OPU leverages the physical phenomenon of scattering. When coherent light passes through a diffusive medium, it creates a random speckle pattern. This is mathematically equivalent to multiplying the input vector by a fixed random matrix.
+* Implication for PPP: This provides a "physical" projection operator. To project a sensory input into the Hyperdimensional space (Latent Space), PPP can simply "shine" the data through the OPU. This operation is effectively free in terms of energy, enabling the system to continuously "hallucinate" or project potential futures in the "Garden of Forking Paths" without draining power.
+6. Strategic Landscape: Interested Parties and Funding Opportunities
+The development of PPP is being accelerated by substantial investment from defense agencies seeking "Third Wave" AI capabilities (contextual reasoning) and private capital seeking to break the "Moore's Law" stalemate.
+6.1 Defense and Government Solicitations
+The US government is actively soliciting research that maps directly to the capabilities of PPP.
+DARPA (Defense Advanced Research Projects Agency)
+* AI Exploration (AIE) Program: This program funds "high-risk, high-reward" projects with rapid timelines (18 months).
+   * Current Opportunity: DARPA-PA-25-03 (Program Announcement for Artificial Intelligence Exploration).
+   * Deadline: Annual deadline of January 24, 2026.
+   * Relevance: AIE explicitly seeks "Third Wave" AI technologies. A proposal framing PPP as a "Geometric Neuro-Symbolic" architecture would be highly responsive.
+* AI Quantified (AIQ):
+   * Objective: To provide mathematical guarantees for the capabilities of generative AI.
+   * Relevance: PPP offers geometric guarantees. We can mathematically prove that a reasoning chain stays within a "Safety Polytope." This is the precise "quantification" DARPA seeks.
+* Neuro-Symbolic AI:
+   * Solicitation: Topics related to "Mitigating Explicit and Implicit Bias" via neuro-symbolic methods.
+   * Status: Active/Amended in late 2025.
+IARPA (Intelligence Advanced Research Projects Activity)
+* REASON Program (Rapid Explanation, Analysis, and Sourcing Online):
+   * Objective: To help intelligence analysts improve evidence and reasoning in reports.
+   * Relevance: PPP's ability to show the "trajectory" of a conclusion (the rotation path) provides the audit trail required for intelligence products. It moves beyond "black box" prediction to "explainable geometry."
+   * Status: Proposers' Day held; BAA execution ongoing through 2026.
+NSF (National Science Foundation)
+* Foundations of Emerging Technologies (FET):
+   * Solicitation: NSF 25-543 (Future Computing Research - Future CoRe).
+   * Deadlines: September 11, 2025 and February 5, 2026.
+   * Scope: Specifically calls for "unconventional computing" and "paradigms beyond Von Neumann." This is the primary vehicle for funding the fundamental academic research into Photonic HDC and Geometric Cognition.
+6.2 Venture Capital and Private Sector
+* Lux Capital: A deep-tech VC firm explicitly focused on "Geometric Deep Learning" and the intersection of biology/physics and AI. They have invested in companies like Recursion (biological geometry) and are a prime target for PPP startups.
+* Playground Global: An early-stage firm with a heavy thesis on "next-generation computing" and "optical systems." They are investors in PsiQuantum, Celestial AI, and Rubust.AI. Their portfolio aligns perfectly with the hardware requirements of PPP.
+* Marvell Technology: An industrial "kingmaker" in the interconnect space. Their interest in (and potential acquisition of) Celestial AI signals that the industry is ready to adopt photonic fabrics for AI scaling.
+7. Strategies for Encapsulation and Roadmap
+To transition Polytopal Projection Processing from theoretical research to a deployed capability, a structured encapsulation strategy is required. This involves framing the technology to address specific pain points (energy, safety, explainability) and executing a phased R&D roadmap.
+7.1 Encapsulation Narrative: "Geometric Interpretability"
+The strongest "hook" for PPP is AI Safety.
+* The Problem: Current LLMs are probabilistic black boxes. We cannot "audit" 100 billion weights to ensure they won't hallucinate or exhibit bias.
+* The PPP Solution: Geometric Constitutional AI. By defining a "Constitution" as a convex polytope in the semantic space, we can mathematically enforce that the system's output vector V_{out} must lie within the "Safety Polytope." If a rotation moves the vector outside this hull, the projection operation "clamps" it back to the boundary.
+* Benefit: This provides a verifiable, deterministic safety layer on top of probabilistic models.
+7.2 The "Neuro-Symbolic Bridge"
+Position PPP not as a replacement for Transformers, but as the Reasoning Head.
+* Hybrid Architecture: Use a standard Transformer to generate the rich, high-dimensional embeddings (the "intuition"). Use a Photonic PPP Co-processor to perform the symbolic logic (the "reasoning") on those embeddings.
+* Mechanism: The Transformer outputs a "thought vector." The PPP chip applies a sequence of Rotations (logical rules) to check for consistency. This mirrors the "System 1" (Fast/Neural) vs. "System 2" (Slow/Symbolic) distinction in cognitive science.
+7.3 Development Roadmap
+Phase
+	Timeframe
+	Objective
+	Key Actions / Targets
+	I. Theory & Simulation
+	2026 Q1-Q2
+	Formalize "Polytopal Algebra"
+	• Publish rigorous math of FHRR on Polytopes. • Submit to NSF FET (Feb 2026). • Develop "TorchPPP" simulation library.
+	II. The "Garden" Demo
+	2026 Q3-Q4
+	Prove Multi-Future Prediction
+	• Demonstrate "Garden of Forking Paths" trajectory prediction for autonomous navigation. • Submit to DARPA AIE (Jan 2027). • Show 100x efficiency gain in "forking" via rotations.
+	III. Photonic Porting
+	2027
+	Hardware Acceleration
+	• Port PPP kernels to Celestial AI Photonic Fabric or Lightmatter Envise. • Partner with Lux Capital for Series A funding. • Demonstrate "Speed of Light" reasoning.
+	IV. Deployment
+	2028+
+	Commercial "Reasoning Engines"
+	• Launch "Geometric Inference Service" for Audit/Compliance markets. • Integrate with IARPA REASON workflows for intelligence analysis.
+	7.4 Conclusion: The Navigable Future
+Polytopal Projection Processing is more than a novel algorithm; it is a convergence of biology, physics, and mathematics. By accepting that "thought" has a shape—a geometry—we can build computers that do not merely calculate probabilities but actually reason about the structure of the world.
+The "Garden of Forking Paths" is no longer a labyrinth of infinite confusion. With the grid cell as our compass, HDC as our map, and photonics as our vehicle, we can navigate the high-dimensional spaces of the future with speed, precision, and—crucially—understanding. The transition from "Artificial Intelligence" to "Geometric Cognition" has begun.
+Works cited
+1. Applications of Conceptual Spaces: The Case for Geometric Knowledge Representation, https://www.researchgate.net/publication/285601470_Applications_of_Conceptual_Spaces_The_Case_for_Geometric_Knowledge_Representation 2. Events and Causal Mappings Modeled in Conceptual Spaces - Frontiers, https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2020.00630/full 3. Where can a place cell put its fields? Let us count the ways. | Fiete Lab, https://fietelab.mit.edu/wp-content/uploads/2021/03/where_can_a_place_cell_put_its_fields__let_us_count_the_ways___to_post_-1.pdf 4. Place- cell capacity and volatility with grid- like inputs - eLife, https://elifesciences.org/articles/62702.pdf 5. Discretization on Unstructured Grids for Inhomogeneous, Anisotropic Media. Part I: Derivation of the Methods | SIAM Journal on Scientific Computing, https://epubs.siam.org/doi/abs/10.1137/S1064827595293582 6. Biologically Inspired Spatial Representation - University of Waterloo, https://compneuro.uwaterloo.ca/files/publications/komer.2020a.pdf 7. distance and grid-like codes support navigation of abstract social space in human brain, https://elifesciences.org/reviewed-preprints/89025 8. Distance and grid-like codes support the navigation of abstract social space in the human brain - PMC - NIH, https://pmc.ncbi.nlm.nih.gov/articles/PMC11178359/ 9. Graph-based Spatial Transformer with Memory Replay for Multi-future Pedestrian Trajectory Prediction - arXiv, https://arxiv.org/pdf/2206.05712 10. Distance and grid-like codes support the navigation of abstract social space in the human brain | eLife, https://elifesciences.org/articles/89025 11. Are Grid-Like Representations a Component of All Perception and Cognition? - Frontiers, https://www.frontiersin.org/journals/neural-circuits/articles/10.3389/fncir.2022.924016/full 12. Probing variability in a cognitive map using manifold inference from neural dynamics - bioRxiv, https://www.biorxiv.org/content/10.1101/418939v1.full.pdf 13. Graph Embeddings, Disentanglement, and Algorithm Maps - UC Berkeley, https://escholarship.org/content/qt8xb4737b/qt8xb4737b.pdf 14. Layerwise Recall and the Geometry of Interwoven Knowledge in LLMs - arXiv, https://arxiv.org/html/2502.10871v2 15. The Linear Representation Hypothesis and the Geometry of Large Language Models - arXiv, https://arxiv.org/html/2311.03658v2 16. From Tokens to Semantics: The Emergence and Stabilization of Polysemanticity in Language Models - OpenReview, https://openreview.net/pdf?id=Kyx1qoZHcO 17. The Geometry of Intelligence: Unpacking Superposition, Polysemanticity, and the Architecture of Sparse Autoencoders in Large Language Models | Uplatz Blog, https://uplatz.com/blog/the-geometry-of-intelligence-unpacking-superposition-polysemanticity-and-the-architecture-of-sparse-autoencoders-in-large-language-models/ 18. [2210.01892] Polysemanticity and Capacity in Neural Networks - arXiv, https://arxiv.org/abs/2210.01892 19. NeurIPS 2022 - Bird's-eye views of conference proceedings, https://www.confviews.com/neurips2022/ 20. Vector Symbolic Architectures as a Computing Framework for Emerging Hardware - PMC, https://pmc.ncbi.nlm.nih.gov/articles/PMC10588678/ 21. Generalized Holographic Reduced Representations - arXiv, https://arxiv.org/html/2405.09689v1 22. (PDF) Implementing Holographic Reduced Representations for Spiking Neural Networks, https://www.researchgate.net/publication/392784339_Implementing_Holographic_Reduced_Representations_for_Spiking_Neural_Networks 23. Efficient Context-Preserving Encoding and Decoding of Compositional Structures Using Sparse Binary Representations - MDPI, https://www.mdpi.com/2078-2489/16/5/343 24. FoGE: Fock Space inspired encoding for graph prompting - arXiv, https://arxiv.org/html/2507.02937v2 25. [PDF] On Geometric Algebra representation of Binary Spatter Codes | Semantic Scholar, https://www.semanticscholar.org/paper/On-Geometric-Algebra-representation-of-Binary-Codes-Aerts-Czachor/fa34309cba9521557b4333f4547ca40afa9e3e8d 26. (PDF) Geometric Analogue of Holographic Reduced Representation - ResearchGate, https://www.researchgate.net/publication/222521503_Geometric_Analogue_of_Holographic_Reduced_Representation 27. Vector-Derived Transformation Binding: An Improved Binding Operation for Deep Symbol-Like Processing in Neural Networks - University of Waterloo, https://compneuro.uwaterloo.ca/files/publications/gosmann.2019b.pdf 28. Unitary circuit dynamics Contents 1 Selected bibliography, https://www.pks.mpg.de/fileadmin/user_upload/MPIPKS/group_pages/DQI/Intro_UnitaryCircuits.pdf 29. Causal Intervention and Counterfactual Reasoning for Multimodal Pedestrian Trajectory Prediction - MDPI, https://www.mdpi.com/2313-433X/11/11/379 30. arXiv:2101.06806v1 [cs.RO] 18 Jan 2021, https://arxiv.org/pdf/2101.06806 31. MULTIVERSE: Mining Collective Data Science Knowledge from Code on the Web to Suggest Alternative Analysis Approaches, https://behavioral-data.github.io/resources/pubpdfs/merrill_multiverse_2021.pdf 32. Borges And New Media: Connections Via Heterotopic Spaces - MavMatrix, https://mavmatrix.uta.edu/context/english_theses/article/1095/type/native/viewcontent 33. [Quick Review] Transformers represent belief state geometry in their, https://liner.com/review/transformers-represent-belief-state-geometry-in-their-residual-stream 34. Transformers Represent Belief State Geometry in their Residual Stream - AI Alignment Forum, https://www.alignmentforum.org/posts/gTZ2SxesbHckJ3CkF/transformers-represent-belief-state-geometry-in-their 35. Part 1/The 360×360×3600 Global SynchroCore: A Theoretical Upper-Bound Architecture for Post-GPU AI Compute - note, https://note.com/caoru358max/n/n40c1273345ac 36. OptiCAM: An optical content-addressable memory architecture for ultra-fast pattern matching | APL Photonics | AIP Publishing, https://pubs.aip.org/aip/app/article/10/12/126116/3374814/OptiCAM-An-optical-content-addressable-memory 37. Cross-Layer Design of Vector-Symbolic Computing: Bridging Cognition and Brain-Inspired Hardware Acceleration - arXiv, https://arxiv.org/html/2508.14245v2 38. Patent Snapshot: Celestial AI and photonic innovations for advanced AI computing, https://parolaanalytics.com/blog/celestial-ai-photonic-fabric-patents/ 39. (PDF) Photonic Fabric Platform for AI Accelerators - ResearchGate, https://www.researchgate.net/publication/393852118_Photonic_Fabric_Platform_for_AI_Accelerators 40. Streamlined optical training of large-scale modern deep learning architectures with direct feedback alignment - arXiv, https://arxiv.org/html/2409.12965v2 41. Neural Brain: A Neuroscience-inspired Framework for Embodied Agents - arXiv, https://arxiv.org/html/2505.07634v1 42. Funding Opportunities Archive - SUNY, https://www.suny.edu/impact/research/sandbox-funding-opps/archive/ 43. Program Announcement for Artificial Intelligence Exploration (AIE) - SAM.gov, https://sam.gov/workspace/contract/opp/2a46edcf65df4bf095bcb4c102c4a58f/view?utm_campaign=20583205-CIST%20%3A%3A%20MavOps&utm_source=hs_email&utm_medium=email&_hsenc=p2ANqtz-8lqFMm2A9uBvaaVwk5lniqfbijzwBgwJPpJiMsn9foTU1LFMEbKWXU19GzjiWswD523eDH 44. AIQ: Artificial Intelligence Quantified - DARPA, https://www.darpa.mil/research/programs/aiq-artificial-intelligence-quantified 45. STTR: Mitigating Explicit and Implicit Bias Through Hybrid AI (Amended) - DARPA, https://www.darpa.mil/research/programs/mitigating-explicit-implicit-bias 46. Rapid Explanation, Analysis and Sourcing Online (REASON), https://arl.devcom.army.mil/collaborate-with-us/opportunity/reason/ 47. Proposers' Days - IARPA, https://www.iarpa.gov/engage-with-us/proposers-days 48. NSF 25-543: Computer and Information Science and Engineering : Future Computing Research (Future CoRe), https://www.nsf.gov/funding/opportunities/future-core-computer-information-science-engineering-future-computing/nsf25-543/solicitation 49. Computer and Information Science and Engineering : Future Computing Research (Future CoRe) | Mary Lou Fulton College for Teaching and Learning Innovation - Arizona State University, https://education.asu.edu/funding-calendar/computer-and-information-science-and-engineering-future-computing-research-0 50. Portfolio - DIMENSION, https://www.dimensioncap.com/portfolio 51. Investing in Monte Rosa Therapeutics - Dimension, https://www.dimensioncap.com/blog/investing-in-monte-rosa-therapeutics 52. Playground Global raises $25,000,000 at Series C on 2022-11-15 - Founder Lodge, https://founderlodge.com/round/-raises-25000000-Series-C-2022-11-15-Peter-Barrett-NTgwNQ 53. Peter Barrett - Playground VC, https://www.playground.vc/people/peter-barrett 54. The Speed of Light: Silicon Photonics Shatters the AI Interconnect Bottleneck, https://markets.financialcontent.com/wral/article/tokenring-2026-1-1-the-speed-of-light-silicon-photonics-shatters-the-ai-interconnect-bottleneck
