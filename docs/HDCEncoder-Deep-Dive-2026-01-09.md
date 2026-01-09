@@ -1,7 +1,15 @@
 # HDCEncoder Deep Dive: Neural-Geometric Bridge Analysis
 **Date:** 2026-01-09
 **Module:** `lib/encoding/HDCEncoder.ts`
-**Version:** 1.0.0
+**Version:** 2.0.0
+
+> **v2.0 Update:** This document has been updated to reflect the enhanced HDCEncoder with:
+> - Real embedding API integration (OpenAI/Cohere/Custom)
+> - Positional encoding for word order preservation
+> - Multi-head self-attention aggregation
+> - Configurable/domain-specific archetypes
+> - Improved tokenization with subword support
+> - Preset domain archetypes (Medical, Legal, Software)
 
 ---
 
@@ -407,218 +415,145 @@ const encoder = new HDCEncoder({
 
 ---
 
-## 7. Limitations & Improvement Opportunities
+## 7. v2.0 Enhancements (Implemented)
 
-### Current Limitations
+The following improvements have been implemented in v2.0:
 
-#### 7.1 Hash-Based Embeddings Are Semantic-Blind
+### 7.1 Real Embedding API Integration ✅
 
-**Problem:** `_hashToEmbedding()` creates random vectors from string hashes. "dog" and "canine" get unrelated vectors despite being synonyms.
+**Solution:** Added async methods with multi-provider support.
 
-**Current behavior:**
-```
-hash("dog")    → [0.23, -0.14, 0.87, ...]  (random)
-hash("canine") → [-0.56, 0.91, 0.12, ...]  (completely different)
-```
-
-**Impact:** The encoder cannot recognize synonyms, related words, or semantic similarity without an external embedding model.
-
-#### 7.2 Simple Tokenization
-
-**Problem:** Whitespace splitting misses:
-- Compound words ("machine-learning" → "machine", "learning")
-- Subword units (BPE/WordPiece would capture morphology)
-- Stop word filtering (all words treated equally before weighting)
-
-#### 7.3 No Context Awareness
-
-**Problem:** Each token is encoded independently. "bank" in "river bank" vs "money bank" produces identical vectors.
-
-#### 7.4 Fixed Archetype Labels
-
-**Problem:** The 24 archetypes are hard-coded. Domain-specific applications (medical, legal, etc.) may need different concept taxonomies.
-
-#### 7.5 Linear Aggregation
-
-**Problem:** Token embeddings are summed linearly. Word order and syntactic structure are lost.
-
-```
-"dog bites man" == "man bites dog"  (same embedding)
-```
-
-### Improvement Opportunities
-
-#### 7.A Replace Hash Embeddings with Real Embeddings
-
-**Recommended approach:**
 ```typescript
-async embeddingToForce(text: string): Promise<Force> {
-    // Call external embedding API
-    const response = await fetch('https://api.openai.com/v1/embeddings', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${apiKey}` },
-        body: JSON.stringify({
-            model: 'text-embedding-3-small',
-            input: text
-        })
-    });
-    const { data } = await response.json();
-    return this._projectEmbedding(new Float32Array(data[0].embedding));
-}
+// Create encoder with OpenAI embeddings
+const encoder = createAPIEncoder('openai', process.env.OPENAI_API_KEY);
+
+// Async encoding with real semantic embeddings
+const force = await encoder.textToForceAsync("reasoning about causality");
+
+// Supported providers: 'openai', 'cohere', 'local', 'custom'
 ```
 
-**Benefits:**
+**Benefits achieved:**
 - True semantic similarity ("dog" ≈ "canine")
 - Contextual understanding
-- Multilingual support
+- Embedding cache for repeated queries
 
-**Trade-offs:**
-- API latency (~100-500ms)
-- Cost ($0.02 per 1M tokens for ada-002)
-- External dependency
+### 7.2 Positional Encoding ✅
 
-#### 7.B Learned Projection Matrix
-
-**Current:** Random Gaussian projection (JL lemma)
-
-**Improvement:** Train a projection matrix on your domain:
+**Solution:** Transformer-style sinusoidal positional encoding.
 
 ```typescript
-// Instead of random:
-this._projectionMatrix = this._createProjectionMatrix(4);
+// Enabled by default
+const encoder = new HDCEncoder({
+    usePositionalEncoding: true,
+    positionalDimension: 64
+});
 
-// Learn from data:
-this._projectionMatrix = await trainProjection(
-    trainingEmbeddings,  // 1536D inputs
-    targetForces,        // 4D desired outputs
-    { epochs: 100, lr: 0.001 }
-);
+// Now "dog bites man" ≠ "man bites dog"
 ```
 
-**Benefits:**
-- Optimized for your specific use case
-- Can encode domain-specific structure
-- Better distance preservation for your data distribution
-
-#### 7.C Dynamic Archetype Discovery
-
-**Current:** 24 fixed archetypes
-
-**Improvement:** Cluster embeddings to discover natural concepts:
-
-```typescript
-// K-means clustering on embedding corpus
-const clusters = kMeans(corpusEmbeddings, k=24);
-
-// Use cluster centroids as archetypes
-this._archetypeEmbeddings = clusters.centroids;
-this._archetypes = clusters.labels.map((_, i) => ({
-    index: i,
-    label: generateLabelFromCluster(clusters.members[i]),
-    keywords: extractKeywords(clusters.members[i])
-}));
+**Implementation:**
+```
+PE(pos, 2i) = sin(pos / 10000^(2i/d))
+PE(pos, 2i+1) = cos(pos / 10000^(2i/d))
 ```
 
-#### 7.D Positional/Sequential Encoding
+### 7.3 Multi-Head Self-Attention ✅
 
-**Current:** Bag-of-words (order ignored)
-
-**Improvement:** Add position encoding:
+**Solution:** 4-head attention mechanism for intelligent token weighting.
 
 ```typescript
-_textToEmbedding(text: string): Float32Array {
-    const tokens = this._tokenize(text);
-    const embedding = new Float32Array(1536);
+const encoder = new HDCEncoder({
+    useAttention: true,
+    attentionHeads: 4,
+    temperature: 1.0
+});
 
-    for (let i = 0; i < tokens.length; i++) {
-        const tokenEmb = this._getTokenEmbedding(tokens[i]);
-        const posEnc = this._positionalEncoding(i, tokens.length);
-
-        // Combine token and position
-        for (let j = 0; j < 1536; j++) {
-            embedding[j] += tokenEmb[j] * posEnc[j % posEnc.length];
-        }
-    }
-}
-
-_positionalEncoding(pos: number, maxLen: number): Float32Array {
-    // Sinusoidal position encoding (Transformer-style)
-    const encoding = new Float32Array(64);
-    for (let i = 0; i < 32; i++) {
-        const freq = 1 / Math.pow(10000, 2 * i / 64);
-        encoding[2*i] = Math.sin(pos * freq);
-        encoding[2*i + 1] = Math.cos(pos * freq);
-    }
-    return encoding;
-}
+// Get attention visualization
+const viz = encoder.getAttentionVisualization("the quick brown fox");
+// viz.tokens: ["the", "quick", "brown", "fox"]
+// viz.contributions: [0.15, 0.28, 0.29, 0.28]  // "the" weighted down
 ```
 
-#### 7.E Streaming/Incremental Encoding
-
-**Current:** Full text processed at once
-
-**Improvement:** Streaming for real-time applications:
-
-```typescript
-class StreamingEncoder {
-    private _runningEmbedding: Float32Array;
-    private _tokenCount: number = 0;
-
-    addToken(token: string): Force {
-        const tokenEmb = this._getTokenEmbedding(token);
-
-        // Exponential moving average
-        const alpha = 0.1;
-        for (let i = 0; i < 1536; i++) {
-            this._runningEmbedding[i] =
-                alpha * tokenEmb[i] + (1 - alpha) * this._runningEmbedding[i];
-        }
-
-        return this._projectToForce(this._runningEmbedding);
-    }
-}
+**How it works:**
+```
+Attention(Q, K, V) = softmax(QK^T / √d_k) V
 ```
 
-#### 7.F Attention-Based Aggregation
+### 7.4 Configurable Domain Archetypes ✅
 
-**Current:** Simple weighted sum
-
-**Improvement:** Self-attention for token importance:
+**Solution:** Custom archetype definitions + preset domain packages.
 
 ```typescript
-_aggregateWithAttention(tokenEmbeddings: Float32Array[]): Float32Array {
-    const n = tokenEmbeddings.length;
-    const attention = new Float32Array(n);
+// Use medical domain archetypes
+import { MEDICAL_ARCHETYPES, createDomainEncoder } from './HDCEncoder';
+const medicalEncoder = createDomainEncoder(MEDICAL_ARCHETYPES);
 
-    // Compute attention scores (simplified single-head)
-    for (let i = 0; i < n; i++) {
-        let score = 0;
-        for (let j = 0; j < n; j++) {
-            score += this._dotProduct(tokenEmbeddings[i], tokenEmbeddings[j]);
-        }
-        attention[i] = score / n;
-    }
+// Or define your own
+const customEncoder = new HDCEncoder({
+    customArchetypes: [
+        { label: 'my-concept', keywords: ['word1', 'word2'] },
+        // ...
+    ]
+});
+```
 
-    // Softmax
-    const expAtt = attention.map(a => Math.exp(a));
-    const sumExp = expAtt.reduce((a, b) => a + b);
+**Preset domains included:**
+- `MEDICAL_ARCHETYPES` (24 concepts: diagnosis, treatment, symptom, etc.)
+- `LEGAL_ARCHETYPES` (24 concepts: statute, precedent, contract, etc.)
+- `SOFTWARE_ARCHETYPES` (24 concepts: architecture, algorithm, api, etc.)
 
-    // Weighted combination
-    const result = new Float32Array(1536);
-    for (let i = 0; i < n; i++) {
-        const weight = expAtt[i] / sumExp;
-        for (let j = 0; j < 1536; j++) {
-            result[j] += tokenEmbeddings[i][j] * weight;
-        }
-    }
+### 7.5 Improved Tokenization ✅
 
-    return result;
-}
+**Solution:** Subword tokenization + stop word penalties + frequency weighting.
+
+```typescript
+// "understanding" → ["understand", "ing"]
+// Morphological awareness for better semantic capture
+
+// Stop words automatically down-weighted:
+// "the" → 0.3 weight
+// "causality" → 0.9 weight
 ```
 
 ---
 
-## 8. Integration Guide
+## 8. Remaining Improvement Opportunities
+
+### 8.A Learned Projection Matrix
+
+**Status:** Not yet implemented
+
+**Future improvement:** Train projection matrix on domain-specific data:
+
+```typescript
+this._projectionMatrix = await trainProjection(
+    trainingEmbeddings,
+    targetForces,
+    { epochs: 100, lr: 0.001 }
+);
+```
+
+### 8.B Dynamic Archetype Discovery
+
+**Status:** Not yet implemented
+
+**Future improvement:** K-means clustering to discover natural concepts:
+
+```typescript
+const clusters = kMeans(corpusEmbeddings, k=24);
+this._archetypeEmbeddings = clusters.centroids;
+```
+
+### 8.C Streaming/Incremental Encoding
+
+**Status:** Not yet implemented
+
+**Future improvement:** Real-time token-by-token encoding for streaming applications.
+
+---
+
+## 9. Integration Guide
 
 ### Basic Usage
 
