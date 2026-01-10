@@ -98,3 +98,69 @@ export {
   // Namespace
   AudioProcessing,
 } from './audio-processing';
+
+// 4D Polytopes (8-cell, 16-cell, 24-cell)
+export {
+  // Classes
+  Cell8,
+  Cell16,
+  Cell24,
+
+  // Vector operations
+  createVector4D,
+  distance4D as polytope_distance4D,
+  scale4D as polytope_scale4D,
+  add4D as polytope_add4D,
+  midpoint4D,
+
+  // Verification
+  verifyConstruction,
+  classifySymmetry,
+  type SymmetryGroup,
+
+  // Namespace
+  Polytopes,
+} from './polytopes';
+
+// Music Geometry Domain (24-Cell musical mapping)
+export {
+  // Types
+  type Vector4D,
+  type Vertex24,
+  type MusicalKey,
+  type Edge24,
+  type Path4D,
+  type TensionResult,
+  type CalibrationResult,
+
+  // Core class
+  Cell24 as MusicCell24,
+
+  // Vector operations (from domain)
+  distance4D,
+  dot4D,
+  magnitude4D,
+  normalize4D,
+  add4D,
+  subtract4D,
+  scale4D,
+  lerp4D,
+
+  // Tension analysis
+  calculateTension,
+  calculateResolution,
+
+  // Path analysis
+  createPath,
+  analyzeVoiceLeading,
+  detectPythagoreanComma,
+
+  // Calibration
+  runCalibrationSuite,
+
+  // Semantic bridge
+  blendSemanticAndStructural,
+
+  // Namespace
+  MusicGeometryDomain,
+} from './music-geometry-domain';
