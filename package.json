@@ -3,10 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/*.test.js",
+    "test": "TS_NODE_TRANSPILE_ONLY=1 node --loader ts-node/esm --test tests/*.test.js",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.0"
   }
 }
