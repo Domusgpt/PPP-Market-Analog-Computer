@@ -7,6 +7,8 @@
     "test:embeddings": "npx tsx scripts/test-embeddings.ts",
     "test:embeddings:curl": "./scripts/test-embeddings-curl.sh",
     "test:quick": "npx tsx scripts/quick-test.ts",
+    "test:e2e": "npx tsx scripts/test-e2e-voyage.ts",
+    "test:music": "npx tsx scripts/test-music-geometry.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
