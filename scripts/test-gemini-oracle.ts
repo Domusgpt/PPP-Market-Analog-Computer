@@ -15,7 +15,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {
     GeminiAudioOracle,
-    createGemini3ProOracle,
+    createGeminiOracle,
     TensionAnalysis,
     EmotionAnalysis,
     CalibrationResult
@@ -391,7 +391,7 @@ async function main() {
     console.log('\n✓ Google API key found');
     console.log('  Using Gemini 3 Pro for analysis');
 
-    const oracle = createGemini3ProOracle(apiKey);
+    const oracle = createGeminiOracle(apiKey);
 
     try {
         // Run test suites

@@ -27,7 +27,7 @@ import * as path from 'path';
 
 export interface GeminiAudioConfig {
     apiKey: string;
-    model: 'gemini-3-pro' | 'gemini-3-flash' | 'gemini-2.5-flash-native-audio';
+    model: 'gemini-3-pro-preview';  // Only Gemini 3 Pro - the best for research
     temperature: number;
     maxOutputTokens: number;
     safetySettings?: SafetySetting[];
@@ -96,7 +96,7 @@ export interface CalibrationResult {
 // =============================================================================
 
 const DEFAULT_CONFIG: Partial<GeminiAudioConfig> = {
-    model: 'gemini-3-pro',
+    model: 'gemini-3-pro-preview',
     temperature: 0.1,               // Low for consistency
     maxOutputTokens: 512,
     safetySettings: [
@@ -468,7 +468,7 @@ export class GeminiAudioOracle {
                 pitchesIdentical: commaAnalysis.pitchMatch,
                 startCoord,
                 endCoord: currentCoord,
-                tuningAssessment: commaAnalysis.tuningAssessment
+                tuningSystem: commaAnalysis.tuningSystem
             }
         };
     }
@@ -771,21 +771,14 @@ export class GeminiAudioOracle {
 }
 
 // =============================================================================
-// FACTORY FUNCTIONS
+// FACTORY FUNCTION
 // =============================================================================
 
 /**
- * Create oracle with Gemini 3 Pro (recommended for research)
+ * Create oracle with Gemini 3 Pro
  */
-export function createGemini3ProOracle(apiKey: string): GeminiAudioOracle {
-    return new GeminiAudioOracle(apiKey, { model: 'gemini-3-pro' });
-}
-
-/**
- * Create oracle with Gemini 3 Flash (faster, cheaper)
- */
-export function createGemini3FlashOracle(apiKey: string): GeminiAudioOracle {
-    return new GeminiAudioOracle(apiKey, { model: 'gemini-3-flash' });
+export function createGeminiOracle(apiKey: string): GeminiAudioOracle {
+    return new GeminiAudioOracle(apiKey, { model: 'gemini-3-pro-preview' });
 }
 
 export default GeminiAudioOracle;
