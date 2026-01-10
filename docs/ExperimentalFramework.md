@@ -367,6 +367,7 @@ All AI-generated analyses will be clearly labeled. Gemini 3 Pro serves as a meas
 - AI ratings may not perfectly reflect human perception
 - Synthesized audio may differ from live performance
 - Cultural bias in Western tonal system
+- **API Access**: Google's Generative Language API blocks cloud/VPS IPs. Run tests locally or use Vertex AI with service account authentication
 
 ---
 
