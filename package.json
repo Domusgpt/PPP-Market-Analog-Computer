@@ -11,6 +11,7 @@
     "test:music": "npx tsx scripts/test-music-geometry.ts",
     "test:bridge": "npx tsx scripts/test-semantic-harmonic.ts",
     "test:oracle": "npx tsx scripts/test-gemini-oracle.ts",
+    "test:research": "npx tsx scripts/test-hypotheses-research.ts",
     "test:gemini-api": "./scripts/test-gemini-api.sh",
     "test:all": "npm run test:music && npm run test:bridge && npm run test:oracle",
     "typecheck": "tsc --noEmit"
