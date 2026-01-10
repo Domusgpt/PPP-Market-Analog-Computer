@@ -5,6 +5,8 @@
   "scripts": {
     "test": "node --test tests/*.test.js",
     "test:embeddings": "npx tsx scripts/test-embeddings.ts",
+    "test:embeddings:curl": "./scripts/test-embeddings-curl.sh",
+    "test:quick": "npx tsx scripts/quick-test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
