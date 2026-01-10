@@ -1,2 +1,6 @@
 node_modules/
 .env
+
+# Generated audio files (keep .gitkeep)
+audio/stimuli/*.wav
+audio/calibration/*.wav
