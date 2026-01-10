@@ -148,6 +148,29 @@ export interface ConvexityResult {
     readonly activeVertices: number[];
 }
 
+/**
+ * Supported topology stages for metamorphic reasoning.
+ */
+export type TopologyStage = 'SIMPLEX' | 'HYPERCUBE' | 'CELL24';
+
+/**
+ * Topology provider interface for dynamic manifold selection.
+ */
+export interface TopologyProvider {
+    /** Human-readable name */
+    readonly name: string;
+    /** Ordered vertex list */
+    readonly vertices: Vector4D[];
+    /** Neighbor indices per vertex */
+    readonly neighbors: number[][];
+    /** Circumradius for boundary proximity calculations */
+    readonly circumradius: number;
+    /** Convexity check against the active manifold */
+    checkConvexity(point: Vector4D, kNearest?: number): ConvexityResult;
+    /** Coherence score for a position */
+    computeCoherence(point: Vector4D, kNearest?: number): number;
+}
+
 // =============================================================================
 // CAUSAL ENGINE TYPES
 // =============================================================================
