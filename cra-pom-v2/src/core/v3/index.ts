@@ -169,6 +169,16 @@ export {
   type UseVisualizationBridgeState,
 } from './integration';
 
+// LLM integration (Gemini)
+export {
+  GeminiService,
+  initializeGemini,
+  getGeminiService,
+  resetGeminiService,
+  type GeminiConfig,
+  type ChatCompletionResult,
+} from './llm';
+
 // Version info
 export const PPP_VERSION = '3.0.0';
 export const PPP_CODENAME = 'Honest Geometric Cognition';
