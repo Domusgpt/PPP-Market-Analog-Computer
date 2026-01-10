@@ -34,6 +34,7 @@ import {
     Bivector4D,
     EngineState,
     ConvexityResult,
+    TopologyProvider,
     MATH_CONSTANTS
 } from '../../types/index.js';
 
@@ -83,6 +84,22 @@ export interface ValidationResult {
 
     /** Warning messages if any */
     readonly warnings: string[];
+}
+
+/**
+ * Batch-level metrics for metamorphic topology decisions.
+ */
+export interface BatchMetrics {
+    /** Mean coherence across batch */
+    readonly coherenceMean: number;
+    /** Variance of coherence across batch */
+    readonly coherenceVariance: number;
+    /** 95th percentile boundary proximity */
+    readonly boundaryRiskP95: number;
+    /** Minimum coherence observed */
+    readonly minCoherence: number;
+    /** Maximum coherence observed */
+    readonly maxCoherence: number;
 }
 
 /**
@@ -938,6 +955,57 @@ export function validateState(state: EngineState): ValidationResult {
  */
 export function computeCoherence(position: Vector4D): number {
     return getDefaultValidator().computeCoherence(position);
+}
+
+function percentile(values: number[], p: number): number {
+    if (values.length === 0) {
+        return 0;
+    }
+    const sorted = [...values].sort((a, b) => a - b);
+    const index = Math.min(sorted.length - 1, Math.max(0, Math.ceil(p * sorted.length) - 1));
+    return sorted[index];
+}
+
+/**
+ * Compute batch-level coherence and boundary risk metrics.
+ *
+ * @param positions - Array of 4D positions to analyze
+ */
+export function computeBatchMetrics(
+    positions: Vector4D[],
+    topology?: Pick<TopologyProvider, 'checkConvexity' | 'circumradius'>
+): BatchMetrics {
+    const provider = topology ?? getDefaultLattice();
+    const coherences: number[] = [];
+    const boundaryProximities: number[] = [];
+
+    for (const position of positions) {
+        const convexity = provider.checkConvexity(position);
+        coherences.push(convexity.coherence);
+        const distFromCenter = magnitude(position);
+        boundaryProximities.push(Math.min(1, distFromCenter / provider.circumradius));
+    }
+
+    if (coherences.length === 0) {
+        return {
+            coherenceMean: 0,
+            coherenceVariance: 0,
+            boundaryRiskP95: 0,
+            minCoherence: 0,
+            maxCoherence: 0
+        };
+    }
+
+    const mean = coherences.reduce((sum, value) => sum + value, 0) / coherences.length;
+    const variance = coherences.reduce((sum, value) => sum + (value - mean) ** 2, 0) / coherences.length;
+
+    return {
+        coherenceMean: mean,
+        coherenceVariance: variance,
+        boundaryRiskP95: percentile(boundaryProximities, 0.95),
+        minCoherence: Math.min(...coherences),
+        maxCoherence: Math.max(...coherences)
+    };
 }
 
 /**

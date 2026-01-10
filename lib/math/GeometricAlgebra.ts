@@ -34,7 +34,7 @@ import {
     Quaternion,
     Grade,
     MATH_CONSTANTS
-} from '../types/index.js';
+} from '../../types/index.js';
 
 // =============================================================================
 // BASIS ELEMENT DEFINITIONS

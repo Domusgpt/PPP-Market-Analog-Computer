@@ -5,3 +5,6 @@
  */
 
 export * from './Lattice24.js';
+export * from './Simplex5.js';
+export * from './Hypercube8.js';
+export * from './TopologyController.js';
