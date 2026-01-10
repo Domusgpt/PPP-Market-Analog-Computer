@@ -12,7 +12,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --exclude '**/*.e2e.test.ts'",
     "test:watch": "vitest --exclude '**/*.e2e.test.ts'",
-    "test:e2e": "vitest run src/core/v3/llm/gemini-service.e2e.test.ts",
+    "test:e2e": "vitest run 'src/core/v3/llm/*.e2e.test.ts'",
+    "test:e2e:gemini": "vitest run src/core/v3/llm/gemini-service.e2e.test.ts",
+    "test:e2e:voyage": "vitest run src/core/v3/llm/voyage-service.e2e.test.ts",
     "test:all": "vitest run",
     "test:coverage": "vitest run --coverage"
   },

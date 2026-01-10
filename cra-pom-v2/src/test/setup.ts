@@ -25,7 +25,6 @@ class MockWorker {
   onmessage: ((event: MessageEvent) => void) | null = null;
   onerror: ((event: ErrorEvent) => void) | null = null;
 
-  private messageQueue: unknown[] = [];
   private keypair: CryptoKeyPair | null = null;
 
   constructor(_scriptUrl: string | URL) {

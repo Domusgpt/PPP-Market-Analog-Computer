@@ -169,14 +169,24 @@ export {
   type UseVisualizationBridgeState,
 } from './integration';
 
-// LLM integration (Gemini)
+// LLM integration (Gemini + Voyage)
 export {
+  // Gemini (Google) - Embeddings + Chat
   GeminiService,
   initializeGemini,
   getGeminiService,
   resetGeminiService,
   type GeminiConfig,
   type ChatCompletionResult,
+  // Voyage AI (Anthropic) - High-quality Embeddings
+  VoyageService,
+  initializeVoyage,
+  getVoyageService,
+  resetVoyageService,
+  type VoyageConfig,
+  type VoyageModel,
+  type VoyageInputType,
+  type VoyageEmbeddingResult,
 } from './llm';
 
 // Version info
