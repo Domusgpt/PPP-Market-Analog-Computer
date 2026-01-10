@@ -4,4 +4,4 @@
  * Re-exports all core types for the Chronomorphic Polytopal Engine.
  */
 
-export * from './engine.types';
+export * from './engine.types.js';
