@@ -11,6 +11,9 @@ on:
         options:
           - quick
           - full
+  push:
+    branches:
+      - 'claude/**'  # Runs on any claude/* branch push
 
 jobs:
   test-oracle:
