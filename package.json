@@ -13,6 +13,7 @@
     "test:oracle": "npx tsx scripts/test-gemini-oracle.ts",
     "test:research": "npx tsx scripts/test-hypotheses-research.ts",
     "test:gemini-api": "./scripts/test-gemini-api.sh",
+    "ci:status": "./scripts/check-ci-status.sh",
     "test:all": "npm run test:music && npm run test:bridge && npm run test:oracle",
     "typecheck": "tsc --noEmit"
   },
