@@ -19,7 +19,8 @@ pub use cell24::Cell24;
 pub use cell600::Cell600;
 pub use cell120::Cell120;
 pub use projection::{ProjectionMode, Projector};
-pub use core::GeometryCore;
+pub use core::{GeometryCore, GeometryMode};
+pub use cell24::TrinityComponent;
 
 /// Vertex activation state for computing which vertices are "active"
 #[derive(Debug, Clone, Copy, PartialEq)]

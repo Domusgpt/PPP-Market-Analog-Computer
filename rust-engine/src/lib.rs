@@ -27,11 +27,15 @@ pub mod rendering;
 pub mod pipeline;
 pub mod analysis;
 
+#[cfg(feature = "web")]
+pub mod web;
+
 // Re-export commonly used types
 pub use geometry::{
     Vec4, Quaternion, Polytope4D,
     Cell24, Cell600, Cell120,
-    ProjectionMode,
+    ProjectionMode, GeometryMode,
+    TrinityComponent,
 };
 pub use cognitive::{
     TrinityState, DialecticEngine, CognitiveRule,
@@ -165,6 +169,16 @@ impl GeometricCognitionEngine {
     /// Get mutable reference to cognitive layer for rule modification
     pub fn cognitive_layer_mut(&mut self) -> &mut cognitive::CognitiveLayer {
         &mut self.cognitive_layer
+    }
+
+    /// Get reference to cognitive layer
+    pub fn cognitive_layer(&self) -> &cognitive::CognitiveLayer {
+        &self.cognitive_layer
+    }
+
+    /// Get mutable reference to geometry core
+    pub fn geometry_mut(&mut self) -> &mut geometry::GeometryCore {
+        &mut self.geometry_core
     }
 }
 

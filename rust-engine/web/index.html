@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometric Cognition Engine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(100, 100, 255, 0.2);
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: #a0a0ff;
+        }
+
+        header .subtitle {
+            font-size: 0.85rem;
+            color: #808080;
+            margin-top: 0.25rem;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #gce-canvas {
+            background: #050510;
+            border-radius: 8px;
+            box-shadow: 0 0 40px rgba(100, 100, 255, 0.1);
+        }
+
+        .sidebar {
+            width: 320px;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 1px solid rgba(100, 100, 255, 0.2);
+            overflow-y: auto;
+        }
+
+        .panel {
+            background: rgba(20, 20, 40, 0.8);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .panel h3 {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #a0a0ff;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .control-group {
+            margin-bottom: 0.75rem;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.75rem;
+            color: #808080;
+            margin-bottom: 0.25rem;
+        }
+
+        .control-group select,
+        .control-group input[type="range"] {
+            width: 100%;
+        }
+
+        select {
+            padding: 0.5rem;
+            background: rgba(30, 30, 60, 0.8);
+            border: 1px solid rgba(100, 100, 255, 0.3);
+            border-radius: 4px;
+            color: #e0e0e0;
+            cursor: pointer;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 4px;
+            background: rgba(100, 100, 255, 0.3);
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #a0a0ff;
+            border-radius: 50%;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .metric {
+            background: rgba(30, 30, 60, 0.5);
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .metric-label {
+            font-size: 0.65rem;
+            color: #606080;
+            text-transform: uppercase;
+        }
+
+        .metric-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #e0e0ff;
+            font-family: 'Consolas', monospace;
+        }
+
+        .trinity-display {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .trinity-component {
+            flex: 1;
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .trinity-component.alpha {
+            background: rgba(255, 60, 60, 0.2);
+            border: 1px solid rgba(255, 60, 60, 0.4);
+        }
+
+        .trinity-component.beta {
+            background: rgba(60, 255, 60, 0.2);
+            border: 1px solid rgba(60, 255, 60, 0.4);
+        }
+
+        .trinity-component.gamma {
+            background: rgba(60, 60, 255, 0.2);
+            border: 1px solid rgba(60, 60, 255, 0.4);
+        }
+
+        .trinity-label {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+
+        .trinity-value {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .patterns-list {
+            font-size: 0.8rem;
+            font-family: 'Consolas', monospace;
+        }
+
+        .pattern-tag {
+            display: inline-block;
+            background: rgba(100, 255, 100, 0.2);
+            border: 1px solid rgba(100, 255, 100, 0.4);
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            margin: 0.2rem;
+            font-size: 0.7rem;
+        }
+
+        .status-bar {
+            padding: 0.5rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(100, 100, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #606080;
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 26, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .loading.hidden {
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(100, 100, 255, 0.2);
+            border-top-color: #a0a0ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            margin-top: 1rem;
+            color: #a0a0ff;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            background: rgba(100, 100, 255, 0.3);
+            border: 1px solid rgba(100, 100, 255, 0.5);
+            border-radius: 4px;
+            color: #e0e0e0;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: rgba(100, 100, 255, 0.5);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Initializing Geometric Cognition Engine...</div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Geometric Cognition Engine</h1>
+            <div class="subtitle">GPU-accelerated analog computation using 4D polytopes</div>
+        </header>
+
+        <div class="main-content">
+            <div class="canvas-container">
+                <canvas id="gce-canvas" width="800" height="600"></canvas>
+            </div>
+
+            <div class="sidebar">
+                <div class="panel">
+                    <h3>Geometry Mode</h3>
+                    <div class="control-group">
+                        <select id="mode-select">
+                            <option value="trinity">Trinity (24-cell)</option>
+                            <option value="core24">Core 24-cell</option>
+                            <option value="expanded600">Expanded 600-cell</option>
+                            <option value="full120">Full 120-cell</option>
+                            <option value="e8dual">E8 Dual Layer</option>
+                        </select>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn" id="btn-pause">Pause</button>
+                        <button class="btn" id="btn-reset">Reset</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Rotation Controls</h3>
+                    <div class="control-group">
+                        <label>XY Plane: <span id="xy-val">0.3</span></label>
+                        <input type="range" id="rot-xy" min="0" max="1" step="0.01" value="0.3">
+                    </div>
+                    <div class="control-group">
+                        <label>XZ Plane: <span id="xz-val">0.2</span></label>
+                        <input type="range" id="rot-xz" min="0" max="1" step="0.01" value="0.2">
+                    </div>
+                    <div class="control-group">
+                        <label>XW Plane: <span id="xw-val">0.1</span></label>
+                        <input type="range" id="rot-xw" min="0" max="1" step="0.01" value="0.1">
+                    </div>
+                    <div class="control-group">
+                        <label>YZ Plane: <span id="yz-val">0.15</span></label>
+                        <input type="range" id="rot-yz" min="0" max="1" step="0.01" value="0.15">
+                    </div>
+                    <div class="control-group">
+                        <label>YW Plane: <span id="yw-val">0.25</span></label>
+                        <input type="range" id="rot-yw" min="0" max="1" step="0.01" value="0.25">
+                    </div>
+                    <div class="control-group">
+                        <label>ZW Plane: <span id="zw-val">0.05</span></label>
+                        <input type="range" id="rot-zw" min="0" max="1" step="0.01" value="0.05">
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Trinity State</h3>
+                    <div class="trinity-display">
+                        <div class="trinity-component alpha">
+                            <div class="trinity-label">Alpha</div>
+                            <div class="trinity-value" id="alpha-level">0.00</div>
+                        </div>
+                        <div class="trinity-component beta">
+                            <div class="trinity-label">Beta</div>
+                            <div class="trinity-value" id="beta-level">0.00</div>
+                        </div>
+                        <div class="trinity-component gamma">
+                            <div class="trinity-label">Gamma</div>
+                            <div class="trinity-value" id="gamma-level">0.00</div>
+                        </div>
+                    </div>
+                    <div class="metric-grid" style="margin-top: 0.75rem;">
+                        <div class="metric">
+                            <div class="metric-label">Tension</div>
+                            <div class="metric-value" id="tension">0.00</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Coherence</div>
+                            <div class="metric-value" id="coherence">0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Betti Numbers</h3>
+                    <div class="metric-grid">
+                        <div class="metric">
+                            <div class="metric-label">b0 (clusters)</div>
+                            <div class="metric-value" id="betti-0">0</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">b1 (loops)</div>
+                            <div class="metric-value" id="betti-1">0</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">b2 (voids)</div>
+                            <div class="metric-value" id="betti-2">0</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Euler</div>
+                            <div class="metric-value" id="euler">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Detected Patterns</h3>
+                    <div class="patterns-list" id="patterns">
+                        <span class="pattern-tag">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <span>Frame: <span id="frame-count">0</span></span>
+            <span>FPS: <span id="fps">0</span></span>
+            <span>Mode: <span id="current-mode">trinity</span></span>
+            <span id="synthesis-status">Synthesis: Inactive</span>
+        </div>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+</body>
+</html>

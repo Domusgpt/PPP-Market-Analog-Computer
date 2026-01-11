@@ -10,9 +10,9 @@ keywords = ["geometry", "cognition", "polytopes", "webgpu", "4d"]
 categories = ["graphics", "mathematics", "science"]
 
 [features]
-default = ["desktop"]
+default = []
 desktop = ["winit", "pollster"]
-web = ["wasm-bindgen", "web-sys", "console_error_panic_hook"]
+web = ["wasm-bindgen", "web-sys", "console_error_panic_hook", "wasm-bindgen-futures", "js-sys", "getrandom/js"]
 
 [dependencies]
 # WebGPU
@@ -45,8 +45,25 @@ anyhow = "1.0"
 
 # Web support (optional)
 wasm-bindgen = { version = "0.2", optional = true }
-web-sys = { version = "0.3", optional = true, features = ["console", "Window", "Document", "HtmlCanvasElement"] }
+wasm-bindgen-futures = { version = "0.4", optional = true }
+js-sys = { version = "0.3", optional = true }
+web-sys = { version = "0.3", optional = true, features = [
+    "console",
+    "Window",
+    "Document",
+    "HtmlCanvasElement",
+    "Element",
+    "CssStyleDeclaration",
+    "Performance",
+    "Navigator",
+    "Gpu",
+    "GpuAdapter",
+    "GpuDevice",
+    "GpuCanvasContext",
+    "GpuTextureFormat",
+] }
 console_error_panic_hook = { version = "0.1", optional = true }
+getrandom = { version = "0.2", optional = true }
 
 # Numeric utilities
 num-traits = "0.2"
