@@ -1,0 +1,94 @@
+[package]
+name = "geometric-cognition-engine"
+version = "0.1.0"
+edition = "2021"
+authors = ["Geometric Cognition Project"]
+description = "A GPU-accelerated geometric cognition engine using 4D polytopes for analog computation"
+license = "MIT"
+repository = "https://github.com/Domusgpt/ppp-info-site"
+keywords = ["geometry", "cognition", "polytopes", "webgpu", "4d"]
+categories = ["graphics", "mathematics", "science"]
+
+[features]
+default = []
+desktop = ["winit", "pollster"]
+web = ["wasm-bindgen", "web-sys", "console_error_panic_hook", "wasm-bindgen-futures", "js-sys", "getrandom/js"]
+
+[dependencies]
+# WebGPU
+wgpu = { version = "0.19", features = ["webgl"] }
+bytemuck = { version = "1.14", features = ["derive"] }
+
+# Math
+nalgebra = "0.32"
+glam = "0.25"
+
+# Windowing (desktop)
+winit = { version = "0.29", optional = true }
+pollster = { version = "0.3", optional = true }
+
+# Async runtime
+tokio = { version = "1.35", features = ["rt", "macros"] }
+futures = "0.3"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Logging
+log = "0.4"
+env_logger = "0.11"
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Web support (optional)
+wasm-bindgen = { version = "0.2", optional = true }
+wasm-bindgen-futures = { version = "0.4", optional = true }
+js-sys = { version = "0.3", optional = true }
+web-sys = { version = "0.3", optional = true, features = [
+    "console",
+    "Window",
+    "Document",
+    "HtmlCanvasElement",
+    "Element",
+    "CssStyleDeclaration",
+    "Performance",
+    "Navigator",
+    "Gpu",
+    "GpuAdapter",
+    "GpuDevice",
+    "GpuCanvasContext",
+    "GpuTextureFormat",
+] }
+console_error_panic_hook = { version = "0.1", optional = true }
+getrandom = { version = "0.2", optional = true }
+
+# Numeric utilities
+num-traits = "0.2"
+rand = "0.8"
+
+[dev-dependencies]
+criterion = "0.5"
+approx = "0.5"
+
+[[bench]]
+name = "geometry_bench"
+harness = false
+
+[profile.release]
+opt-level = 3
+lto = true
+
+[profile.dev]
+opt-level = 1
+
+[lib]
+name = "geometric_cognition"
+path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "gce"
+path = "src/main.rs"
