@@ -26,7 +26,9 @@ pub fn console_log(s: &str) {
 #[wasm_bindgen]
 pub struct WebEngine {
     engine: GeometricCognitionEngine,
+    #[allow(dead_code)]
     canvas_id: String,
+    #[allow(dead_code)]
     running: bool,
     frame_count: u64,
 }

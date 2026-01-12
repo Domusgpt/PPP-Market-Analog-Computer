@@ -83,6 +83,7 @@ impl Default for PixelRule {
 }
 
 /// Configuration for pixel processing
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PixelConfig {
     /// Primary rule to apply
@@ -112,6 +113,7 @@ impl Default for PixelConfig {
     }
 }
 
+#[allow(dead_code)]
 impl PixelConfig {
     /// Create config for thesis-antithesis overlap detection
     pub fn for_synthesis_detection() -> Self {
@@ -151,6 +153,7 @@ impl PixelConfig {
 }
 
 /// Result of pixel analysis
+#[allow(dead_code)]
 #[derive(Debug, Clone, Default)]
 pub struct PixelAnalysis {
     /// Total brightness (sum of all pixels)
@@ -168,6 +171,7 @@ pub struct PixelAnalysis {
 }
 
 /// An identified region of overlap between layers
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct OverlapRegion {
     /// Center position (normalized 0-1)

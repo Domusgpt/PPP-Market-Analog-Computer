@@ -167,6 +167,7 @@ pub trait Polytope4D: Send + Sync {
 }
 
 /// A concrete implementation of a mutable polytope
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ConcretePolytope {
     name: &'static str,
@@ -176,6 +177,7 @@ pub struct ConcretePolytope {
     faces: Vec<Face>,
 }
 
+#[allow(dead_code)]
 impl ConcretePolytope {
     /// Create a new polytope from vertices and edges
     pub fn new(name: &'static str, vertices: Vec<Vec4>, edges: Vec<Edge>) -> Self {

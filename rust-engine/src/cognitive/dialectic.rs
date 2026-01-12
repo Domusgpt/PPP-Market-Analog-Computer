@@ -253,6 +253,7 @@ impl Default for DialecticEngine {
 }
 
 /// A dialectic proposition that can be processed
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Proposition {
     /// Thesis representation (maps to Alpha vertices)
@@ -263,6 +264,7 @@ pub struct Proposition {
     pub label: Option<String>,
 }
 
+#[allow(dead_code)]
 impl Proposition {
     /// Create a new proposition
     pub fn new(thesis: Vec<f64>, antithesis: Vec<f64>) -> Self {

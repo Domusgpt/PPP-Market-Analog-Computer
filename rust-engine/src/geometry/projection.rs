@@ -270,11 +270,13 @@ fn mat4_mul(a: &[[f32; 4]; 4], b: &[[f32; 4]; 4]) -> [[f32; 4]; 4] {
 }
 
 /// Multi-view projector for generating multiple simultaneous projections
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct MultiViewProjector {
     pub projectors: Vec<Projector>,
 }
 
+#[allow(dead_code)]
 impl MultiViewProjector {
     /// Create with orthographic projections along all 4 axes
     pub fn orthographic_all_axes() -> Self {

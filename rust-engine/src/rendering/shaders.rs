@@ -86,6 +86,7 @@ fn fs_main(in: FragmentInput) -> @location(0) vec4<f32> {
 "#;
 
 /// Point rendering vertex shader (for vertices as points)
+#[allow(dead_code)]
 pub const POINT_VERTEX_SHADER: &str = r#"
 struct Uniforms {
     view_proj: mat4x4<f32>,
@@ -134,6 +135,7 @@ fn vs_point(in: VertexInput) -> VertexOutput {
 "#;
 
 /// Point fragment shader with circular points and glow
+#[allow(dead_code)]
 pub const POINT_FRAGMENT_SHADER: &str = r#"
 struct FragmentInput {
     @builtin(position) clip_position: vec4<f32>,
@@ -158,6 +160,7 @@ fn fs_point(in: FragmentInput) -> @location(0) vec4<f32> {
 "#;
 
 /// Post-processing shader for pixel-level analog computation
+#[allow(dead_code)]
 pub const POSTPROCESS_SHADER: &str = r#"
 @group(0) @binding(0)
 var input_texture: texture_2d<f32>;
@@ -254,6 +257,7 @@ fn fs_postprocess(in: VertexOutput) -> @location(0) vec4<f32> {
 "#;
 
 /// Compute shader for pixel-rule analog processing
+#[allow(dead_code)]
 pub const COMPUTE_SHADER: &str = r#"
 @group(0) @binding(0)
 var input_texture: texture_2d<f32>;
@@ -333,6 +337,7 @@ pub fn get_render_shader_source() -> String {
 }
 
 /// Get point shader source
+#[allow(dead_code)]
 pub fn get_point_shader_source() -> String {
     format!("{}\n{}", POINT_VERTEX_SHADER, POINT_FRAGMENT_SHADER)
 }

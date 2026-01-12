@@ -97,6 +97,7 @@ impl Default for Uniforms {
 }
 
 /// Instance data for instanced rendering
+#[allow(dead_code)]
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct Instance {
@@ -106,6 +107,7 @@ pub struct Instance {
     pub color_tint: [f32; 4],
 }
 
+#[allow(dead_code)]
 impl Instance {
     pub fn identity() -> Self {
         Self {

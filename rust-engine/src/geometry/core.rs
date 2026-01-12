@@ -84,6 +84,7 @@ pub struct GeometryCore {
     /// Global rotation animation speed (radians per second)
     rotation_speed: [f64; 6], // XY, XZ, XW, YZ, YW, ZW planes
     /// Enable E₈ dual-layer
+    #[allow(dead_code)]
     e8_enabled: bool,
 }
 
