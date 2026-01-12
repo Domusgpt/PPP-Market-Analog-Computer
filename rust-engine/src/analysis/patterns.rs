@@ -229,7 +229,7 @@ fn detect_high_symmetry(geometry: &GeometryCore, _tolerance: f64) -> Option<f64>
     Some(symmetry_score)
 }
 
-fn detect_clustering(geometry: &GeometryCore, tolerance: f64) -> Option<f64> {
+fn detect_clustering(geometry: &GeometryCore, _tolerance: f64) -> Option<f64> {
     let vertices = geometry.cell24().transformed_vertices();
 
     // Simple clustering detection: check if vertices group into distinct regions

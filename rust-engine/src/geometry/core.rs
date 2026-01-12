@@ -7,7 +7,7 @@
 //! - Projection pipeline coordination
 
 use super::{
-    Vec4, Rotation4D,
+    Rotation4D,
     Cell24, Cell600, Cell120, TrinityComponent,
     Projector, Projected3D,
     Polytope4D,

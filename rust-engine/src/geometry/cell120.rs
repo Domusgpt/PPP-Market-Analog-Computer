@@ -242,7 +242,7 @@ impl Cell120 {
     }
 
     /// Generate from 600-cell by computing cell centroids
-    pub fn from_600cell_dual(cell600: &Cell600) -> Self {
+    pub fn from_600cell_dual(_cell600: &Cell600) -> Self {
         // The 120-cell is dual to the 600-cell
         // Each vertex of the 120-cell corresponds to a cell (tetrahedron) of the 600-cell
         // For simplicity, we use the standard coordinate generation

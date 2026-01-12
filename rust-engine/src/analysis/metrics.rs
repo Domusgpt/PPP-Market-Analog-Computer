@@ -3,7 +3,7 @@
 //! Extracts quantitative metrics that can be used by external systems
 //! for analysis, logging, or ML training.
 
-use crate::geometry::{GeometryCore, Vec4, TrinityComponent};
+use crate::geometry::{GeometryCore, Vec4, TrinityComponent, Polytope4D};
 use super::AnalysisMetrics;
 use serde::{Serialize, Deserialize};
 

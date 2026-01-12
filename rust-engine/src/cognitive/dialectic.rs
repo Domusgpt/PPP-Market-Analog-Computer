@@ -149,7 +149,7 @@ impl DialecticEngine {
 
     /// Calculate dialectic tension between Alpha and Beta
     fn calculate_tension(&self, geometry: &GeometryCore) -> f64 {
-        let cell24 = geometry.cell24();
+        let _cell24 = geometry.cell24();
 
         // Base tension from geometric distance
         let geometric_distance = geometry.dialectic_distance(
@@ -228,8 +228,8 @@ impl DialecticEngine {
         let mut synthesis_points = Vec::new();
 
         // For each Alpha vertex, check proximity to Beta vertices
-        for (ai, av) in cell24.alpha.transformed_vertices.iter().enumerate() {
-            for (bi, bv) in cell24.beta.transformed_vertices.iter().enumerate() {
+        for (_ai, av) in cell24.alpha.transformed_vertices.iter().enumerate() {
+            for (_bi, bv) in cell24.beta.transformed_vertices.iter().enumerate() {
                 let dist = av.distance(*bv);
 
                 if dist < self.config.synthesis_threshold * 2.0 {

@@ -55,7 +55,7 @@ impl CognitiveLayer {
     }
 
     /// Handle detected synthesis
-    fn handle_synthesis(&mut self, geometry: &mut GeometryCore, activated: Vec<usize>) {
+    fn handle_synthesis(&mut self, _geometry: &mut GeometryCore, activated: Vec<usize>) {
         log::debug!("Synthesis detected: {} Gamma vertices activated", activated.len());
 
         // Record the synthesis event
