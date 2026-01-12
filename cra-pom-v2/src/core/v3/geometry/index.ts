@@ -97,6 +97,18 @@ export {
   Quaternion4DModule,
 } from './quaternion4d';
 
+// E8 Projection and φ-Scaling
+export {
+  E8Projection,
+  createMusicalE8,
+  createUniformLayer1,
+  E8ProjectionModule,
+  type Vector8D,
+  type AlignmentPoint,
+  type LayerBlendResult,
+  type E8ProjectionState,
+} from './e8-projection';
+
 // ============================================================================
 // Re-export Vector4D type
 // ============================================================================
