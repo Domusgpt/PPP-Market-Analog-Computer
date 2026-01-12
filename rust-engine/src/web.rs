@@ -22,6 +22,18 @@ pub fn console_log(s: &str) {
     web_sys::console::log_1(&s.into());
 }
 
+/// Get engine version
+#[wasm_bindgen]
+pub fn get_version() -> String {
+    env!("CARGO_PKG_VERSION").to_string()
+}
+
+/// Get engine description
+#[wasm_bindgen]
+pub fn get_description() -> String {
+    "Geometric Cognition Simulation Engine - 4D polytope-based analog computation".to_string()
+}
+
 /// The web-facing engine wrapper
 #[wasm_bindgen]
 pub struct WebEngine {
