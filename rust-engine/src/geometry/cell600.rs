@@ -21,7 +21,7 @@
 //!
 //! (Scaling by 1/2 gives unit edge length)
 
-use super::{Vec4, Rotation4D, Quaternion, Edge, Polytope4D, generate_edges_by_distance};
+use super::{Vec4, Rotation4D, Edge, Polytope4D, generate_edges_by_distance};
 use crate::{PHI, PHI_INV};
 use serde::{Serialize, Deserialize};
 

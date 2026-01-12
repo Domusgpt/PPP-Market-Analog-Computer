@@ -7,10 +7,10 @@
 //! - Projection pipeline coordination
 
 use super::{
-    Vec4, Rotation4D, Quaternion,
+    Vec4, Rotation4D,
     Cell24, Cell600, Cell120, TrinityComponent,
-    Projector, ProjectionMode, Projected3D,
-    Polytope4D, Edge,
+    Projector, Projected3D,
+    Polytope4D,
 };
 use crate::{EngineConfig, PHI};
 use serde::{Serialize, Deserialize};

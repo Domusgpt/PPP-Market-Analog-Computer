@@ -30,15 +30,35 @@ pub struct OutputRecord {
 }
 
 /// Output channel configuration
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct OutputConfig {
     /// Maximum records to keep in history
     pub max_history: usize,
     /// Whether to enable JSON export
     pub json_export: bool,
-    /// Callback on new record (not serializable)
+    /// Callback on new record (not serializable, not cloneable)
     #[serde(skip)]
     pub callback: Option<Box<dyn Fn(&OutputRecord) + Send + Sync>>,
+}
+
+impl std::fmt::Debug for OutputConfig {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("OutputConfig")
+            .field("max_history", &self.max_history)
+            .field("json_export", &self.json_export)
+            .field("callback", &self.callback.as_ref().map(|_| "<callback>"))
+            .finish()
+    }
+}
+
+impl Clone for OutputConfig {
+    fn clone(&self) -> Self {
+        Self {
+            max_history: self.max_history,
+            json_export: self.json_export,
+            callback: None, // Cannot clone callback
+        }
+    }
 }
 
 impl Default for OutputConfig {

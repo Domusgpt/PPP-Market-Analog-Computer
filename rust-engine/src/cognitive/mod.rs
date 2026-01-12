@@ -11,7 +11,7 @@ pub use trinity::TrinityState;
 pub use rules::{CognitiveRule, RuleEngine};
 pub use dialectic::DialecticEngine;
 
-use crate::geometry::{GeometryCore, TrinityComponent, Rotation4D};
+use crate::geometry::GeometryCore;
 
 /// The cognitive layer manages reasoning over geometric states
 pub struct CognitiveLayer {

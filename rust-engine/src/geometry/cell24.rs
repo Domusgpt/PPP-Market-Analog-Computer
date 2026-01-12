@@ -21,7 +21,7 @@
 //!
 //! Alternatively: permutations of (±1, 0, 0, 0) and (±1/√2, ±1/√2, ±1/√2, ±1/√2)
 
-use super::{Vec4, Rotation4D, Quaternion, Edge, Face, Polytope4D, generate_edges_by_distance};
+use super::{Vec4, Rotation4D, Edge, Polytope4D, generate_edges_by_distance};
 use serde::{Serialize, Deserialize};
 
 /// Identifies which 16-cell a vertex belongs to in the Trinity decomposition

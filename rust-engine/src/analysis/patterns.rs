@@ -3,7 +3,7 @@
 //! Detects known patterns in the polytope state that correspond to
 //! specific cognitive or data conditions.
 
-use crate::geometry::{GeometryCore, TrinityComponent, Vec4};
+use crate::geometry::{GeometryCore, Vec4, Polytope4D};
 use serde::{Serialize, Deserialize};
 
 /// A detected pattern

@@ -7,11 +7,11 @@ mod homology;
 mod patterns;
 mod metrics;
 
-pub use homology::{HomologyAnalyzer, BettiNumbers};
+pub use homology::{HomologyAnalyzer, BettiNumbers, TopologicalSignal};
 pub use patterns::PatternDetector;
-pub use metrics::{TopologicalSignal, MetricExtractor};
+pub use metrics::{MetricSignal, MetricExtractor};
 
-use crate::geometry::GeometryCore;
+use crate::geometry::{GeometryCore, Polytope4D};
 
 /// Analysis result container
 #[derive(Debug, Clone)]

@@ -121,7 +121,8 @@ impl RenderEngine {
                 },
                 None,
             )
-            .await?;
+            .await
+            .map_err(|e| anyhow::anyhow!("Failed to request device: {:?}", e))?;
 
         // Create uniform buffer
         let uniforms = Uniforms {

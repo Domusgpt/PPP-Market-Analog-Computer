@@ -7,9 +7,9 @@ use crate::geometry::{GeometryCore, Vec4, TrinityComponent};
 use super::AnalysisMetrics;
 use serde::{Serialize, Deserialize};
 
-/// A topological signal for export
+/// A metric signal for export
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TopologicalSignal {
+pub struct MetricSignal {
     /// Signal name/type
     pub name: String,
     /// Signal value
