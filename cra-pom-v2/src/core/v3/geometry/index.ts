@@ -156,6 +156,40 @@ export {
   type AnimationFrame,
 } from './projection';
 
+// Homological Analysis
+export {
+  // Core computation
+  computeBetti,
+  computeDistanceMatrix,
+  buildRipsComplex,
+
+  // Persistence
+  computePersistence,
+  getIntervalPersistence,
+  filterPersistence,
+
+  // Event detection
+  detectTransition,
+
+  // Class
+  HomologyAnalyzer,
+
+  // Factory
+  createPolytopeAnalyzer,
+  quickBetti,
+
+  // Module
+  HomologyModule,
+
+  // Types
+  type BettiNumbers,
+  type PersistenceInterval,
+  type PersistenceDiagram,
+  type TopologicalEventType,
+  type TopologicalEvent,
+  type SimplexData,
+} from './homology';
+
 // ============================================================================
 // Re-export Vector4D type
 // ============================================================================
