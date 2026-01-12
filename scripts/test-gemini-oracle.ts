@@ -55,7 +55,7 @@ async function generateTestAudio(
     filename: string,
     durationMs: number = 2000
 ): Promise<string> {
-    const audioDir = '/home/user/ppp-info-site/audio/stimuli';
+    const audioDir = path.join(process.cwd(), 'audio/stimuli');
 
     // Ensure directory exists
     if (!fs.existsSync(audioDir)) {

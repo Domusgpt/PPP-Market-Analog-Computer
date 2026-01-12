@@ -30,8 +30,8 @@ import { MusicGeometryDomain, Vector4D } from '../lib/domains/MusicGeometryDomai
 // =============================================================================
 
 const CONFIG = {
-    audioDir: '/home/user/ppp-info-site/audio/stimuli',
-    resultsDir: '/home/user/ppp-info-site/results',
+    audioDir: path.join(process.cwd(), 'audio/stimuli'),
+    resultsDir: path.join(process.cwd(), 'results'),
     sampleRate: 48000,
     bitDepth: 24,
     durationMs: 3000,        // 3 seconds per stimulus
