@@ -176,15 +176,19 @@ function multiplyMatrices(a, b) {
 function render() {
     if (!engine || !gl) return;
 
-    const canvas = gl.canvas;
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    try {
+        const canvas = gl.canvas;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // Get vertex and edge data from engine
-    const vertices = engine.get_vertices();
-    const edges = engine.get_edges();
+        // Get vertex and edge data from engine
+        const vertices = engine.get_vertices();
+        const edges = engine.get_edges();
 
-    if (vertices.length === 0) return;
+        if (vertices.length === 0) {
+            console.warn('No vertices to render');
+            return;
+        }
 
     // Parse vertex data (x,y,z,r,g,b,a per vertex)
     const positions = [];
@@ -241,6 +245,10 @@ function render() {
 
     // Draw points
     gl.drawArrays(gl.POINTS, 0, vertexCount);
+
+    } catch (e) {
+        console.error('Render error:', e);
+    }
 }
 
 /**
@@ -407,36 +415,56 @@ function updateSliderLabels() {
  */
 async function main() {
     const loadingEl = document.getElementById('loading');
+    const loadingText = loadingEl.querySelector('.loading-text');
 
     try {
+        loadingText.textContent = 'Initializing WebGL...';
+
         // Initialize WebGL
         const canvas = document.getElementById('gce-canvas');
         initGL(canvas);
+        console.log('WebGL initialized');
+
+        loadingText.textContent = 'Loading WASM module...';
 
         // Load WASM module
-        const { default: init, WebEngine, get_version, get_description } = await import('./pkg/geometric_cognition.js');
-        await init();
+        const wasm = await import('./pkg/geometric_cognition.js');
+        await wasm.default();
+        console.log('WASM module loaded');
 
-        console.log(`Geometric Cognition Engine v${get_version()}`);
-        console.log(get_description());
+        console.log(`Geometric Cognition Engine v${wasm.get_version()}`);
+        console.log(wasm.get_description());
+
+        loadingText.textContent = 'Creating engine...';
 
         // Create engine instance
-        engine = new WebEngine('gce-canvas');
+        engine = new wasm.WebEngine('gce-canvas');
+        console.log('Engine created');
+
+        // Test vertex data
+        const testVertices = engine.get_vertices();
+        console.log('Vertex count:', testVertices.length / 7);
+
+        const testEdges = engine.get_edges();
+        console.log('Edge count:', testEdges.length / 2);
 
         // Setup UI
         setupUI();
         updateSliderLabels();
+        console.log('UI setup complete');
 
         // Hide loading screen
         loadingEl.classList.add('hidden');
 
         // Start animation loop
         requestAnimationFrame(animate);
+        console.log('Animation started');
 
     } catch (error) {
         console.error('Initialization error:', error);
-        loadingEl.querySelector('.loading-text').textContent =
-            `Error: ${error.message}. Check console for details.`;
+        console.error('Stack:', error.stack);
+        loadingText.textContent = `Error: ${error.message}`;
+        loadingText.style.color = '#ff6666';
     }
 }
 
