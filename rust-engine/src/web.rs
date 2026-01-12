@@ -284,15 +284,3 @@ impl WebEngine {
         )
     }
 }
-
-/// Get engine version
-#[wasm_bindgen]
-pub fn get_version() -> String {
-    env!("CARGO_PKG_VERSION").to_string()
-}
-
-/// Get engine description
-#[wasm_bindgen]
-pub fn get_description() -> String {
-    "Geometric Cognition Engine: GPU-accelerated analog computation using 4D polytopes".to_string()
-}
