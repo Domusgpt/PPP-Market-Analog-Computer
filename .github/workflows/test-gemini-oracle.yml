@@ -37,7 +37,7 @@ jobs:
 
       - name: Test Gemini API accessibility
         env:
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           echo "Testing Gemini 3 Pro API access..."
           response=$(curl -s -w "\n%{http_code}" -X POST \
@@ -64,14 +64,14 @@ jobs:
 
       - name: Run Oracle Smoke Test
         env:
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: npm run test:oracle
         continue-on-error: true
 
       - name: Run Research Hypothesis Tests
         if: ${{ github.event.inputs.test_mode == 'full' }}
         env:
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: npm run test:research
         continue-on-error: true
 
