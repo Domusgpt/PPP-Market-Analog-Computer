@@ -1,0 +1,37 @@
+{
+  "name": "cra-pom-v2",
+  "version": "1.0.0",
+  "description": "Geometric Cognition Kernel - CRA-POM v2 Implementation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --exclude '**/*.e2e.test.ts'",
+    "test:watch": "vitest --exclude '**/*.e2e.test.ts'",
+    "test:e2e": "vitest run 'src/core/v3/llm/*.e2e.test.ts'",
+    "test:e2e:gemini": "vitest run src/core/v3/llm/gemini-service.e2e.test.ts",
+    "test:e2e:voyage": "vitest run src/core/v3/llm/voyage-service.e2e.test.ts",
+    "test:all": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "happy-dom": "^20.1.0",
+    "jsdom": "^27.4.0",
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0",
+    "vitest": "^4.0.16"
+  }
+}
