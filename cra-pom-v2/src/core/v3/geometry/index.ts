@@ -109,6 +109,53 @@ export {
   type E8ProjectionState,
 } from './e8-projection';
 
+// Projection Pipeline (4D → 3D → 2D)
+export {
+  // 4D → 3D
+  project4DTo3D,
+  project4DTo3DBatch,
+
+  // 3D → 2D
+  project3DTo2D,
+  project3DTo2DBatch,
+  defaultCamera,
+
+  // Full pipeline
+  projectFull,
+  projectFullBatch,
+  projectFullSorted,
+
+  // Multi-view
+  multiViewProject,
+
+  // Viewport
+  toViewport,
+  toViewportBatch,
+
+  // Utilities
+  distance3D,
+  distance2D,
+
+  // Class
+  ProjectionPipeline,
+
+  // Module
+  ProjectionModule,
+
+  // Types
+  type Vector3D,
+  type Vector2D,
+  type Camera3D,
+  type Viewport,
+  type ProjectionMethod4D,
+  type ProjectionMethod3D,
+  type ProjectionOptions4D,
+  type ProjectionOptions3D,
+  type ProjectedPoint,
+  type MultiViewResult,
+  type AnimationFrame,
+} from './projection';
+
 // ============================================================================
 // Re-export Vector4D type
 // ============================================================================
