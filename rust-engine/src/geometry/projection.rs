@@ -7,7 +7,7 @@ use super::Vec4;
 use serde::{Serialize, Deserialize};
 
 /// Available projection methods
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum ProjectionMode {
     /// Drop one axis (simple orthographic)
     Orthographic { drop_axis: usize },

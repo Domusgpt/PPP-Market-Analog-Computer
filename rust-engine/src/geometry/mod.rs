@@ -13,13 +13,13 @@ mod projection;
 mod core;
 
 pub use vector::Vec4;
-pub use quaternion::Quaternion;
-pub use polytope::{Polytope4D, Edge, Face};
+pub use quaternion::{Quaternion, Rotation4D, icosian_quaternions};
+pub use polytope::{Polytope4D, Edge, Face, generate_edges_by_distance};
 pub use cell24::Cell24;
 pub use cell600::Cell600;
 pub use cell120::Cell120;
-pub use projection::{ProjectionMode, Projector};
-pub use core::{GeometryCore, GeometryMode};
+pub use projection::{ProjectionMode, Projector, Projected3D, Projected2D};
+pub use core::{GeometryCore, GeometryMode, GeometryRenderData, PolytopeRenderData, GeometryState};
 pub use cell24::TrinityComponent;
 
 /// Vertex activation state for computing which vertices are "active"
