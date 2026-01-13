@@ -54,9 +54,33 @@ const fsSource = `
 `;
 
 /**
+ * Resize canvas to match display size
+ */
+function resizeCanvasToDisplaySize(canvas) {
+    const displayWidth = canvas.clientWidth;
+    const displayHeight = canvas.clientHeight;
+
+    // Check if canvas is not the same size
+    if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+        console.log('Resized canvas to:', displayWidth, 'x', displayHeight);
+        return true;
+    }
+    return false;
+}
+
+/**
  * Initialize WebGL context and shaders
  */
 function initGL(canvas) {
+    // Ensure canvas has a size
+    if (canvas.width === 0 || canvas.height === 0) {
+        canvas.width = 800;
+        canvas.height = 600;
+        console.log('Set default canvas size: 800x600');
+    }
+
     gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
     if (!gl) {
         throw new Error('WebGL not supported');
@@ -132,8 +156,9 @@ function createViewProjection(width, height) {
     // Simple look-at
     const view = lookAt([eyeX, eyeY, eyeZ], [0, 0, 0], [0, 1, 0]);
 
-    // Multiply view * proj
-    return multiplyMatrices(view, proj);
+    // Multiply proj * view (projection applied after view transform)
+    // Standard order: position -> model -> view -> projection
+    return multiplyMatrices(proj, view);
 }
 
 /**
@@ -204,85 +229,85 @@ function render() {
             return;
         }
 
-    // Parse vertex data (x,y,z,r,g,b,a per vertex)
-    const positions = [];
-    const colors = [];
-    const vertexCount = vertices.length / 7;
+        // Parse vertex data (x,y,z,r,g,b,a per vertex)
+        const positions = [];
+        const colors = [];
+        const vertexCount = vertices.length / 7;
 
-    for (let i = 0; i < vertexCount; i++) {
-        const base = i * 7;
-        positions.push(vertices[base], vertices[base + 1], vertices[base + 2]);
-        colors.push(vertices[base + 3], vertices[base + 4], vertices[base + 5], vertices[base + 6]);
-    }
-
-    // Upload vertex data
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.DYNAMIC_DRAW);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.DYNAMIC_DRAW);
-
-    // Use program
-    gl.useProgram(program);
-
-    // Set uniforms
-    const viewProj = createViewProjection(canvas.width, canvas.height);
-    const vpLoc = gl.getUniformLocation(program, 'uViewProjection');
-    gl.uniformMatrix4fv(vpLoc, false, new Float32Array(viewProj));
-
-    const modelLoc = gl.getUniformLocation(program, 'uModel');
-    gl.uniformMatrix4fv(modelLoc, false, new Float32Array([
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-    ]));
-
-    // Position attribute
-    const posLoc = gl.getAttribLocation(program, 'aPosition');
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.enableVertexAttribArray(posLoc);
-    gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
-
-    // Color attribute
-    const colorLoc = gl.getAttribLocation(program, 'aColor');
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.enableVertexAttribArray(colorLoc);
-    gl.vertexAttribPointer(colorLoc, 4, gl.FLOAT, false, 0, 0);
-
-    // Draw edges
-    if (edges.length > 0) {
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(edges), gl.DYNAMIC_DRAW);
-        gl.drawElements(gl.LINES, edges.length, gl.UNSIGNED_SHORT, 0);
-    }
-
-    // Draw points
-    gl.drawArrays(gl.POINTS, 0, vertexCount);
-
-    if (!renderDebugLogged) {
-        const error = gl.getError();
-        if (error !== gl.NO_ERROR) {
-            console.error('WebGL error:', error);
-        } else {
-            console.log('WebGL: No errors');
+        for (let i = 0; i < vertexCount; i++) {
+            const base = i * 7;
+            positions.push(vertices[base], vertices[base + 1], vertices[base + 2]);
+            colors.push(vertices[base + 3], vertices[base + 4], vertices[base + 5], vertices[base + 6]);
         }
-        console.log('Drew', vertexCount, 'vertices and', edges.length, 'edge indices');
 
-        // Log transformed position of first vertex
+        // Upload vertex data
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.DYNAMIC_DRAW);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.DYNAMIC_DRAW);
+
+        // Use program
+        gl.useProgram(program);
+
+        // Set uniforms
         const viewProj = createViewProjection(canvas.width, canvas.height);
-        const pos = [positions[0], positions[1], positions[2], 1];
-        let result = [0, 0, 0, 0];
-        for (let i = 0; i < 4; i++) {
-            for (let j = 0; j < 4; j++) {
-                result[i] += viewProj[i * 4 + j] * pos[j];
-            }
+        const vpLoc = gl.getUniformLocation(program, 'uViewProjection');
+        gl.uniformMatrix4fv(vpLoc, false, new Float32Array(viewProj));
+
+        const modelLoc = gl.getUniformLocation(program, 'uModel');
+        gl.uniformMatrix4fv(modelLoc, false, new Float32Array([
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        ]));
+
+        // Position attribute
+        const posLoc = gl.getAttribLocation(program, 'aPosition');
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        gl.enableVertexAttribArray(posLoc);
+        gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
+
+        // Color attribute
+        const colorLoc = gl.getAttribLocation(program, 'aColor');
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        gl.enableVertexAttribArray(colorLoc);
+        gl.vertexAttribPointer(colorLoc, 4, gl.FLOAT, false, 0, 0);
+
+        // Draw edges
+        if (edges.length > 0) {
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(edges), gl.DYNAMIC_DRAW);
+            gl.drawElements(gl.LINES, edges.length, gl.UNSIGNED_SHORT, 0);
         }
-        console.log('First vertex after viewProj:', result);
-        console.log('NDC:', result[0]/result[3], result[1]/result[3], result[2]/result[3]);
-        console.log('=== END DEBUG ===');
-        renderDebugLogged = true;
-    }
+
+        // Draw points
+        gl.drawArrays(gl.POINTS, 0, vertexCount);
+
+        if (!renderDebugLogged) {
+            const error = gl.getError();
+            if (error !== gl.NO_ERROR) {
+                console.error('WebGL error:', error);
+            } else {
+                console.log('WebGL: No errors');
+            }
+            console.log('Drew', vertexCount, 'vertices and', edges.length, 'edge indices');
+
+            // Log transformed position of first vertex
+            const vp = createViewProjection(canvas.width, canvas.height);
+            const pos = [positions[0], positions[1], positions[2], 1];
+            let result = [0, 0, 0, 0];
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    result[i] += vp[i * 4 + j] * pos[j];
+                }
+            }
+            console.log('First vertex after viewProj:', result);
+            console.log('NDC:', result[0]/result[3], result[1]/result[3], result[2]/result[3]);
+            console.log('=== END DEBUG ===');
+            renderDebugLogged = true;
+        }
 
     } catch (e) {
         console.error('Render error:', e);
