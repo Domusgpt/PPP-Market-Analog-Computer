@@ -479,6 +479,7 @@ export class GeminiAudioOracle {
 
     /**
      * Call Gemini API with audio file
+     * Supports both Generative Language API and Vertex AI
      */
     private async callGeminiWithAudio(audioPath: string, prompt: string): Promise<string> {
         const { execSync } = await import('child_process');
@@ -524,10 +525,29 @@ export class GeminiAudioOracle {
         fs.writeFileSync(tempFile, JSON.stringify(payload));
 
         try {
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${this.config.model}:generateContent?key=${this.config.apiKey}`;
+            let endpoint: string;
+            let authHeader: string;
+
+            // Check if using Vertex AI (GCP) or Generative Language API
+            if (process.env.USE_VERTEX_AI === 'true' && process.env.GCP_PROJECT_ID) {
+                // Vertex AI endpoint
+                const projectId = process.env.GCP_PROJECT_ID;
+                const location = process.env.GCP_LOCATION || 'us-central1';
+                const model = 'gemini-1.5-pro';  // Vertex AI model name
+
+                endpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${model}:generateContent`;
+
+                // Get access token from gcloud
+                const accessToken = execSync('gcloud auth print-access-token', { encoding: 'utf-8' }).trim();
+                authHeader = `-H "Authorization: Bearer ${accessToken}"`;
+            } else {
+                // Generative Language API endpoint
+                endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${this.config.model}:generateContent?key=${this.config.apiKey}`;
+                authHeader = '';
+            }
 
             const result = execSync(
-                `curl -s -X POST "${endpoint}" -H "Content-Type: application/json" -d @${tempFile}`,
+                `curl -s -X POST "${endpoint}" ${authHeader} -H "Content-Type: application/json" -d @${tempFile}`,
                 { encoding: 'utf-8', timeout: 120000, maxBuffer: 50 * 1024 * 1024 }
             );
 

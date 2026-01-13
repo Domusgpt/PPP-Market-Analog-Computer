@@ -1,7 +1,7 @@
 name: Test Gemini Audio Oracle
 
 on:
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch:
     inputs:
       test_mode:
         description: 'Test mode (full or quick)'
@@ -13,15 +13,30 @@ on:
           - full
   push:
     branches:
-      - 'claude/**'  # Runs on any claude/* branch push
+      - 'claude/**'
 
 jobs:
   test-oracle:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # Required for Workload Identity Federation
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -35,13 +50,18 @@ jobs:
       - name: Install SoX for audio generation
         run: sudo apt-get update && sudo apt-get install -y sox
 
-      - name: Test Gemini API accessibility
-        env:
-          GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      - name: Test Vertex AI Gemini Access
         run: |
-          echo "Testing Gemini 3 Pro API access..."
+          echo "Testing Vertex AI Gemini 3 Pro access..."
+
+          ACCESS_TOKEN=$(gcloud auth print-access-token)
+          PROJECT_ID="${{ secrets.GCP_PROJECT_ID }}"
+          LOCATION="us-central1"
+          MODEL="gemini-1.5-pro"
+
           response=$(curl -s -w "\n%{http_code}" -X POST \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent?key=${GOOGLE_API_KEY}" \
+            "https://${LOCATION}-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/${LOCATION}/publishers/google/models/${MODEL}:generateContent" \
+            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
             -H "Content-Type: application/json" \
             -d '{"contents":[{"parts":[{"text":"Respond with only: OK"}]}]}')
 
@@ -51,28 +71,17 @@ jobs:
           echo "HTTP Status: $http_code"
 
           if [ "$http_code" = "200" ]; then
-            echo "API is accessible from GitHub Actions!"
+            echo "SUCCESS: Vertex AI Gemini is accessible!"
             echo "$body" | head -c 500
           else
-            echo "API returned status $http_code"
-            echo "$body" | head -c 500
-            if [ "$http_code" = "403" ]; then
-              echo ""
-              echo "Note: 403 means Google blocks this IP range too"
-            fi
+            echo "Response: $body"
           fi
 
       - name: Run Oracle Smoke Test
         env:
-          GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          USE_VERTEX_AI: "true"
         run: npm run test:oracle
-        continue-on-error: true
-
-      - name: Run Research Hypothesis Tests
-        if: ${{ github.event.inputs.test_mode == 'full' }}
-        env:
-          GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: npm run test:research
         continue-on-error: true
 
       - name: Run Music Geometry Test (no API needed)
@@ -83,12 +92,4 @@ jobs:
         with:
           name: generated-audio-stimuli
           path: audio/stimuli/*.wav
-          if-no-files-found: ignore
-
-      - name: Upload research results
-        if: ${{ github.event.inputs.test_mode == 'full' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: hypothesis-results
-          path: results/*.json
           if-no-files-found: ignore
