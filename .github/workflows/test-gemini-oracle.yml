@@ -1,0 +1,95 @@
+name: Test Gemini Audio Oracle
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'Test mode (full or quick)'
+        required: false
+        default: 'quick'
+        type: choice
+        options:
+          - quick
+          - full
+  push:
+    branches:
+      - 'claude/**'
+
+jobs:
+  test-oracle:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # Required for Workload Identity Federation
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Install SoX for audio generation
+        run: sudo apt-get update && sudo apt-get install -y sox
+
+      - name: Test Vertex AI Gemini Access
+        run: |
+          echo "Testing Vertex AI Gemini 3 Pro access..."
+
+          ACCESS_TOKEN=$(gcloud auth print-access-token)
+          PROJECT_ID="${{ secrets.GCP_PROJECT_ID }}"
+          LOCATION="us-central1"
+          MODEL="gemini-1.5-pro"
+
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "https://${LOCATION}-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/${LOCATION}/publishers/google/models/${MODEL}:generateContent" \
+            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{"contents":[{"parts":[{"text":"Respond with only: OK"}]}]}')
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "HTTP Status: $http_code"
+
+          if [ "$http_code" = "200" ]; then
+            echo "SUCCESS: Vertex AI Gemini is accessible!"
+            echo "$body" | head -c 500
+          else
+            echo "Response: $body"
+          fi
+
+      - name: Run Oracle Smoke Test
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          USE_VERTEX_AI: "true"
+        run: npm run test:oracle
+        continue-on-error: true
+
+      - name: Run Music Geometry Test (no API needed)
+        run: npm run test:music
+
+      - name: Upload generated audio files
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-audio-stimuli
+          path: audio/stimuli/*.wav
+          if-no-files-found: ignore

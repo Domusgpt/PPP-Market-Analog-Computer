@@ -3,6 +3,26 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/*.test.js"
+    "test": "node --test tests/*.test.js",
+    "test:embeddings": "npx tsx scripts/test-embeddings.ts",
+    "test:embeddings:curl": "./scripts/test-embeddings-curl.sh",
+    "test:quick": "npx tsx scripts/quick-test.ts",
+    "test:e2e": "npx tsx scripts/test-e2e-voyage.ts",
+    "test:music": "npx tsx scripts/test-music-geometry.ts",
+    "test:bridge": "npx tsx scripts/test-semantic-harmonic.ts",
+    "test:oracle": "npx tsx scripts/test-gemini-oracle.ts",
+    "test:research": "npx tsx scripts/test-hypotheses-research.ts",
+    "test:gemini-api": "./scripts/test-gemini-api.sh",
+    "ci:status": "./scripts/check-ci-status.sh",
+    "test:all": "npm run test:music && npm run test:bridge && npm run test:oracle",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "tsx": "^4.7.0",
+    "@types/node": "^20.10.0"
   }
 }

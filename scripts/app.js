@@ -16,10 +16,12 @@ import { cloneSpinorTopologyWeave } from './SpinorTopologyWeave.js';
 import { cloneSpinorFluxContinuum } from './SpinorFluxContinuum.js';
 import { cloneSpinorContinuumLattice } from './SpinorContinuumLattice.js';
 import { cloneSpinorContinuumConstellation } from './SpinorContinuumConstellation.js';
+import { createGeometricAuditBridge } from './geometricAuditBridge.js';
 import { decodeQuaternionFrame, WebSocketQuaternionAdapter, SerialQuaternionAdapter } from './LiveQuaternionAdapters.js';
 import { CalibrationToolkit, DEFAULT_CALIBRATION_SEQUENCES } from './CalibrationToolkit.js';
 import { CalibrationDatasetBuilder } from './CalibrationDatasetBuilder.js';
 import { CalibrationInsightEngine } from './CalibrationInsightEngine.js';
+import { createTelemetryOtelAdapter } from './telemetryOtelAdapter.js';
 import { clampValue, cloneMappingDefinition, formatDataArray, parseDataInput } from './utils.js';
 import { DATA_CHANNEL_COUNT } from './constants.js';
 import {
@@ -179,6 +181,15 @@ window.addEventListener('DOMContentLoaded', () => {
     const sonicGeometryConfig = typeof globalConfig.sonicGeometry === 'object' && globalConfig.sonicGeometry !== null
         ? globalConfig.sonicGeometry
         : {};
+    const geometricAuditConfig = typeof globalConfig.geometricAudit === 'object' && globalConfig.geometricAudit !== null
+        ? globalConfig.geometricAudit
+        : {};
+    const otelConfig = typeof globalConfig.otel === 'object' && globalConfig.otel !== null
+        ? globalConfig.otel
+        : {};
+    const geometricAuditModeLabel = document.getElementById('geometricAuditMode');
+    const geometricAuditSummaryLabel = document.getElementById('geometricAuditSummary');
+    const geometricAuditAnchorLabel = document.getElementById('geometricAuditAnchor');
 
     if (channelCount) {
         channelCount.textContent = `0 / ${DATA_CHANNEL_COUNT} channels`;
@@ -191,6 +202,17 @@ window.addEventListener('DOMContentLoaded', () => {
     let dataPlayer = null;
     let autoStream = null;
     let sonicGeometryEngine = null;
+    const geometricAuditBridge = geometricAuditConfig.enabled
+        ? createGeometricAuditBridge({
+            batchSize: geometricAuditConfig.batchSize,
+            maxChainLength: geometricAuditConfig.maxChainLength,
+            maxBatches: geometricAuditConfig.maxBatches
+        })
+        : null;
+    const telemetryOtelAdapter = createTelemetryOtelAdapter({
+        ...otelConfig,
+        enabled: otelConfig.enabled === true
+    });
     const sonicAnalysisListeners = new Set();
     const sonicSignalListeners = new Set();
     const sonicTransductionListeners = new Set();
@@ -330,8 +352,44 @@ window.addEventListener('DOMContentLoaded', () => {
         if (liveStreamTelemetryLabel) {
             liveStreamTelemetryLabel.textContent = summary;
         }
+        telemetryOtelAdapter.recordLiveTelemetry(liveStreamState);
     };
     renderLiveTelemetry();
+
+    const renderGeometricAuditStatus = () => {
+        if (!geometricAuditBridge) {
+            if (geometricAuditModeLabel) {
+                geometricAuditModeLabel.textContent = 'disabled';
+                geometricAuditModeLabel.classList.add('idle');
+            }
+            if (geometricAuditSummaryLabel) {
+                geometricAuditSummaryLabel.textContent = 'Geometric audit pipeline disabled.';
+            }
+            if (geometricAuditAnchorLabel) {
+                geometricAuditAnchorLabel.textContent = 'No batches sealed.';
+            }
+            return;
+        }
+        if (geometricAuditModeLabel) {
+            geometricAuditModeLabel.textContent = 'active';
+            geometricAuditModeLabel.classList.remove('idle');
+        }
+        const state = geometricAuditBridge.getState();
+        if (geometricAuditSummaryLabel) {
+            geometricAuditSummaryLabel.textContent = `Chain ${state.chain.length} • Pending ${state.pending.length} • Batches ${state.batches.length}`;
+        }
+        const lastBatch = state.batches[state.batches.length - 1];
+        if (geometricAuditAnchorLabel) {
+            if (lastBatch && lastBatch.anchored) {
+                geometricAuditAnchorLabel.textContent = `Last anchor ${lastBatch.anchored.hash} @ ${new Date(lastBatch.anchored.anchoredAt).toLocaleTimeString()}`;
+            } else if (lastBatch) {
+                geometricAuditAnchorLabel.textContent = `Last batch ${lastBatch.index} sealed (root ${lastBatch.root.slice(0, 8)}…)`;
+            } else {
+                geometricAuditAnchorLabel.textContent = 'No batches sealed.';
+            }
+        }
+    };
+    renderGeometricAuditStatus();
 
     const stringifyJson = (value) => {
         try {
@@ -1022,10 +1080,101 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    const emitGeometricAuditConstellation = (constellation) => {
+        if (!geometricAuditBridge || !constellation) {
+            return;
+        }
+        const { evidence, sealedBatch } = geometricAuditBridge.ingestConstellation(constellation, {
+            timestamp: constellation.timestamp,
+            metadata: {
+                source: 'sonic-constellation',
+                mode: constellation?.transport?.mode || 'unknown'
+            }
+        });
+        telemetryOtelAdapter.recordAuditEvidence(evidence);
+        if (typeof geometricAuditConfig.onEvidence === 'function') {
+            try {
+                geometricAuditConfig.onEvidence(evidence);
+            } catch (error) {
+                console.error('PPP_CONFIG.geometricAudit.onEvidence error', error);
+            }
+        }
+        if (typeof geometricAuditConfig.exporter === 'function') {
+            try {
+                geometricAuditConfig.exporter({ type: 'audit.evidence', evidence });
+            } catch (error) {
+                console.error('PPP_CONFIG.geometricAudit.exporter error', error);
+            }
+        }
+        if (sealedBatch && typeof geometricAuditConfig.onBatchSealed === 'function') {
+            try {
+                geometricAuditConfig.onBatchSealed(sealedBatch);
+            } catch (error) {
+                console.error('PPP_CONFIG.geometricAudit.onBatchSealed error', error);
+            }
+        }
+        if (sealedBatch) {
+            telemetryOtelAdapter.recordAuditBatch(sealedBatch, 'sealed');
+            if (typeof geometricAuditConfig.exporter === 'function') {
+                try {
+                    geometricAuditConfig.exporter({ type: 'audit.batch.sealed', batch: sealedBatch });
+                } catch (error) {
+                    console.error('PPP_CONFIG.geometricAudit.exporter error', error);
+                }
+            }
+        }
+        if (sealedBatch && typeof geometricAuditConfig.anchorBatch === 'function') {
+            Promise.resolve(geometricAuditConfig.anchorBatch(sealedBatch))
+                .then((anchorResult) => {
+                    if (!anchorResult) {
+                        return;
+                    }
+                    const anchorHash = typeof anchorResult === 'string' ? anchorResult : anchorResult.hash;
+                    if (!anchorHash || typeof anchorHash !== 'string') {
+                        return;
+                    }
+                    const anchoredAt = typeof anchorResult === 'object' && Number.isFinite(anchorResult.anchoredAt)
+                        ? anchorResult.anchoredAt
+                        : undefined;
+                    const anchored = geometricAuditBridge.anchorBatch(sealedBatch.index, anchorHash, anchoredAt);
+                    if (anchored && typeof geometricAuditConfig.onBatchAnchored === 'function') {
+                        geometricAuditConfig.onBatchAnchored(anchored);
+                    }
+                    if (anchored) {
+                        telemetryOtelAdapter.recordAuditBatch(anchored, 'anchored');
+                        if (typeof geometricAuditConfig.exporter === 'function') {
+                            try {
+                                geometricAuditConfig.exporter({ type: 'audit.batch.anchored', batch: anchored });
+                            } catch (error) {
+                                console.error('PPP_CONFIG.geometricAudit.exporter error', error);
+                            }
+                        }
+                    }
+                    renderGeometricAuditStatus();
+                })
+                .catch((error) => {
+                    console.error('PPP_CONFIG.geometricAudit.anchorBatch error', error);
+                    if (typeof geometricAuditConfig.onBatchAnchorError === 'function') {
+                        geometricAuditConfig.onBatchAnchorError({ batch: sealedBatch, error });
+                    }
+                    if (typeof geometricAuditConfig.exporter === 'function') {
+                        try {
+                            geometricAuditConfig.exporter({ type: 'audit.batch.anchor_error', batch: sealedBatch, error });
+                        } catch (exportError) {
+                            console.error('PPP_CONFIG.geometricAudit.exporter error', exportError);
+                        }
+                    }
+                    renderGeometricAuditStatus();
+                });
+        }
+        renderGeometricAuditStatus();
+    };
+
     const notifySonicConstellation = (constellation) => {
         if (!constellation) {
             return;
         }
+        emitGeometricAuditConstellation(constellation);
         if (typeof globalConfig.onSonicConstellation === 'function') {
             try {
                 globalConfig.onSonicConstellation(cloneSonicConstellation(constellation));
@@ -2765,6 +2914,21 @@ window.addEventListener('DOMContentLoaded', () => {
         developmentTracker,
         dataRecorder,
         dataPlayer,
+        geometricAudit: {
+            enabled: Boolean(geometricAuditBridge),
+            getState: () => (geometricAuditBridge ? geometricAuditBridge.getState() : null),
+            ingestConstellation: (constellation, overrides = {}) => (
+                geometricAuditBridge ? geometricAuditBridge.ingestConstellation(constellation, overrides) : null
+            ),
+            sealPendingBatch: () => (geometricAuditBridge ? geometricAuditBridge.sealPendingBatch() : null),
+            anchorBatch: (index, hash, timestamp) => (
+                geometricAuditBridge ? geometricAuditBridge.anchorBatch(index, hash, timestamp) : null
+            ),
+            verifyBatchIntegrity: (index) => (
+                geometricAuditBridge ? geometricAuditBridge.verifyBatchIntegrity(index) : false
+            ),
+            verifyChainIntegrity: () => (geometricAuditBridge ? geometricAuditBridge.verifyChainIntegrity() : false)
+        },
         sonicGeometry: {
             engine: sonicGeometryEngine,
             isSupported: () => (sonicGeometryEngine ? sonicGeometryEngine.isSupported() : false),
