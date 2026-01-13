@@ -173,6 +173,7 @@ function multiplyMatrices(a, b) {
 /**
  * Render the current frame
  */
+let renderDebugLogged = false;
 function render() {
     if (!engine || !gl) return;
 
@@ -184,6 +185,19 @@ function render() {
         // Get vertex and edge data from engine
         const vertices = engine.get_vertices();
         const edges = engine.get_edges();
+
+        if (!renderDebugLogged) {
+            console.log('=== RENDER DEBUG ===');
+            console.log('Canvas size:', canvas.width, 'x', canvas.height);
+            console.log('Vertices array length:', vertices.length);
+            console.log('Edges array length:', edges.length);
+            if (vertices.length > 0) {
+                console.log('First vertex (x,y,z,r,g,b,a):',
+                    vertices[0], vertices[1], vertices[2],
+                    vertices[3], vertices[4], vertices[5], vertices[6]);
+            }
+            console.log('Zoom:', zoom, 'CameraRotX:', cameraRotX, 'CameraRotY:', cameraRotY);
+        }
 
         if (vertices.length === 0) {
             console.warn('No vertices to render');
@@ -245,6 +259,30 @@ function render() {
 
     // Draw points
     gl.drawArrays(gl.POINTS, 0, vertexCount);
+
+    if (!renderDebugLogged) {
+        const error = gl.getError();
+        if (error !== gl.NO_ERROR) {
+            console.error('WebGL error:', error);
+        } else {
+            console.log('WebGL: No errors');
+        }
+        console.log('Drew', vertexCount, 'vertices and', edges.length, 'edge indices');
+
+        // Log transformed position of first vertex
+        const viewProj = createViewProjection(canvas.width, canvas.height);
+        const pos = [positions[0], positions[1], positions[2], 1];
+        let result = [0, 0, 0, 0];
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                result[i] += viewProj[i * 4 + j] * pos[j];
+            }
+        }
+        console.log('First vertex after viewProj:', result);
+        console.log('NDC:', result[0]/result[3], result[1]/result[3], result[2]/result[3]);
+        console.log('=== END DEBUG ===');
+        renderDebugLogged = true;
+    }
 
     } catch (e) {
         console.error('Render error:', e);

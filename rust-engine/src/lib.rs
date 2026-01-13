@@ -199,3 +199,32 @@ mod tests {
         assert!((PHI - PHI_INV - 1.0).abs() < 1e-10);
     }
 }
+
+#[cfg(test)]
+mod render_test {
+    use crate::*;
+    use crate::geometry::GeometryCore;
+    
+    #[test]
+    fn test_actual_vertex_output() {
+        let config = EngineConfig::default();
+        let core = GeometryCore::new(&config);
+        
+        let render_data = core.get_render_data();
+        
+        println!("Number of layers: {}", render_data.layers.len());
+        for (i, layer) in render_data.layers.iter().enumerate() {
+            println!("Layer {}: {} vertices, {} edges", i, layer.vertices_3d.len(), layer.edges.len());
+            if !layer.vertices_3d.is_empty() {
+                println!("  First vertex: {:?}", layer.vertices_3d[0]);
+                println!("  Last vertex: {:?}", layer.vertices_3d[layer.vertices_3d.len()-1]);
+                // Check for NaN or Inf
+                for (j, v) in layer.vertices_3d.iter().enumerate() {
+                    if !v[0].is_finite() || !v[1].is_finite() || !v[2].is_finite() {
+                        println!("  WARNING: Non-finite vertex at {}: {:?}", j, v);
+                    }
+                }
+            }
+        }
+    }
+}
