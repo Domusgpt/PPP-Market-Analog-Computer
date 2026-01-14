@@ -1,2 +1,5 @@
 node_modules/
 rust-engine/target/
+rust-engine/web/pkg/
+test-*.js
+test-*.cjs
