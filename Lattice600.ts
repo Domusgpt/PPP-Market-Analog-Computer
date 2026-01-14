@@ -30,8 +30,15 @@
  * - Quantum Gravity Research - "Emergence Theory" framework
  */
 
-import { Vector4D, MATH_CONSTANTS, LatticeVertex } from '../../types/index.js';
-import { dot, magnitude, normalize } from '../math/GeometricAlgebra.js';
+import { Vector4D, MATH_CONSTANTS, LatticeVertex } from './types/index.js';
+
+// Inline simple vector operations (from GeometricAlgebra)
+const dot = (a: number[], b: number[]): number => a.reduce((sum, val, i) => sum + val * b[i], 0);
+const magnitude = (v: number[]): number => Math.sqrt(dot(v, v));
+const normalize = (v: number[]): number[] => {
+    const mag = magnitude(v);
+    return mag > 0 ? v.map(x => x / mag) : v;
+};
 
 // =============================================================================
 // CONSTANTS

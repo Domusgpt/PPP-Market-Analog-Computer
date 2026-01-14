@@ -22,7 +22,7 @@
  * - Ali, A.F. "Quantum Spacetime Imprints: The 24-Cell" EPJC (2025)
  */
 
-import { Vector4D, MATH_CONSTANTS } from '../../types/index.js';
+import { Vector4D, MATH_CONSTANTS } from './types/index.js';
 
 // =============================================================================
 // CONSTANTS
