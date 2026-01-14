@@ -1,0 +1,73 @@
+======================================================================
+E8 → H4 PARTICLE MASS RATIO ANALYSIS
+======================================================================
+
+[1/5] Generating E8 roots and Moxness folding...
+      E8 roots: 240
+      Moxness det: 1.000000
+
+[2/5] Analyzing Moxness eigenvalue spectrum...
+      Eigenvalues: ['1.0000', '1.0000', '1.0000', '1.0000', '1.0000', '1.0000', '1.0000', '1.0000']
+      Successive ratios: ['1.0000', '1.0000', '1.0000', '1.0000', '1.0000', '1.0000', '1.0000']
+
+[3/5] Analyzing H4 magnitude spectrum...
+      Unique magnitudes: ['0.3289', '0.3289', '0.3289', '0.4013', '0.4013', '0.4126', '0.4126', '0.4221', '0.4221', '0.4228']
+      Magnitude ratios: ['1.0000', '1.0000', '1.2202', '1.0000', '1.0283']
+
+[4/5] Matching to fundamental mass ratios...
+
+      --------------------------------------------------------------
+      Ratio                    Measured          φ-expr     φ-err%
+      --------------------------------------------------------------
+      down/up                    2.1620    (φ^-5+φ^3)/2       0.05
+      W/Z                        0.8815    (φ^-4+φ^1)/2       0.05
+      top/bottom                41.3300     (φ^4+φ^9)/2       0.25
+      strange/down              20.0000     (φ^5+φ^7)/2       0.31
+      Higgs/Z                    1.3730         φ^-1·√5       0.65
+      tau/muon                  16.8167     (φ^3+φ^7)/2       1.08
+      tau/electron            3477.2300            φ^17       2.70
+      muon/electron            206.7683         φ^10·√3       3.03
+      Higgs/W                    1.5590    (φ^-2+φ^2)/2       3.78
+      bottom/charm               3.2910     (φ^2+φ^3)/2       4.13
+      charm/strange             13.6000     (φ^5+φ^6)/2       6.74
+      proton/electron         1836.1527            φ^16      20.20
+      --------------------------------------------------------------
+
+[5/5] Golden ratio mass hierarchy analysis...
+
+      LEPTON φ-HIERARCHY:
+      m_μ/m_e = φ^11.08 (nearest integer: 11)
+      m_τ/m_e = φ^16.94 (nearest integer: 17)
+
+      If m_μ = m_e × φ^11: 101.69 MeV (error: 3.75%)
+      If m_τ = m_e × φ^17: 1824.78 MeV (error: 2.70%)
+
+      PROTON/ELECTRON RATIO:
+      Measured: 1836.1527
+      φ^11 = 199.0050 (error: 89.16%)
+      4×φ^10 = 491.9675 (error: 73.21%)
+
+[STAT] Running Monte Carlo significance test...
+      Our mean error: 15.15%
+      Random baseline: 6.80% ± 1.93%
+      P-value: 0.9986
+      Significant at α=0.05: False
+
+======================================================================
+ANALYSIS SUMMARY
+======================================================================
+
+TOP 5 φ-BASED PREDICTIONS (lowest error):
+  • down/up: (φ^-5+φ^3)/2 → 2.1620 (0.05% error)
+  • W/Z: (φ^-4+φ^1)/2 → 0.8815 (0.05% error)
+  • top/bottom: (φ^4+φ^9)/2 → 41.3300 (0.25% error)
+  • strange/down: (φ^5+φ^7)/2 → 20.0000 (0.31% error)
+  • Higgs/Z: φ^-1·√5 → 1.3730 (0.65% error)
+
+KEY FINDINGS:
+  • Lepton mass ratios follow φ^n pattern with 3.8% / 2.7% error
+  • Statistical significance: p = 0.9986
+  • ✗ Results not statistically significant at α=0.05
+
+Results saved to: e8_mass_ratio_results.json
+======================================================================
