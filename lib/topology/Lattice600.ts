@@ -30,7 +30,7 @@
  * - Quantum Gravity Research - "Emergence Theory" framework
  */
 
-import { Vector4D, MATH_CONSTANTS, LatticeVertex } from './types/index.js';
+import { Vector4D, MATH_CONSTANTS, LatticeVertex } from '../../types/index.js';
 
 // Inline simple vector operations (from GeometricAlgebra)
 const dot = (a: number[], b: number[]): number => a.reduce((sum, val, i) => sum + val * b[i], 0);

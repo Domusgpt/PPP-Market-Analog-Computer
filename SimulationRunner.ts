@@ -34,10 +34,16 @@ import {
     createLagrangeOrbit,
     createEulerOrbit,
     toJacobiCoordinates
-} from './ThreeBodyPhaseSpace.js';
+} from './lib/topology/ThreeBodyPhaseSpace.js';
 import { Vector4D, MATH_CONSTANTS } from './types/index.js';
-import { Vector8D, generateE8Roots, projectE8to4D, createMoxnessMatrix } from './E8H4Folding.js';
-import { Lattice600, getDefaultLattice600, Lattice600Vertex } from './Lattice600.js';
+import { Vector8D, generateE8Roots, projectE8to4D, createMoxnessMatrix } from './lib/topology/E8H4Folding.js';
+import { Lattice600, getDefaultLattice600, Lattice600Vertex, Cell24Subset } from './lib/topology/Lattice600.js';
+import {
+    computeTrinityDecomposition,
+    phillipsSynthesis,
+    TrinityDecomposition,
+    Cell16Subset
+} from './lib/topology/TrinityDecomposition.js';
 
 // =============================================================================
 // TYPES
@@ -198,20 +204,81 @@ function rk4Step(state: ThreeBodyState, dt: number): ThreeBodyState {
 }
 
 // =============================================================================
-// PPP LATTICE EVOLUTION
+// PPP LATTICE EVOLUTION - NESTED 24-CELL / 16-CELL TRIALECTIC
 // =============================================================================
 
 /**
- * Evolve state by walking along the 600-cell graph.
+ * The nested structure:
  *
- * Instead of numerically integrating F=ma, we:
- * 1. Encode current state to 8D phase space
- * 2. Map to nearest 600-cell vertex
- * 3. Walk along edges according to momentum direction
- * 4. Decode back to physical state
+ * 600-cell (120 vertices)
+ * ├── 24-cell A (24 vertices) [Body 1]
+ * │   ├── 16-cell α (8 vertices)
+ * │   ├── 16-cell β (8 vertices)
+ * │   └── 16-cell γ (8 vertices)
+ * ├── 24-cell B (24 vertices) [Body 2]
+ * │   └── (same 16-cell trinity)
+ * ├── 24-cell C (24 vertices) [Body 3]
+ * │   └── (same 16-cell trinity)
+ * ├── 24-cell D (24 vertices) [Interaction]
+ * └── 24-cell E (24 vertices) [Interaction]
  *
- * The key insight: The lattice structure preserves symplectic geometry,
- * so trajectories naturally conserve energy and angular momentum.
+ * Bodies evolve by:
+ * 1. Each body maps to its 24-cell (A, B, C)
+ * 2. Within each 24-cell, find which 16-cell trialectic (α, β, γ)
+ * 3. Phillips Synthesis: Given two bodies' positions, third is constrained
+ * 4. Evolution = snapping to nearest valid constellation
+ */
+
+// Cache the trinity decomposition (same for all 24-cells)
+let _trinityCache: TrinityDecomposition | null = null;
+
+function getTrinity(): TrinityDecomposition {
+    if (!_trinityCache) {
+        _trinityCache = computeTrinityDecomposition();
+    }
+    return _trinityCache;
+}
+
+/**
+ * Find which 16-cell (α, β, γ) a point is nearest to within a 24-cell.
+ */
+function classifyTrialectic(
+    point: Vector4D,
+    trinity: TrinityDecomposition
+): { subset: 'alpha' | 'beta' | 'gamma'; nearestVertex: Vector4D; distance: number } {
+    let bestSubset: 'alpha' | 'beta' | 'gamma' = 'alpha';
+    let bestVertex: Vector4D = trinity.alpha.vertices[0];
+    let bestDist = Infinity;
+
+    for (const [name, subset] of [
+        ['alpha', trinity.alpha],
+        ['beta', trinity.beta],
+        ['gamma', trinity.gamma]
+    ] as const) {
+        for (const v of subset.vertices) {
+            const dist = Math.sqrt(
+                (point[0] - v[0]) ** 2 + (point[1] - v[1]) ** 2 +
+                (point[2] - v[2]) ** 2 + (point[3] - v[3]) ** 2
+            );
+            if (dist < bestDist) {
+                bestDist = dist;
+                bestVertex = v;
+                bestSubset = name;
+            }
+        }
+    }
+
+    return { subset: bestSubset, nearestVertex: bestVertex, distance: bestDist };
+}
+
+/**
+ * Evolve using the nested 24-cell constellation with 16-cell trialectic.
+ *
+ * Instead of F=ma integration:
+ * 1. Map each body to its 24-cell
+ * 2. Classify each body's position in the trialectic (α, β, γ)
+ * 3. Use Phillips Synthesis: body 3's γ emerges from bodies 1's α + body 2's β
+ * 4. Snap to nearest valid lattice configuration
  */
 function pppStep(
     state: ThreeBodyState,
@@ -220,151 +287,94 @@ function pppStep(
     cellMapping: Cell600Mapping,
     dt: number
 ): { state: ThreeBodyState; phasePoint: ReducedPhasePoint; cellMapping: Cell600Mapping } {
-    // Get current vertex and its neighbors
-    const currentVertex = lattice.getVertex(cellMapping.nearestVertex);
-    if (!currentVertex) {
-        return { state, phasePoint, cellMapping };
-    }
+    const trinity = getTrinity();
+    const cells = lattice.disjoint24Cells;
 
-    // Compute momentum direction in H4 space
-    // The phase space encodes momenta in coordinates 4-7
-    const momDirection: Vector4D = [
-        phasePoint.coordinates[4],
-        phasePoint.coordinates[5],
-        phasePoint.coordinates[6],
-        phasePoint.coordinates[7]
-    ];
-    const momNorm = Math.sqrt(
-        momDirection[0]**2 + momDirection[1]**2 +
-        momDirection[2]**2 + momDirection[3]**2
+    // Get H4 projections for each body from mapping
+    const h4 = cellMapping.h4Position;
+
+    // Classify each body in the trialectic
+    // Body 1 should be in α, Body 2 in β, Body 3's γ is computed
+    const body1Class = classifyTrialectic(h4, trinity);
+    const body2Offset: Vector4D = [h4[0] + 0.3, h4[1], h4[2], h4[3]];
+    const body2Class = classifyTrialectic(body2Offset, trinity);
+
+    // Phillips Synthesis: Given α (body1) and β (body2), compute γ (body3)
+    const synthesizedGamma = phillipsSynthesis(
+        body1Class.nearestVertex,
+        body2Class.nearestVertex
     );
 
-    if (momNorm < MATH_CONSTANTS.EPSILON || currentVertex.neighbors.length === 0) {
-        // No movement - stationary state
-        return { state, phasePoint, cellMapping };
-    }
+    // The constellation coherence: how well does the trialectic balance?
+    // Perfect balance = centroid at origin (color neutral)
+    const centroid: Vector4D = [
+        (body1Class.nearestVertex[0] + body2Class.nearestVertex[0] + synthesizedGamma[0]) / 3,
+        (body1Class.nearestVertex[1] + body2Class.nearestVertex[1] + synthesizedGamma[1]) / 3,
+        (body1Class.nearestVertex[2] + body2Class.nearestVertex[2] + synthesizedGamma[2]) / 3,
+        (body1Class.nearestVertex[3] + body2Class.nearestVertex[3] + synthesizedGamma[3]) / 3
+    ];
+    const centroidDist = Math.sqrt(
+        centroid[0]**2 + centroid[1]**2 + centroid[2]**2 + centroid[3]**2
+    );
+    const coherence = Math.exp(-centroidDist * 2);
 
-    // Normalize momentum direction
-    const momUnit: Vector4D = [
-        momDirection[0] / momNorm,
-        momDirection[1] / momNorm,
-        momDirection[2] / momNorm,
-        momDirection[3] / momNorm
+    // Evolution: Bodies move toward valid trialectic configuration
+    // High coherence = stable orbit, low change
+    // Low coherence = bodies adjust toward synthesis
+    const changeFactor = (1 - coherence) * dt;
+
+    // Move body positions toward their trialectic vertices
+    const newBody1Pos: [number, number, number] = [
+        state.body1.position[0] + changeFactor * (body1Class.nearestVertex[0] - state.body1.position[0]),
+        state.body1.position[1] + changeFactor * (body1Class.nearestVertex[1] - state.body1.position[1]),
+        state.body1.position[2] + changeFactor * (body1Class.nearestVertex[2] - state.body1.position[2])
     ];
 
-    // Find neighbor that best aligns with momentum direction
-    // This is geodesic walking on the lattice graph
-    let bestNeighbor = currentVertex.neighbors[0];
-    let bestAlignment = -Infinity;
+    const newBody2Pos: [number, number, number] = [
+        state.body2.position[0] + changeFactor * (body2Class.nearestVertex[0] - state.body2.position[0]),
+        state.body2.position[1] + changeFactor * (body2Class.nearestVertex[1] - state.body2.position[1]),
+        state.body2.position[2] + changeFactor * (body2Class.nearestVertex[2] - state.body2.position[2])
+    ];
 
-    for (const neighborId of currentVertex.neighbors) {
-        const neighbor = lattice.getVertex(neighborId);
-        if (!neighbor) continue;
+    // Body 3 moves toward synthesized γ position
+    const newBody3Pos: [number, number, number] = [
+        state.body3.position[0] + changeFactor * (synthesizedGamma[0] - state.body3.position[0]),
+        state.body3.position[1] + changeFactor * (synthesizedGamma[1] - state.body3.position[1]),
+        state.body3.position[2] + changeFactor * (synthesizedGamma[2] - state.body3.position[2])
+    ];
 
-        // Direction to neighbor
-        const dir: Vector4D = [
-            neighbor.coordinates[0] - currentVertex.coordinates[0],
-            neighbor.coordinates[1] - currentVertex.coordinates[1],
-            neighbor.coordinates[2] - currentVertex.coordinates[2],
-            neighbor.coordinates[3] - currentVertex.coordinates[3]
-        ];
-        const dirNorm = Math.sqrt(dir[0]**2 + dir[1]**2 + dir[2]**2 + dir[3]**2);
+    // Compute new velocities from position changes
+    const newBody1Vel: [number, number, number] = [
+        (newBody1Pos[0] - state.body1.position[0]) / dt,
+        (newBody1Pos[1] - state.body1.position[1]) / dt,
+        (newBody1Pos[2] - state.body1.position[2]) / dt
+    ];
+    const newBody2Vel: [number, number, number] = [
+        (newBody2Pos[0] - state.body2.position[0]) / dt,
+        (newBody2Pos[1] - state.body2.position[1]) / dt,
+        (newBody2Pos[2] - state.body2.position[2]) / dt
+    ];
+    const newBody3Vel: [number, number, number] = [
+        (newBody3Pos[0] - state.body3.position[0]) / dt,
+        (newBody3Pos[1] - state.body3.position[1]) / dt,
+        (newBody3Pos[2] - state.body3.position[2]) / dt
+    ];
 
-        if (dirNorm < MATH_CONSTANTS.EPSILON) continue;
+    const newState: ThreeBodyState = {
+        body1: { position: newBody1Pos, velocity: newBody1Vel, mass: state.body1.mass },
+        body2: { position: newBody2Pos, velocity: newBody2Vel, mass: state.body2.mass },
+        body3: { position: newBody3Pos, velocity: newBody3Vel, mass: state.body3.mass },
+        time: state.time + dt
+    };
 
-        // Alignment with momentum
-        const alignment = (
-            dir[0] * momUnit[0] + dir[1] * momUnit[1] +
-            dir[2] * momUnit[2] + dir[3] * momUnit[3]
-        ) / dirNorm;
+    // Re-encode to phase space
+    const newPhasePoint = encodeToPhaseSpace(newState);
+    const newCellMapping = mapTo600Cell(newState);
 
-        if (alignment > bestAlignment) {
-            bestAlignment = alignment;
-            bestNeighbor = neighborId;
-        }
-    }
-
-    // Step probability based on time step and momentum
-    // Larger dt = more likely to step
-    const stepProbability = Math.min(1, momNorm * dt * 2);
-
-    // Determine if we actually step (for small dt, may stay in place)
-    const shouldStep = bestAlignment > 0.3 && Math.random() < stepProbability;
-
-    if (shouldStep) {
-        const newVertex = lattice.getVertex(bestNeighbor);
-        if (newVertex) {
-            // Update H4 position to new vertex
-            const newH4: Vector4D = [...newVertex.coordinates] as Vector4D;
-
-            // Reconstruct 8D phase point (position updated, momentum evolves)
-            // The new phase point keeps similar momentum but position moves
-            const newCoords: Vector8D = [
-                newH4[0], newH4[1], newH4[2], newH4[3],
-                phasePoint.coordinates[4] * 0.99, // Slight damping (energy goes to potential)
-                phasePoint.coordinates[5] * 0.99,
-                phasePoint.coordinates[6] * 0.99,
-                phasePoint.coordinates[7] * 0.99
-            ];
-
-            // Normalize
-            const norm8 = Math.sqrt(newCoords.reduce((s, x) => s + x * x, 0));
-            const normalized: Vector8D = norm8 > MATH_CONSTANTS.EPSILON
-                ? newCoords.map(x => x / norm8) as Vector8D
-                : newCoords;
-
-            // Find nearest E8 node for new position
-            const e8Roots = generateE8Roots();
-            let nearestNode = 0;
-            let minDist = Infinity;
-            for (let i = 0; i < e8Roots.length; i++) {
-                let dist = 0;
-                for (let j = 0; j < 8; j++) {
-                    dist += (normalized[j] - e8Roots[i][j]) ** 2;
-                }
-                if (dist < minDist) {
-                    minDist = dist;
-                    nearestNode = i;
-                }
-            }
-
-            const newPhasePoint: ReducedPhasePoint = {
-                coordinates: normalized,
-                jacobi: phasePoint.jacobi,
-                shapeSphere: phasePoint.shapeSphere,
-                nearestE8Node: nearestNode,
-                latticeError: Math.sqrt(minDist)
-            };
-
-            // Decode to physical state
-            const newState = decodeFromPhaseSpace(newPhasePoint, [1, 1, 1], 1);
-            const finalState: ThreeBodyState = {
-                ...newState,
-                time: state.time + dt
-            };
-
-            // Update cell mapping
-            const newCellMapping: Cell600Mapping = {
-                h4Position: newH4,
-                nearestVertex: bestNeighbor,
-                distance: 0,
-                cell24Index: newVertex.cell24Index,
-                bodyAssignments: cellMapping.bodyAssignments
-            };
-
-            return {
-                state: finalState,
-                phasePoint: newPhasePoint,
-                cellMapping: newCellMapping
-            };
-        }
-    }
-
-    // No step - just advance time
     return {
-        state: { ...state, time: state.time + dt },
-        phasePoint,
-        cellMapping
+        state: newState,
+        phasePoint: newPhasePoint,
+        cellMapping: newCellMapping
     };
 }
 

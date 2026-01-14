@@ -34,7 +34,7 @@
  * - Kustaanheimo-Stiefel regularization theory
  */
 
-import { Vector4D, MATH_CONSTANTS } from './types/index.js';
+import { Vector4D, MATH_CONSTANTS } from '../../types/index.js';
 import { Vector8D, generateE8Roots, projectE8to4D } from './E8H4Folding.js';
 import { Lattice600, getDefaultLattice600 } from './Lattice600.js';
 
