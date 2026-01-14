@@ -204,6 +204,56 @@ function multiplyMatricesColumnMajor(a, b) {
 }
 
 /**
+ * Draw a test pattern to verify WebGL is working
+ */
+function drawTestPattern() {
+    if (!gl || !program) return;
+
+    // Simple triangle in NDC space
+    const testPositions = new Float32Array([
+        0.0,  0.5, 0.0,   // top
+       -0.5, -0.5, 0.0,   // bottom left
+        0.5, -0.5, 0.0    // bottom right
+    ]);
+
+    const testColors = new Float32Array([
+        1.0, 0.0, 0.0, 1.0,  // red
+        0.0, 1.0, 0.0, 1.0,  // green
+        0.0, 0.0, 1.0, 1.0   // blue
+    ]);
+
+    gl.useProgram(program);
+
+    // Identity matrices for test
+    const identity = new Float32Array([
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    ]);
+
+    gl.uniformMatrix4fv(gl.getUniformLocation(program, 'uViewProjection'), false, identity);
+    gl.uniformMatrix4fv(gl.getUniformLocation(program, 'uModel'), false, identity);
+
+    // Position
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, testPositions, gl.STATIC_DRAW);
+    const posLoc = gl.getAttribLocation(program, 'aPosition');
+    gl.enableVertexAttribArray(posLoc);
+    gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
+
+    // Color
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, testColors, gl.STATIC_DRAW);
+    const colorLoc = gl.getAttribLocation(program, 'aColor');
+    gl.enableVertexAttribArray(colorLoc);
+    gl.vertexAttribPointer(colorLoc, 4, gl.FLOAT, false, 0, 0);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    console.log('Drew test triangle');
+}
+
+/**
  * Render the current frame
  */
 let renderDebugLogged = false;
@@ -223,17 +273,31 @@ function render() {
             console.log('=== RENDER DEBUG ===');
             console.log('Canvas size:', canvas.width, 'x', canvas.height);
             console.log('Vertices array length:', vertices.length);
+            console.log('Vertices type:', vertices.constructor.name);
             console.log('Edges array length:', edges.length);
+            console.log('Edges type:', edges.constructor.name);
             if (vertices.length > 0) {
-                console.log('First vertex (x,y,z,r,g,b,a):',
-                    vertices[0], vertices[1], vertices[2],
-                    vertices[3], vertices[4], vertices[5], vertices[6]);
+                console.log('First 3 vertices (x,y,z,r,g,b,a):');
+                for (let i = 0; i < Math.min(3, vertices.length / 7); i++) {
+                    const b = i * 7;
+                    console.log(`  V${i}: pos=[${vertices[b].toFixed(3)}, ${vertices[b+1].toFixed(3)}, ${vertices[b+2].toFixed(3)}] color=[${vertices[b+3].toFixed(2)}, ${vertices[b+4].toFixed(2)}, ${vertices[b+5].toFixed(2)}, ${vertices[b+6].toFixed(2)}]`);
+                }
+            }
+            if (edges.length > 0) {
+                console.log('First 6 edge indices:', Array.from(edges.slice(0, 6)));
             }
             console.log('Zoom:', zoom, 'CameraRotX:', cameraRotX, 'CameraRotY:', cameraRotY);
+
+            // Test viewProj matrix
+            const testVP = createViewProjection(canvas.width, canvas.height);
+            console.log('ViewProj matrix[0-3]:', testVP.slice(0, 4));
+            console.log('ViewProj matrix[12-15]:', testVP.slice(12, 16));
         }
 
         if (vertices.length === 0) {
-            console.warn('No vertices to render');
+            console.warn('No vertices to render - drawing test pattern');
+            // Draw a test triangle to verify WebGL works
+            drawTestPattern();
             return;
         }
 
