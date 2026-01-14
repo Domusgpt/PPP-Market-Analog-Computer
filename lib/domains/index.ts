@@ -6,4 +6,3 @@
 
 export * from './MusicGeometryDomain.js';
 export * from './MusicEmbeddingBridge.js';
-export * from './PhysicsGeometryDomain.js';

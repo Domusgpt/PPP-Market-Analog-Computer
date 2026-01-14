@@ -30,8 +30,8 @@
  * - Quantum Gravity Research - "Emergence Theory" framework
  */
 
-import { Vector4D, MATH_CONSTANTS, LatticeVertex } from './types/index.js';
-import { dot, magnitude, normalize } from './lib/math/GeometricAlgebra.js';
+import { Vector4D, MATH_CONSTANTS, LatticeVertex } from '../../types/index.js';
+import { dot, magnitude, normalize } from '../math/GeometricAlgebra.js';
 
 // =============================================================================
 // CONSTANTS
