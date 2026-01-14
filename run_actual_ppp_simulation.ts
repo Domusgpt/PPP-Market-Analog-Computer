@@ -17,6 +17,7 @@ import {
     Vector8D
 } from './E8H4Folding.js';
 import { Lattice24, getDefaultLattice } from './lib/topology/Lattice24.js';
+import { Vector4D } from './types/index.js';
 
 console.log("=".repeat(70));
 console.log("PPP ACTUAL ENGINE SIMULATION");
@@ -76,9 +77,10 @@ console.log("Applying forces to the engine:");
 
 // Apply a force toward a lattice vertex
 const targetVertex = engine.lattice.vertices[0];
-console.log(`Target vertex: [${targetVertex.join(', ')}]`);
+const targetCoords = targetVertex.coordinates;
+console.log(`Target vertex: [${targetCoords.join(', ')}]`);
 
-engine.applyLinearForce(targetVertex, 0.5);
+engine.applyLinearForce(targetCoords, 0.5);
 let result = engine.update(0.016);
 
 console.log(`After force applied:`);
@@ -92,7 +94,7 @@ console.log();
 console.log("Running 100 timesteps...");
 
 for (let i = 0; i < 100; i++) {
-    engine.applyLinearForce(targetVertex, 0.1);
+    engine.applyLinearForce(targetCoords, 0.1);
     result = engine.update(0.016);
 }
 
@@ -153,23 +155,24 @@ const vertices = lattice.vertices;
 console.log(`24-cell vertices: ${vertices.length}`);
 
 // Trinity split: divide by coordinate plane pairs
-const alpha: typeof vertices = [];
-const beta: typeof vertices = [];
-const gamma: typeof vertices = [];
+const alpha: Vector4D[] = [];
+const beta: Vector4D[] = [];
+const gamma: Vector4D[] = [];
 
 for (const v of vertices) {
-    const nonZeroIndices = v
+    const coords = v.coordinates;
+    const nonZeroIndices = coords
         .map((x, i) => Math.abs(x) > 0.5 ? i : -1)
         .filter(i => i >= 0);
 
     if (nonZeroIndices.length === 2) {
         const [a, b] = nonZeroIndices;
         if ((a === 0 && b === 1) || (a === 2 && b === 3)) {
-            alpha.push(v);
+            alpha.push(coords);
         } else if ((a === 0 && b === 2) || (a === 1 && b === 3)) {
-            beta.push(v);
+            beta.push(coords);
         } else {
-            gamma.push(v);
+            gamma.push(coords);
         }
     }
 }

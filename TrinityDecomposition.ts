@@ -27,8 +27,8 @@
  * - Phillips, P.R. "Trinity Dialectic Logic" PPP Framework
  */
 
-import { Vector4D, MATH_CONSTANTS } from '../../types/index.js';
-import { getDefaultLattice, Lattice24 } from './Lattice24.js';
+import { Vector4D, MATH_CONSTANTS } from './types/index.js';
+import { getDefaultLattice, Lattice24 } from './lib/topology/Lattice24.js';
 
 // =============================================================================
 // TYPES
