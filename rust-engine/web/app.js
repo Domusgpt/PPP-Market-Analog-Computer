@@ -133,14 +133,16 @@ function createViewProjection(width, height) {
     const near = 0.1;
     const far = 100.0;
 
-    // Perspective projection
+    // Perspective projection matrix (column-major for WebGL)
     const f = 1.0 / Math.tan(fov / 2);
-    const nf = 1.0 / (near - far);
+    const rangeInv = 1.0 / (near - far);
+
+    // Column-major order: each group of 4 is one column
     const proj = [
-        f / aspect, 0, 0, 0,
-        0, f, 0, 0,
-        0, 0, (far + near) * nf, -1,
-        0, 0, 2 * far * near * nf, 0
+        f / aspect, 0, 0, 0,                          // Column 0
+        0, f, 0, 0,                                   // Column 1
+        0, 0, (far + near) * rangeInv, -1,            // Column 2 (note: -1 at bottom for w=-z)
+        0, 0, 2 * far * near * rangeInv, 0            // Column 3
     ];
 
     // View matrix (camera looking at origin)
@@ -156,24 +158,26 @@ function createViewProjection(width, height) {
     // Simple look-at
     const view = lookAt([eyeX, eyeY, eyeZ], [0, 0, 0], [0, 1, 0]);
 
-    // Multiply proj * view (projection applied after view transform)
-    // Standard order: position -> model -> view -> projection
-    return multiplyMatrices(proj, view);
+    // For column-major matrices, multiplication order is reversed
+    // We want: projection * view * model * vertex
+    // So we compute: proj * view
+    return multiplyMatricesColumnMajor(proj, view);
 }
 
 /**
- * Look-at matrix
+ * Look-at matrix (column-major for WebGL)
  */
 function lookAt(eye, target, up) {
     const zAxis = normalize(subtract(eye, target));
     const xAxis = normalize(cross(up, zAxis));
     const yAxis = cross(zAxis, xAxis);
 
+    // Column-major order for WebGL
     return [
-        xAxis[0], yAxis[0], zAxis[0], 0,
-        xAxis[1], yAxis[1], zAxis[1], 0,
-        xAxis[2], yAxis[2], zAxis[2], 0,
-        -dot(xAxis, eye), -dot(yAxis, eye), -dot(zAxis, eye), 1
+        xAxis[0], yAxis[0], zAxis[0], 0,              // Column 0
+        xAxis[1], yAxis[1], zAxis[1], 0,              // Column 1
+        xAxis[2], yAxis[2], zAxis[2], 0,              // Column 2
+        -dot(xAxis, eye), -dot(yAxis, eye), -dot(zAxis, eye), 1  // Column 3
     ];
 }
 
@@ -183,13 +187,17 @@ function cross(a, b) { return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[
 function dot(a, b) { return a[0]*b[0] + a[1]*b[1] + a[2]*b[2]; }
 function normalize(v) { const l = Math.sqrt(dot(v, v)); return [v[0]/l, v[1]/l, v[2]/l]; }
 
-function multiplyMatrices(a, b) {
+// Matrix multiplication for column-major matrices (WebGL style)
+function multiplyMatricesColumnMajor(a, b) {
     const result = new Array(16).fill(0);
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
+    for (let col = 0; col < 4; col++) {
+        for (let row = 0; row < 4; row++) {
+            let sum = 0;
             for (let k = 0; k < 4; k++) {
-                result[i * 4 + j] += a[i * 4 + k] * b[k * 4 + j];
+                // a[col][k] * b[k][row] in column-major indexing
+                sum += a[k * 4 + row] * b[col * 4 + k];
             }
+            result[col * 4 + row] = sum;
         }
     }
     return result;
