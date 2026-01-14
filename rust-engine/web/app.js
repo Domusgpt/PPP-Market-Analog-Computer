@@ -270,28 +270,19 @@ function render() {
         const edges = engine.get_edges();
 
         if (!renderDebugLogged) {
-            console.log('=== RENDER DEBUG ===');
-            console.log('Canvas size:', canvas.width, 'x', canvas.height);
-            console.log('Vertices array length:', vertices.length);
-            console.log('Vertices type:', vertices.constructor.name);
-            console.log('Edges array length:', edges.length);
-            console.log('Edges type:', edges.constructor.name);
+            showDebugOnPage('Render: ' + (vertices.length/7) + ' verts, ' + (edges.length/2) + ' edges');
             if (vertices.length > 0) {
-                console.log('First 3 vertices (x,y,z,r,g,b,a):');
-                for (let i = 0; i < Math.min(3, vertices.length / 7); i++) {
-                    const b = i * 7;
-                    console.log(`  V${i}: pos=[${vertices[b].toFixed(3)}, ${vertices[b+1].toFixed(3)}, ${vertices[b+2].toFixed(3)}] color=[${vertices[b+3].toFixed(2)}, ${vertices[b+4].toFixed(2)}, ${vertices[b+5].toFixed(2)}, ${vertices[b+6].toFixed(2)}]`);
+                const v0 = 'V0:[' + vertices[0].toFixed(2) + ',' + vertices[1].toFixed(2) + ',' + vertices[2].toFixed(2) + ']';
+                showDebugOnPage(v0);
+                // Transform first vertex
+                const vp = createViewProjection(canvas.width, canvas.height);
+                let clip = [0,0,0,0];
+                for (let r = 0; r < 4; r++) {
+                    clip[r] = vp[r] * vertices[0] + vp[4+r] * vertices[1] + vp[8+r] * vertices[2] + vp[12+r];
                 }
+                const ndc = [clip[0]/clip[3], clip[1]/clip[3], clip[2]/clip[3]];
+                showDebugOnPage('NDC:[' + ndc[0].toFixed(2) + ',' + ndc[1].toFixed(2) + ',' + ndc[2].toFixed(2) + '] w=' + clip[3].toFixed(2));
             }
-            if (edges.length > 0) {
-                console.log('First 6 edge indices:', Array.from(edges.slice(0, 6)));
-            }
-            console.log('Zoom:', zoom, 'CameraRotX:', cameraRotX, 'CameraRotY:', cameraRotY);
-
-            // Test viewProj matrix
-            const testVP = createViewProjection(canvas.width, canvas.height);
-            console.log('ViewProj matrix[0-3]:', testVP.slice(0, 4));
-            console.log('ViewProj matrix[12-15]:', testVP.slice(12, 16));
         }
 
         if (vertices.length === 0) {
@@ -546,6 +537,23 @@ function updateSliderLabels() {
 }
 
 /**
+ * Show debug info on page (for mobile debugging)
+ */
+function showDebugOnPage(message) {
+    let debugDiv = document.getElementById('debug-output');
+    if (!debugDiv) {
+        debugDiv = document.createElement('div');
+        debugDiv.id = 'debug-output';
+        debugDiv.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.9);color:#0f0;font-family:monospace;font-size:10px;max-height:150px;overflow-y:auto;padding:5px;z-index:9999;';
+        document.body.appendChild(debugDiv);
+    }
+    const line = document.createElement('div');
+    line.textContent = message;
+    debugDiv.appendChild(line);
+    debugDiv.scrollTop = debugDiv.scrollHeight;
+}
+
+/**
  * Main initialization
  */
 async function main() {
@@ -553,47 +561,51 @@ async function main() {
     const loadingText = loadingEl.querySelector('.loading-text');
 
     try {
+        showDebugOnPage('Starting initialization...');
         loadingText.textContent = 'Initializing WebGL...';
 
         // Initialize WebGL
         const canvas = document.getElementById('gce-canvas');
         initGL(canvas);
-        console.log('WebGL initialized');
+        showDebugOnPage('WebGL OK: ' + canvas.width + 'x' + canvas.height);
 
         loadingText.textContent = 'Loading WASM module...';
 
         // Load WASM module
         const wasm = await import('./pkg/geometric_cognition.js');
         await wasm.default();
-        console.log('WASM module loaded');
+        showDebugOnPage('WASM loaded');
 
-        console.log(`Geometric Cognition Engine v${wasm.get_version()}`);
-        console.log(wasm.get_description());
+        showDebugOnPage('Version: ' + wasm.get_version());
 
         loadingText.textContent = 'Creating engine...';
 
         // Create engine instance
         engine = new wasm.WebEngine('gce-canvas');
-        console.log('Engine created');
+        showDebugOnPage('Engine created');
 
         // Test vertex data
         const testVertices = engine.get_vertices();
-        console.log('Vertex count:', testVertices.length / 7);
+        const vertCount = testVertices.length / 7;
+        showDebugOnPage('Vertices: ' + vertCount + ' (array len: ' + testVertices.length + ')');
 
         const testEdges = engine.get_edges();
-        console.log('Edge count:', testEdges.length / 2);
+        showDebugOnPage('Edges: ' + (testEdges.length / 2));
+
+        if (testVertices.length > 0) {
+            showDebugOnPage('V0: [' + testVertices[0].toFixed(2) + ', ' + testVertices[1].toFixed(2) + ', ' + testVertices[2].toFixed(2) + ']');
+        }
 
         // Setup UI
         setupUI();
         updateSliderLabels();
-        console.log('UI setup complete');
 
         // Hide loading screen
         loadingEl.classList.add('hidden');
+        showDebugOnPage('Starting render loop...');
 
         // Start animation loop
         requestAnimationFrame(animate);
-        console.log('Animation started');
 
     } catch (error) {
         console.error('Initialization error:', error);
