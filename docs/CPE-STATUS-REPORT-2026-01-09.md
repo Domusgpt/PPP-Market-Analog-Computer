@@ -67,7 +67,22 @@ From cognitive science research on how humans reason about causality:
 
 The CPE physics engine is designed to satisfy all three constraints.
 
-### 1.2 The Orthocognitum
+### 1.2 Dynamic Topology Selection (Simplex → Hypercube → 24-Cell)
+
+**Dynamic topology selection** is the policy of shifting the active manifold as reasoning evolves, escalating geometric complexity only when the cognitive task demands it. The CPE therefore progresses from **simplex** to **hypercube** to **24-cell**, using the canonical menu in the polytope vocabulary defined in *“A Vocabulary of Form: The Six Convex Regular 4-Polytopes (Polychora)”* (Chronomorphic Polytopal Engine Expansion, Section 1.2) as the basis for adaptive topology selection. The progression can be summarized as:
+
+| Manifold | Cognitive function | Role in adaptive selection |
+| --- | --- | --- |
+| **Simplex (4-simplex / 5-cell)** | **Association** | Minimal connectivity for rapid hypothesis seeding and coarse linkage. |
+| **Hypercube (tesseract / 8-cell)** | **Discrimination** | Orthogonal axes for contrast, branching, and categorical separation. |
+| **24-Cell (icositetrachoron)** | **Synthesis** | Dense, self-dual symmetry for integration and coherence validation. |
+
+### 1.3 Progressive Topology Benefits: Energy Efficiency and Audit Clarity
+
+Progressive topology improves **energy efficiency** by allocating computational effort only when needed: early reasoning steps use the low-cost simplex manifold, and only escalate to the higher-degree hypercube and 24-cell when richer structure is required. This reduces unnecessary state updates while preserving the ability to scale precision under demand.  
+It also improves **audit clarity** by making reasoning stages explicit in the geometry. Each topology change produces a visible, auditable transition between association, discrimination, and synthesis phases, enabling validators to trace how and why the engine upgraded the representational manifold.
+
+### 1.4 The Orthocognitum
 
 The "Orthocognitum" is the valid region of thought - the space where coherent reasoning can occur. It is defined by the **24-Cell polytope**, a unique 4-dimensional shape with these properties:
 
@@ -78,7 +93,7 @@ The "Orthocognitum" is the valid region of thought - the space where coherent re
 
 If a reasoning state leaves the Orthocognitum, it has entered the realm of incoherent or invalid thought.
 
-### 1.3 Clifford Algebra Cl(4,0)
+### 1.5 Clifford Algebra Cl(4,0)
 
 The mathematical substrate is **Clifford Algebra** (also called Geometric Algebra) over 4-dimensional Euclidean space. Key properties:
 
