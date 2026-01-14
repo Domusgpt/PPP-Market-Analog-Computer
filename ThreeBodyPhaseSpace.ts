@@ -450,26 +450,23 @@ export function mapTo600Cell(state: ThreeBodyState): Cell600Mapping {
  * Discovered by Chenciner & Montgomery (2000).
  */
 export function createFigure8Orbit(): ThreeBodyState {
-    // Figure-8 initial conditions (normalized units)
-    const x1 = -0.97000436;
-    const y1 = 0.24308753;
-    const vx3 = -0.93240737;
-    const vy3 = -0.86473146;
-
+    // Figure-8 initial conditions from Chenciner-Montgomery (2000)
+    // Verified values from Simó's numerical computation
+    // See: https://burtleburtle.net/bob/physics/eight.html
     return {
         body1: {
-            position: [x1, y1, 0],
-            velocity: [-vx3 / 2, -vy3 / 2, 0],
+            position: [-0.97000436, 0.24308753, 0],
+            velocity: [-0.46620369, -0.43236573, 0],
             mass: 1
         },
         body2: {
-            position: [-x1, -y1, 0],
-            velocity: [-vx3 / 2, -vy3 / 2, 0],
+            position: [0.97000436, -0.24308753, 0],
+            velocity: [-0.46620369, -0.43236573, 0],
             mass: 1
         },
         body3: {
             position: [0, 0, 0],
-            velocity: [vx3, vy3, 0],
+            velocity: [0.93240737, 0.86473146, 0],
             mass: 1
         },
         time: 0
