@@ -114,8 +114,8 @@
   "monte_carlo": {
     "n_good_matches": 9,
     "our_mean_error": 7.1578027204107695,
-    "random_mean": 211.50193467950336,
-    "random_std": 55.46143197243096,
+    "random_mean": 211.71485411839674,
+    "random_std": 55.407522848383465,
     "p_value": 0.0,
     "significant_0.05": 1.0,
     "significant_0.01": 1.0
