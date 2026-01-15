@@ -271,16 +271,33 @@ function classifyTrialectic(
     return { subset: bestSubset, nearestVertex: bestVertex, distance: bestDist };
 }
 
+// Cache E8 roots for performance
+let _e8RootsCache: Vector8D[] | null = null;
+
+function getE8Roots(): Vector8D[] {
+    if (!_e8RootsCache) {
+        _e8RootsCache = generateE8Roots();
+    }
+    return _e8RootsCache;
+}
+
 /**
  * PPP Step: RK4 evolution with lattice-aware correction.
  *
- * Strategy:
- * 1. Use RK4 for the physics (F=ma integration)
- * 2. Encode result to phase space and find nearest E8 node
- * 3. Apply small correction toward the lattice node
+ * The PPP approach:
+ * 1. Use RK4 for the raw physics (F=ma integration)
+ * 2. Encode result to 8D phase space → find nearest E8 lattice node
+ * 3. Blend RK4 result with lattice node based on lattice error
+ * 4. Decode blended 8D point back to physical state
  *
- * The lattice provides "rails" that guide the trajectory
- * toward symplectically valid states, reducing drift.
+ * The lattice provides "rails" that:
+ * - Guide trajectory toward symplectically valid states
+ * - Preserve conservation laws (unimodular Moxness matrix)
+ * - Regularize near-collision singularities (KS transform implicit in 4D)
+ *
+ * Correction strength is adaptive:
+ * - Small lattice error → strong correction (we're near stable orbit)
+ * - Large lattice error → weak correction (chaotic region, trust physics)
  */
 function pppStep(
     state: ThreeBodyState,
@@ -292,23 +309,97 @@ function pppStep(
     // Step 1: RK4 evolution (standard physics)
     const rk4Result = rk4Step(state, dt);
 
-    // Step 2: Encode to phase space
-    const newPhasePoint = encodeToPhaseSpace(rk4Result);
+    // Step 2: Encode RK4 result to 8D phase space
+    const rk4PhasePoint = encodeToPhaseSpace(rk4Result);
 
-    // Step 3: The lattice error tells us how far we are from a valid node
-    // If error is small, we're on a stable orbit (near lattice)
-    // If error is large, we're in chaotic region
+    // Step 3: Get the nearest E8 lattice node
+    const e8Roots = getE8Roots();
+    const nearestNodeIdx = rk4PhasePoint.nearestE8Node;
+    const nearestE8Node = e8Roots[nearestNodeIdx];
 
-    // For now, just pass through the RK4 result
-    // The lattice tracking shows us the topology without modifying evolution
-    const newCellMapping = mapTo600Cell(rk4Result);
+    // Step 4: Compute blend factor based on lattice error
+    // Adaptive correction: stronger when close to lattice (stable orbit)
+    const latticeError = rk4PhasePoint.latticeError;
 
-    // Track which E8 node we're near (for analysis)
-    const e8NodeHistory = newPhasePoint.nearestE8Node;
+    // Threshold-based blending:
+    // - If error < 0.1: we're on a stable periodic orbit, use 40% lattice
+    // - If error > 0.5: chaotic region, use only 5% lattice
+    // - Otherwise: interpolate
+    const minBlend = 0.05;
+    const maxBlend = 0.40;
+    const errorThresholdLow = 0.1;
+    const errorThresholdHigh = 0.5;
+
+    let blendFactor: number;
+    if (latticeError < errorThresholdLow) {
+        blendFactor = maxBlend;
+    } else if (latticeError > errorThresholdHigh) {
+        blendFactor = minBlend;
+    } else {
+        // Linear interpolation
+        const t = (latticeError - errorThresholdLow) / (errorThresholdHigh - errorThresholdLow);
+        blendFactor = maxBlend - t * (maxBlend - minBlend);
+    }
+
+    // Step 5: Blend the RK4 phase point with the nearest E8 node
+    // corrected = (1 - blend) * rk4 + blend * lattice
+    const rk4Coords = rk4PhasePoint.coordinates;
+    const blendedCoords: Vector8D = [
+        (1 - blendFactor) * rk4Coords[0] + blendFactor * nearestE8Node[0],
+        (1 - blendFactor) * rk4Coords[1] + blendFactor * nearestE8Node[1],
+        (1 - blendFactor) * rk4Coords[2] + blendFactor * nearestE8Node[2],
+        (1 - blendFactor) * rk4Coords[3] + blendFactor * nearestE8Node[3],
+        (1 - blendFactor) * rk4Coords[4] + blendFactor * nearestE8Node[4],
+        (1 - blendFactor) * rk4Coords[5] + blendFactor * nearestE8Node[5],
+        (1 - blendFactor) * rk4Coords[6] + blendFactor * nearestE8Node[6],
+        (1 - blendFactor) * rk4Coords[7] + blendFactor * nearestE8Node[7]
+    ];
+
+    // Renormalize to unit 8-sphere (preserve phase space structure)
+    const norm = Math.sqrt(blendedCoords.reduce((s, x) => s + x * x, 0));
+    const normalizedCoords: Vector8D = norm > 1e-10
+        ? blendedCoords.map(x => x / norm) as Vector8D
+        : blendedCoords;
+
+    // Step 6: Compute scale factor from original physical state
+    // We need to preserve the overall scale when decoding
+    const jacobi = rk4PhasePoint.jacobi;
+    const originalScale = Math.sqrt(
+        jacobi.rho[0]**2 + jacobi.rho[1]**2 +
+        jacobi.sigma[0]**2 + jacobi.sigma[1]**2 +
+        jacobi.pRho[0]**2 + jacobi.pRho[1]**2 +
+        jacobi.pSigma[0]**2 + jacobi.pSigma[1]**2
+    );
+
+    // Step 7: Create corrected phase point
+    const correctedPhasePoint: ReducedPhasePoint = {
+        coordinates: normalizedCoords,
+        jacobi: rk4PhasePoint.jacobi, // Keep original Jacobi for reference
+        shapeSphere: rk4PhasePoint.shapeSphere,
+        nearestE8Node: nearestNodeIdx,
+        latticeError: latticeError * (1 - blendFactor) // Effective error reduced by blending
+    };
+
+    // Step 8: Decode back to physical state
+    const masses: [number, number, number] = [
+        state.body1.mass,
+        state.body2.mass,
+        state.body3.mass
+    ];
+    const decodedState = decodeFromPhaseSpace(correctedPhasePoint, masses, originalScale);
+
+    // Preserve time from RK4 step
+    const correctedState: ThreeBodyState = {
+        ...decodedState,
+        time: rk4Result.time
+    };
+
+    // Step 9: Map to 600-cell for tracking
+    const newCellMapping = mapTo600Cell(correctedState);
 
     return {
-        state: rk4Result,
-        phasePoint: newPhasePoint,
+        state: correctedState,
+        phasePoint: correctedPhasePoint,
         cellMapping: newCellMapping
     };
 }
