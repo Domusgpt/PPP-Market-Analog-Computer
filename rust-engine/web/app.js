@@ -91,14 +91,18 @@ function initGL(canvas) {
     gl.shaderSource(vs, vsSource);
     gl.compileShader(vs);
     if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) {
-        console.error('VS error:', gl.getShaderInfoLog(vs));
+        const err = 'VS error: ' + gl.getShaderInfoLog(vs);
+        console.error(err);
+        showDebugOnPage(err);
     }
 
     const fs = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fs, fsSource);
     gl.compileShader(fs);
     if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
-        console.error('FS error:', gl.getShaderInfoLog(fs));
+        const err = 'FS error: ' + gl.getShaderInfoLog(fs);
+        console.error(err);
+        showDebugOnPage(err);
     }
 
     // Link program
@@ -107,8 +111,18 @@ function initGL(canvas) {
     gl.attachShader(program, fs);
     gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        console.error('Link error:', gl.getProgramInfoLog(program));
+        const err = 'Link error: ' + gl.getProgramInfoLog(program);
+        console.error(err);
+        showDebugOnPage(err);
     }
+
+    // Verify attribute/uniform locations
+    gl.useProgram(program);
+    const posLoc = gl.getAttribLocation(program, 'aPosition');
+    const colorLoc = gl.getAttribLocation(program, 'aColor');
+    const vpLoc = gl.getUniformLocation(program, 'uViewProjection');
+    const modelLoc = gl.getUniformLocation(program, 'uModel');
+    console.log('Shader locations - pos:', posLoc, 'color:', colorLoc, 'vp:', vpLoc, 'model:', modelLoc);
 
     // Create buffers
     vertexBuffer = gl.createBuffer();
@@ -116,7 +130,7 @@ function initGL(canvas) {
     indexBuffer = gl.createBuffer();
 
     // Setup GL state
-    gl.enable(gl.DEPTH_TEST);
+    gl.disable(gl.DEPTH_TEST);  // Disabled temporarily for debugging
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.clearColor(0.02, 0.02, 0.05, 1.0);
