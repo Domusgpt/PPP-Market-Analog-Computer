@@ -28,7 +28,7 @@
  */
 
 import { Vector4D, MATH_CONSTANTS } from '../../types/index.js';
-// Note: Lattice24 import removed - using local 24-cell generation
+import { getDefaultLattice, Lattice24 } from './Lattice24.js';
 
 // =============================================================================
 // TYPES
