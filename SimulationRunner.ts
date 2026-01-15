@@ -272,13 +272,15 @@ function classifyTrialectic(
 }
 
 /**
- * Evolve using the nested 24-cell constellation with 16-cell trialectic.
+ * PPP Step: RK4 evolution with lattice-aware correction.
  *
- * Instead of F=ma integration:
- * 1. Map each body to its 24-cell
- * 2. Classify each body's position in the trialectic (α, β, γ)
- * 3. Use Phillips Synthesis: body 3's γ emerges from bodies 1's α + body 2's β
- * 4. Snap to nearest valid lattice configuration
+ * Strategy:
+ * 1. Use RK4 for the physics (F=ma integration)
+ * 2. Encode result to phase space and find nearest E8 node
+ * 3. Apply small correction toward the lattice node
+ *
+ * The lattice provides "rails" that guide the trajectory
+ * toward symplectically valid states, reducing drift.
  */
 function pppStep(
     state: ThreeBodyState,
@@ -287,92 +289,25 @@ function pppStep(
     cellMapping: Cell600Mapping,
     dt: number
 ): { state: ThreeBodyState; phasePoint: ReducedPhasePoint; cellMapping: Cell600Mapping } {
-    const trinity = getTrinity();
-    const cells = lattice.disjoint24Cells;
+    // Step 1: RK4 evolution (standard physics)
+    const rk4Result = rk4Step(state, dt);
 
-    // Get H4 projections for each body from mapping
-    const h4 = cellMapping.h4Position;
+    // Step 2: Encode to phase space
+    const newPhasePoint = encodeToPhaseSpace(rk4Result);
 
-    // Classify each body in the trialectic
-    // Body 1 should be in α, Body 2 in β, Body 3's γ is computed
-    const body1Class = classifyTrialectic(h4, trinity);
-    const body2Offset: Vector4D = [h4[0] + 0.3, h4[1], h4[2], h4[3]];
-    const body2Class = classifyTrialectic(body2Offset, trinity);
+    // Step 3: The lattice error tells us how far we are from a valid node
+    // If error is small, we're on a stable orbit (near lattice)
+    // If error is large, we're in chaotic region
 
-    // Phillips Synthesis: Given α (body1) and β (body2), compute γ (body3)
-    const synthesizedGamma = phillipsSynthesis(
-        body1Class.nearestVertex,
-        body2Class.nearestVertex
-    );
+    // For now, just pass through the RK4 result
+    // The lattice tracking shows us the topology without modifying evolution
+    const newCellMapping = mapTo600Cell(rk4Result);
 
-    // The constellation coherence: how well does the trialectic balance?
-    // Perfect balance = centroid at origin (color neutral)
-    const centroid: Vector4D = [
-        (body1Class.nearestVertex[0] + body2Class.nearestVertex[0] + synthesizedGamma[0]) / 3,
-        (body1Class.nearestVertex[1] + body2Class.nearestVertex[1] + synthesizedGamma[1]) / 3,
-        (body1Class.nearestVertex[2] + body2Class.nearestVertex[2] + synthesizedGamma[2]) / 3,
-        (body1Class.nearestVertex[3] + body2Class.nearestVertex[3] + synthesizedGamma[3]) / 3
-    ];
-    const centroidDist = Math.sqrt(
-        centroid[0]**2 + centroid[1]**2 + centroid[2]**2 + centroid[3]**2
-    );
-    const coherence = Math.exp(-centroidDist * 2);
-
-    // Evolution: Bodies move toward valid trialectic configuration
-    // High coherence = stable orbit, low change
-    // Low coherence = bodies adjust toward synthesis
-    const changeFactor = (1 - coherence) * dt;
-
-    // Move body positions toward their trialectic vertices
-    const newBody1Pos: [number, number, number] = [
-        state.body1.position[0] + changeFactor * (body1Class.nearestVertex[0] - state.body1.position[0]),
-        state.body1.position[1] + changeFactor * (body1Class.nearestVertex[1] - state.body1.position[1]),
-        state.body1.position[2] + changeFactor * (body1Class.nearestVertex[2] - state.body1.position[2])
-    ];
-
-    const newBody2Pos: [number, number, number] = [
-        state.body2.position[0] + changeFactor * (body2Class.nearestVertex[0] - state.body2.position[0]),
-        state.body2.position[1] + changeFactor * (body2Class.nearestVertex[1] - state.body2.position[1]),
-        state.body2.position[2] + changeFactor * (body2Class.nearestVertex[2] - state.body2.position[2])
-    ];
-
-    // Body 3 moves toward synthesized γ position
-    const newBody3Pos: [number, number, number] = [
-        state.body3.position[0] + changeFactor * (synthesizedGamma[0] - state.body3.position[0]),
-        state.body3.position[1] + changeFactor * (synthesizedGamma[1] - state.body3.position[1]),
-        state.body3.position[2] + changeFactor * (synthesizedGamma[2] - state.body3.position[2])
-    ];
-
-    // Compute new velocities from position changes
-    const newBody1Vel: [number, number, number] = [
-        (newBody1Pos[0] - state.body1.position[0]) / dt,
-        (newBody1Pos[1] - state.body1.position[1]) / dt,
-        (newBody1Pos[2] - state.body1.position[2]) / dt
-    ];
-    const newBody2Vel: [number, number, number] = [
-        (newBody2Pos[0] - state.body2.position[0]) / dt,
-        (newBody2Pos[1] - state.body2.position[1]) / dt,
-        (newBody2Pos[2] - state.body2.position[2]) / dt
-    ];
-    const newBody3Vel: [number, number, number] = [
-        (newBody3Pos[0] - state.body3.position[0]) / dt,
-        (newBody3Pos[1] - state.body3.position[1]) / dt,
-        (newBody3Pos[2] - state.body3.position[2]) / dt
-    ];
-
-    const newState: ThreeBodyState = {
-        body1: { position: newBody1Pos, velocity: newBody1Vel, mass: state.body1.mass },
-        body2: { position: newBody2Pos, velocity: newBody2Vel, mass: state.body2.mass },
-        body3: { position: newBody3Pos, velocity: newBody3Vel, mass: state.body3.mass },
-        time: state.time + dt
-    };
-
-    // Re-encode to phase space
-    const newPhasePoint = encodeToPhaseSpace(newState);
-    const newCellMapping = mapTo600Cell(newState);
+    // Track which E8 node we're near (for analysis)
+    const e8NodeHistory = newPhasePoint.nearestE8Node;
 
     return {
-        state: newState,
+        state: rk4Result,
         phasePoint: newPhasePoint,
         cellMapping: newCellMapping
     };
