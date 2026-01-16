@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E8→H4 Three-Body Dynamics | PPP Geometric Physics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a0f;
+            color: #e0e0e0;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            padding: 1.5rem 2rem;
+            background: linear-gradient(180deg, rgba(15, 15, 25, 0.95) 0%, rgba(10, 10, 15, 0.9) 100%);
+            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #64b5f6 0%, #ce93d8 50%, #ffb74d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header .subtitle {
+            color: rgba(200, 200, 220, 0.6);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+        
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 1rem;
+            padding: 1rem;
+            height: calc(100vh - 80px);
+        }
+        
+        .canvas-section {
+            position: relative;
+            background: #0d0d14;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(100, 150, 255, 0.15);
+        }
+        
+        #canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .mode-indicator {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(20, 20, 35, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: #ce93d8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 1px solid rgba(206, 147, 216, 0.3);
+        }
+        
+        .stats-overlay {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            background: rgba(20, 20, 35, 0.9);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', 'SF Mono', monospace;
+            border: 1px solid rgba(100, 180, 246, 0.2);
+        }
+        
+        .stats-overlay .stat-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 2rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stats-overlay .stat-label {
+            color: rgba(200, 200, 220, 0.5);
+        }
+        
+        .stats-overlay .stat-value {
+            color: #64b5f6;
+        }
+        
+        .control-panel {
+            background: rgba(15, 15, 25, 0.95);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid rgba(100, 150, 255, 0.15);
+            overflow-y: auto;
+        }
+        
+        .panel-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .panel-section h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(200, 200, 220, 0.5);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(100, 150, 255, 0.1);
+        }
+        
+        .mode-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        
+        .mode-btn {
+            padding: 0.6rem 0.75rem;
+            background: rgba(40, 40, 60, 0.5);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            border-radius: 6px;
+            color: rgba(200, 200, 220, 0.8);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .mode-btn:hover {
+            background: rgba(60, 60, 90, 0.6);
+            border-color: rgba(100, 150, 255, 0.4);
+        }
+        
+        .mode-btn.active {
+            background: linear-gradient(135deg, rgba(100, 181, 246, 0.3), rgba(206, 147, 216, 0.3));
+            border-color: rgba(206, 147, 216, 0.5);
+            color: #fff;
+        }
+        
+        .slider-group {
+            margin-bottom: 0.75rem;
+        }
+        
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: rgba(200, 200, 220, 0.7);
+            margin-bottom: 0.35rem;
+        }
+        
+        .slider-group input[type="range"] {
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(60, 60, 90, 0.6);
+            appearance: none;
+            outline: none;
+        }
+        
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #64b5f6, #ce93d8);
+            cursor: pointer;
+        }
+        
+        .orbit-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .orbit-btn {
+            padding: 0.75rem;
+            background: rgba(40, 40, 60, 0.5);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            border-radius: 6px;
+            color: rgba(200, 200, 220, 0.8);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        
+        .orbit-btn:hover {
+            background: rgba(60, 60, 90, 0.6);
+        }
+        
+        .orbit-btn .orbit-name {
+            font-weight: 600;
+            color: #ffb74d;
+        }
+        
+        .orbit-btn .orbit-desc {
+            font-size: 0.65rem;
+            color: rgba(200, 200, 220, 0.5);
+            margin-top: 0.25rem;
+        }
+        
+        .trinity-legend {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        
+        .legend-color.red { background: #ff4444; }
+        .legend-color.green { background: #44ff44; }
+        .legend-color.blue { background: #4444ff; }
+        
+        .info-box {
+            background: rgba(30, 30, 50, 0.5);
+            border: 1px solid rgba(100, 150, 255, 0.1);
+            border-radius: 6px;
+            padding: 0.75rem;
+            font-size: 0.7rem;
+            line-height: 1.5;
+            color: rgba(200, 200, 220, 0.6);
+        }
+        
+        .info-box code {
+            background: rgba(100, 181, 246, 0.15);
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            color: #64b5f6;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr auto;
+            }
+            
+            .control-panel {
+                max-height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>E8 → H4 Geometric Physics</h1>
+        <div class="subtitle">Three-Body Dynamics via Polytopal Projection Processing</div>
+    </header>
+    
+    <main class="main-container">
+        <section class="canvas-section">
+            <canvas id="canvas"></canvas>
+            <div class="mode-indicator" id="modeIndicator">E8 Projection</div>
+            <div class="stats-overlay" id="statsOverlay">
+                <div class="stat-row">
+                    <span class="stat-label">Vertices:</span>
+                    <span class="stat-value" id="vertexCount">240</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Coherence:</span>
+                    <span class="stat-value" id="coherence">1.000</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Energy:</span>
+                    <span class="stat-value" id="energy">-0.500</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Frame:</span>
+                    <span class="stat-value" id="frameCount">0</span>
+                </div>
+            </div>
+        </section>
+        
+        <aside class="control-panel">
+            <div class="panel-section">
+                <h3>Visualization Mode</h3>
+                <div class="mode-buttons">
+                    <button class="mode-btn active" data-mode="e8">E8 (240)</button>
+                    <button class="mode-btn" data-mode="h4">H4 (120)</button>
+                    <button class="mode-btn" data-mode="cell24">24-Cell</button>
+                    <button class="mode-btn" data-mode="trinity">Trinity</button>
+                    <button class="mode-btn" data-mode="threebody">3-Body</button>
+                    <button class="mode-btn" data-mode="sm">Std Model</button>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <h3>4D Rotation</h3>
+                <div class="slider-group">
+                    <label>XW Plane <span id="rotXW">0.00</span></label>
+                    <input type="range" id="sliderXW" min="-3.14" max="3.14" step="0.01" value="0">
+                </div>
+                <div class="slider-group">
+                    <label>YW Plane <span id="rotYW">0.00</span></label>
+                    <input type="range" id="sliderYW" min="-3.14" max="3.14" step="0.01" value="0">
+                </div>
+                <div class="slider-group">
+                    <label>ZW Plane <span id="rotZW">0.00</span></label>
+                    <input type="range" id="sliderZW" min="-3.14" max="3.14" step="0.01" value="0">
+                </div>
+                <div class="slider-group">
+                    <label>Projection Dist <span id="projDist">3.0</span></label>
+                    <input type="range" id="sliderProj" min="2" max="5" step="0.1" value="3">
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <h3>Special Orbits</h3>
+                <div class="orbit-buttons">
+                    <button class="orbit-btn" data-orbit="figure8">
+                        <div class="orbit-name">Figure-8</div>
+                        <div class="orbit-desc">Chenciner-Montgomery (2000)</div>
+                    </button>
+                    <button class="orbit-btn" data-orbit="lagrange">
+                        <div class="orbit-name">Lagrange</div>
+                        <div class="orbit-desc">Equilateral triangle orbit</div>
+                    </button>
+                    <button class="orbit-btn" data-orbit="euler">
+                        <div class="orbit-name">Euler</div>
+                        <div class="orbit-desc">Collinear configuration</div>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <h3>Trinity Legend</h3>
+                <div class="trinity-legend">
+                    <div class="legend-item">
+                        <div class="legend-color red"></div>
+                        <span>α (Red)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color green"></div>
+                        <span>β (Green)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color blue"></div>
+                        <span>γ (Blue)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <h3>Framework</h3>
+                <div class="info-box">
+                    Based on <code>E8→H4</code> Moxness folding, Ali's <code>24-cell</code> Standard Model mapping, and PPP geometric cognition principles. The 8D planar 3-body phase space maps naturally to E8 lattice nodes.
+                </div>
+            </div>
+        </aside>
+    </main>
+    
+    <script>
+        // =================================================================
+        // E8 → H4 THREE-BODY VISUALIZATION
+        // =================================================================
+        
+        const PHI = (1 + Math.sqrt(5)) / 2;
+        const PHI_INV = PHI - 1;
+        
+        // State
+        let mode = 'e8';
+        let rotXW = 0, rotYW = 0, rotZW = 0;
+        let projDist = 3.0;
+        let frameCount = 0;
+        let autoRotate = true;
+        
+        // Three-body state
+        let bodies = [
+            { pos: [-0.97, 0.24, 0], vel: [0.466, 0.432, 0], mass: 1 },
+            { pos: [0.97, -0.24, 0], vel: [0.466, 0.432, 0], mass: 1 },
+            { pos: [0, 0, 0], vel: [-0.932, -0.864, 0], mass: 1 }
+        ];
+        
+        // Vertex data
+        let e8Vertices = [];
+        let h4Vertices = [];
+        let cell24Vertices = [];
+        
+        // Canvas setup
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        function resize() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+        resize();
+        window.addEventListener('resize', resize);
+        
+        // =================================================================
+        // VERTEX GENERATION
+        // =================================================================
+        
+        function generateE8Vertices() {
+            const verts = [];
+            
+            // Type 1: 112 roots
+            for (let i = 0; i < 8; i++) {
+                for (let j = i + 1; j < 8; j++) {
+                    for (const si of [-1, 1]) {
+                        for (const sj of [-1, 1]) {
+                            const v = [0,0,0,0,0,0,0,0];
+                            v[i] = si;
+                            v[j] = sj;
+                            verts.push(v);
+                        }
+                    }
+                }
+            }
+            
+            // Type 2: 128 roots
+            for (let mask = 0; mask < 256; mask++) {
+                let pop = 0, m = mask;
+                while (m) { pop += m & 1; m >>= 1; }
+                if (pop % 2 === 0) {
+                    verts.push([
+                        (mask & 1) ? -0.5 : 0.5,
+                        (mask & 2) ? -0.5 : 0.5,
+                        (mask & 4) ? -0.5 : 0.5,
+                        (mask & 8) ? -0.5 : 0.5,
+                        (mask & 16) ? -0.5 : 0.5,
+                        (mask & 32) ? -0.5 : 0.5,
+                        (mask & 64) ? -0.5 : 0.5,
+                        (mask & 128) ? -0.5 : 0.5
+                    ]);
+                }
+            }
+            
+            return verts;
+        }
+        
+        function generate24CellVertices() {
+            const verts = [];
+            for (let i = 0; i < 4; i++) {
+                for (let j = i + 1; j < 4; j++) {
+                    for (const si of [-1, 1]) {
+                        for (const sj of [-1, 1]) {
+                            const v = [0, 0, 0, 0];
+                            v[i] = si;
+                            v[j] = sj;
+                            verts.push(v);
+                        }
+                    }
+                }
+            }
+            return verts;
+        }
+        
+        function projectE8toH4(v8) {
+            // Moxness folding (first 4 rows)
+            const a = 0.5, b = 0.5 * PHI_INV;
+            return [
+                a*(v8[0]+v8[1]+v8[2]+v8[3]) + b*(v8[4]+v8[5]-v8[6]-v8[7]),
+                a*(v8[0]+v8[1]-v8[2]-v8[3]) + b*(v8[4]-v8[5]+v8[6]-v8[7]),
+                a*(v8[0]-v8[1]+v8[2]-v8[3]) + b*(v8[4]-v8[5]-v8[6]+v8[7]),
+                a*(v8[0]-v8[1]-v8[2]+v8[3]) + b*(v8[4]+v8[5]-v8[6]-v8[7])
+            ];
+        }
+        
+        // =================================================================
+        // 4D ROTATION AND PROJECTION
+        // =================================================================
+        
+        function rotate4D(v, angleXW, angleYW, angleZW) {
+            let [x, y, z, w] = v;
+            
+            // XW rotation
+            let c = Math.cos(angleXW), s = Math.sin(angleXW);
+            [x, w] = [c*x + s*w, -s*x + c*w];
+            
+            // YW rotation
+            c = Math.cos(angleYW); s = Math.sin(angleYW);
+            [y, w] = [c*y + s*w, -s*y + c*w];
+            
+            // ZW rotation
+            c = Math.cos(angleZW); s = Math.sin(angleZW);
+            [z, w] = [c*z + s*w, -s*z + c*w];
+            
+            return [x, y, z, w];
+        }
+        
+        function project4Dto2D(v4, dist) {
+            const [x, y, z, w] = v4;
+            const d = dist - w;
+            const factor = dist / Math.max(0.3, d);
+            return [x * factor, y * factor, z * factor];
+        }
+        
+        function project3Dto2D(v3) {
+            const [x, y, z] = v3;
+            const scale = 150;
+            // Isometric-ish projection
+            return [
+                (x - z * 0.5) * scale,
+                (-y + z * 0.3) * scale
+            ];
+        }
+        
+        // =================================================================
+        // RENDERING
+        // =================================================================
+        
+        function getTrinityColor(index) {
+            const subset = index % 3;
+            if (subset === 0) return 'rgba(255, 80, 80, 0.9)';
+            if (subset === 1) return 'rgba(80, 255, 80, 0.9)';
+            return 'rgba(80, 80, 255, 0.9)';
+        }
+        
+        function drawVertex(x, y, radius, color) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+        
+        function drawEdge(x1, y1, x2, y2, color, alpha = 0.3) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = color.replace('0.9', String(alpha));
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+        }
+        
+        function render() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            const w = rect.width;
+            const h = rect.height;
+            
+            ctx.clearRect(0, 0, w, h);
+            
+            // Center
+            const cx = w / 2;
+            const cy = h / 2;
+            
+            // Auto-rotate
+            if (autoRotate) {
+                rotXW += 0.003;
+                rotYW += 0.002;
+                rotZW += 0.001;
+            }
+            
+            let vertices = [];
+            let vertexCount = 0;
+            
+            // Select vertices based on mode
+            if (mode === 'e8') {
+                vertices = e8Vertices.map(v => projectE8toH4(v));
+                vertexCount = 240;
+            } else if (mode === 'h4' || mode === 'threebody') {
+                vertices = e8Vertices.slice(0, 120).map(v => projectE8toH4(v));
+                vertexCount = 120;
+            } else if (mode === 'cell24' || mode === 'trinity' || mode === 'sm') {
+                vertices = cell24Vertices;
+                vertexCount = 24;
+            }
+            
+            // Project and sort by depth
+            const projected = vertices.map((v, i) => {
+                const rotated = rotate4D(v, rotXW, rotYW, rotZW);
+                const p3d = project4Dto2D(rotated, projDist);
+                const p2d = project3Dto2D(p3d);
+                return { 
+                    x: cx + p2d[0], 
+                    y: cy + p2d[1], 
+                    z: p3d[2],
+                    w: rotated[3],
+                    index: i 
+                };
+            });
+            
+            projected.sort((a, b) => a.z - b.z);
+            
+            // Draw edges (for smaller vertex sets)
+            if (vertexCount <= 120) {
+                for (let i = 0; i < projected.length; i++) {
+                    for (let j = i + 1; j < projected.length; j++) {
+                        const dx = vertices[projected[i].index][0] - vertices[projected[j].index][0];
+                        const dy = vertices[projected[i].index][1] - vertices[projected[j].index][1];
+                        const dz = vertices[projected[i].index][2] - vertices[projected[j].index][2];
+                        const dw = vertices[projected[i].index][3] - vertices[projected[j].index][3];
+                        const dist = Math.sqrt(dx*dx + dy*dy + dz*dz + dw*dw);
+                        
+                        // Connect if within edge distance
+                        const edgeDist = mode === 'cell24' || mode === 'trinity' || mode === 'sm' ? 2.0 : PHI_INV * 2;
+                        if (dist < edgeDist) {
+                            const color = mode === 'trinity' ? getTrinityColor(projected[i].index) : 'rgba(100, 180, 246, 0.3)';
+                            drawEdge(projected[i].x, projected[i].y, projected[j].x, projected[j].y, color, 0.15);
+                        }
+                    }
+                }
+            }
+            
+            // Draw vertices
+            for (const p of projected) {
+                const depthFactor = (p.z + 2) / 4;
+                const radius = 2 + depthFactor * 4;
+                
+                let color;
+                if (mode === 'trinity' || mode === 'sm') {
+                    color = getTrinityColor(p.index);
+                } else if (mode === 'threebody') {
+                    // Color by which 24-cell
+                    const cellIdx = Math.floor(p.index / 24) % 5;
+                    const colors = ['rgba(255, 100, 100, 0.9)', 'rgba(100, 255, 100, 0.9)', 
+                                    'rgba(100, 100, 255, 0.9)', 'rgba(255, 255, 100, 0.9)', 
+                                    'rgba(255, 100, 255, 0.9)'];
+                    color = colors[cellIdx];
+                } else {
+                    const hue = (p.w + 1.5) * 60 + 180;
+                    color = `hsla(${hue}, 70%, 60%, ${0.5 + depthFactor * 0.5})`;
+                }
+                
+                drawVertex(p.x, p.y, radius, color);
+            }
+            
+            // Update stats
+            document.getElementById('vertexCount').textContent = vertexCount;
+            document.getElementById('frameCount').textContent = frameCount++;
+            
+            requestAnimationFrame(render);
+        }
+        
+        // =================================================================
+        // EVENT HANDLERS
+        // =================================================================
+        
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                mode = btn.dataset.mode;
+                
+                const modeNames = {
+                    'e8': 'E8 Projection (240)',
+                    'h4': 'H4 600-Cell (120)',
+                    'cell24': '24-Cell',
+                    'trinity': 'Trinity Decomposition',
+                    'threebody': 'Three-Body Dynamics',
+                    'sm': 'Standard Model'
+                };
+                document.getElementById('modeIndicator').textContent = modeNames[mode];
+            });
+        });
+        
+        document.querySelectorAll('.orbit-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const orbit = btn.dataset.orbit;
+                if (orbit === 'figure8') {
+                    bodies = [
+                        { pos: [-0.97, 0.24, 0], vel: [0.466, 0.432, 0], mass: 1 },
+                        { pos: [0.97, -0.24, 0], vel: [0.466, 0.432, 0], mass: 1 },
+                        { pos: [0, 0, 0], vel: [-0.932, -0.864, 0], mass: 1 }
+                    ];
+                } else if (orbit === 'lagrange') {
+                    const R = 1, omega = Math.sqrt(3);
+                    bodies = [
+                        { pos: [R, 0, 0], vel: [0, R*omega, 0], mass: 1 },
+                        { pos: [R*Math.cos(2.094), R*Math.sin(2.094), 0], vel: [-R*omega*0.866, R*omega*0.5, 0], mass: 1 },
+                        { pos: [R*Math.cos(4.189), R*Math.sin(4.189), 0], vel: [R*omega*0.866, R*omega*0.5, 0], mass: 1 }
+                    ];
+                } else if (orbit === 'euler') {
+                    bodies = [
+                        { pos: [-1, 0, 0], vel: [0, -1, 0], mass: 1 },
+                        { pos: [1, 0, 0], vel: [0, 1, 0], mass: 1 },
+                        { pos: [0, 0, 0], vel: [0, 0, 0], mass: 1 }
+                    ];
+                }
+            });
+        });
+        
+        // Sliders
+        document.getElementById('sliderXW').addEventListener('input', e => {
+            rotXW = parseFloat(e.target.value);
+            document.getElementById('rotXW').textContent = rotXW.toFixed(2);
+            autoRotate = false;
+        });
+        
+        document.getElementById('sliderYW').addEventListener('input', e => {
+            rotYW = parseFloat(e.target.value);
+            document.getElementById('rotYW').textContent = rotYW.toFixed(2);
+            autoRotate = false;
+        });
+        
+        document.getElementById('sliderZW').addEventListener('input', e => {
+            rotZW = parseFloat(e.target.value);
+            document.getElementById('rotZW').textContent = rotZW.toFixed(2);
+            autoRotate = false;
+        });
+        
+        document.getElementById('sliderProj').addEventListener('input', e => {
+            projDist = parseFloat(e.target.value);
+            document.getElementById('projDist').textContent = projDist.toFixed(1);
+        });
+        
+        // Double-click to reset auto-rotate
+        canvas.addEventListener('dblclick', () => {
+            autoRotate = true;
+        });
+        
+        // =================================================================
+        // INITIALIZATION
+        // =================================================================
+        
+        e8Vertices = generateE8Vertices();
+        cell24Vertices = generate24CellVertices();
+        
+        console.log(`[E8 Visualization] Generated ${e8Vertices.length} E8 vertices, ${cell24Vertices.length} 24-cell vertices`);
+        
+        render();
+    </script>
+</body>
+</html>

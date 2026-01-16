@@ -1,0 +1,332 @@
+﻿The Trinity Refactor: Architectural Deconstruction and Toposophic Reorientation of the Chronomorphic Polytopal Engine
+1. Introduction: The Geometric Necessity of Refactoring
+The intersection of computational geometry and music theory has historically relied on static, low-dimensional models to represent harmonic relationships. From the Euler Tonnetz, which maps pitch classes to a two-dimensional simplicial complex of triangles, to the generalized orbifolds proposed by Dmitri Tymoczko, the primary objective has been to spatialise the abstract notion of "tonal distance." However, these models often suffer from a determinism that fails to capture the fluid, probabilistic nature of post-tonal, jazz, and algorithmic composition. The Chronomorphic Polytopal Engine (CPE) was conceived to address this by lifting harmonic representation into four-dimensional space, specifically utilizing the 24-cell (icositetrachoron) as its fundamental lattice. Yet, in its monolithic form, the 24-cell creates a rigid "crystalline" harmony that resists the modeling of ambiguity.
+This report details the theoretical and technical specification for the "Trinity Refactor," a comprehensive architectural overhaul of the CPE. The core hypothesis of this refactor is that harmonic ambiguity—the phenomenon where a chord functions simultaneously in multiple keys or modes—is best modeled not as a point in space, but as a superposition of states distributed across specific sub-polytopes. By decomposing the 24-cell into three interlocking, mutually orthogonal 16-cells (designated Alpha $\alpha$, Beta $\beta$, and Gamma $\gamma$), we establish a coordinate system capable of representing Harmonic Phase Shifts and Multi-State Superposition.
+The 24-cell is the only regular convex polytope with no analogue in three dimensions, making it a unique object for modeling complex high-dimensional relationships.1 It is composed of 24 octahedral cells and 24 vertices, and possesses the exceptional property of being self-dual.2 This self-duality implies that the geometric relationships observed in the vertex-first projection are mirrored in the cell-first projection, allowing for a recursive depth in harmonic modeling. However, the monolithic treatment of its 24 vertices treats all harmonic excursions as equal. The Trinity Refactor breaks this symmetry. By exploiting the fact that the symmetry group of the 16-cell ($B_4$) is a subgroup of index 3 within the 24-cell's symmetry group ($F_4$), we can partition the harmonic space into three distinct "layers" or "phases".3
+This report will exhaustively cover the geometric derivations of the decomposition, the music-theoretic mapping of the Alpha/Beta/Gamma sets to neo-Riemannian transformations, the application of Topological Data Analysis (TDA) to quantify harmonic voids using Betti numbers, and the computational implementation of this engine using WebAssembly (WASM) and the Ripser library for real-time performance. We posit that this refactor transforms the CPE from a passive visualization tool into an active generative system capable of navigating the "measurable 4-dimensional interstices" 3 of the harmonic envelope.
+________________
+2. Geometric Foundations: The 24-Cell and the Trinity Decomposition
+To successfully implement the Trinity Refactor, one must first master the intricate coordinate geometry of the 24-cell and the precise algorithm for its decomposition. The 24-cell acts as the "master lattice," but its functional utility in the CPE is derived from the interplay of its constituent 16-cells.
+2.1. The 24-Cell: Properties and Coordinate Systems
+The 24-cell is the fourth in the sequence of six convex regular 4-polytopes. It can be constructed as the rectification of the 16-cell or by adding the vertices of the dual 24-cell to the 24-cell itself.4 Its 24 vertices form the root system of the $D_4$ lattice, which is the densest possible lattice packing of hyperspheres in four dimensions.6 This property is crucial for the CPE, as it ensures that the "harmonic distance" between adjacent chords is minimized and uniform, creating an "optimal" space for voice leading.
+The vertices of a standard, origin-centered 24-cell with radius $\sqrt{2}$ are given by all permutations of coordinates and sign changes of the vector:
+
+
+
+
+$$(\pm 1, \pm 1, 0, 0)$$
+
+
+This generates exactly 24 vertices.
+Let us enumerate the combinatorial explosion to confirm the vertex count, as this forms the addressable memory space of the CPE.
+There are $\binom{4}{2} = 6$ ways to place two non-zero coordinates in a 4-vector.
+For each placement, there are $2^2 = 4$ sign combinations (++, +-, -+, --).
+$6 \times 4 = 24$ vertices.
+This coordinate system is superior to the $(\pm 1/2, \pm 1/2, \pm 1/2, \pm 1/2)$ definition often used for the dual 24-cell or the Hurwitz integer definition, because the integer coordinates $(\pm 1, \pm 1, 0, 0)$ map cleanly to computational array indices and allow for efficient integer arithmetic in the DSP (Digital Signal Processing) stage of the engine.7
+2.2. The Partitioning Algorithm: Alpha, Beta, Gamma
+The core mechanism of the Trinity Refactor is the partitioning of these 24 vertices into three disjoint sets of eight vertices. Each set of eight vertices must form a regular 16-cell (or 4-orthoplex). A 16-cell is the 4D analogue of the octahedron; its vertices are defined by permutations of $(\pm 1, 0, 0, 0)$ in a standard frame, but within the rotated frame of the 24-cell, they take on a specific interleaved structure.8
+We partition the vertices based on the orthogonality of their axes pairs. The six possible axis pairs for the non-zero coordinates are:
+1. $(x, y)$ - Indices 1, 2
+2. $(z, w)$ - Indices 3, 4
+3. $(x, z)$ - Indices 1, 3
+4. $(y, w)$ - Indices 2, 4
+5. $(x, w)$ - Indices 1, 4
+6. $(y, z)$ - Indices 2, 3
+The decomposition pairs these axes such that the resulting vertices are mutually orthogonal or antipodal, satisfying the geometric requirements of the cross-polytope.
+2.2.1. The Alpha ($\alpha$) 16-Cell
+The Alpha cell acts as the "Prime" harmonic phase. We assign it the axis pairs $(1,2)$ and $(3,4)$.
+* Subgroup $\alpha_1$: Permutations of $(\pm 1, \pm 1, 0, 0)$. There are 4 such vertices: $(1,1,0,0), (1,-1,0,0), (-1,1,0,0), (-1,-1,0,0)$. Geometrically, these form a square in the $xy$-plane.
+* Subgroup $\alpha_2$: Permutations of $(0, 0, \pm 1, \pm 1)$. There are 4 such vertices: $(0,0,1,1), (0,0,1,-1), (0,0,-1,1), (0,0,-1,-1)$. Geometrically, these form a square in the $zw$-plane.
+Because the $xy$-plane and $zw$-plane are completely orthogonal in $\mathbb{R}^4$, every vector in $\alpha_1$ is orthogonal to every vector in $\alpha_2$. The union of two orthogonal squares in 4D forms the 16-cell. Thus, Alpha is a valid regular 16-cell.8
+2.2.2. The Beta ($\beta$) 16-Cell
+The Beta cell represents the first phase shift. We assign it the axis pairs $(1,3)$ and $(2,4)$.
+* Subgroup $\beta_1$: Permutations of $(\pm 1, 0, \pm 1, 0)$. Vertices like $(1,0,1,0)$.
+* Subgroup $\beta_2$: Permutations of $(0, \pm 1, 0, \pm 1)$. Vertices like $(0,1,0,1)$.
+This set also forms a valid 16-cell, rotated relative to Alpha.
+2.2.3. The Gamma ($\gamma$) 16-Cell
+The Gamma cell represents the second phase shift. We assign it the axis pairs $(1,4)$ and $(2,3)$.
+* Subgroup $\gamma_1$: Permutations of $(\pm 1, 0, 0, \pm 1)$. Vertices like $(1,0,0,1)$.
+* Subgroup $\gamma_2$: Permutations of $(0, \pm 1, \pm 1, 0)$. Vertices like $(0,1,1,0)$.
+This partition is exhaustive ($8+8+8 = 24$) and disjoint. No vertex appears in more than one 16-cell. This proves that the 24-cell is a compound of three 16-cells.2
+2.3. Symmetry Groups and The "Trinity Index"
+The mathematical justification for this refactor lies in Group Theory. The symmetry group of the 24-cell is the Coxeter group $F_4$, which has an order of 1152. The symmetry group of a single 16-cell is the hyperoctahedral group $B_4$, with an order of 384.3
+If we consider the stabilizer of the decomposition (the set of operations that map the Alpha cell to itself, the Beta to itself, etc.), we correspond to the subgroup $B_4$. The index of $B_4$ in $F_4$ is:
+
+
+
+
+$$= \frac{|F_4|}{|B_4|} = \frac{1152}{384} = 3$$
+
+
+This index of 3 is the "Trinity Index." It implies that the full symmetry of the 24-cell is constructed by taking the symmetries of the 16-cell and adding operations that permute the three 16-cells cyclically ($\alpha \to \beta \to \gamma \to \alpha$).
+In the context of the CPE, this is foundational. It means that modulation (changing keys/modes) can be modeled as a permutation operation on the Trinity sets. A musical transformation that stays within Alpha is a "local" transformation (diatonic or intra-octatonic). A transformation that requires the full $F_4$ group moves the music from Alpha to Beta or Gamma, representing a fundamental Phase Shift in the harmonic fabric.
+2.4. Dual Tesseracts and Interstices
+The dual of the 24-cell is itself (self-dual). However, the duality of the decomposition is illuminating. The 16-cell is dual to the Tesseract (8-cell). Since the 24-cell decomposes into three 16-cells, its dual (the 24-cell) decomposes into three Tesseracts.3
+Snippet 3 highlights a critical feature for the CPE: "The 24-cell encloses the three tesseracts... leaving 4-dimensional space in some places between its envelope and each tesseract's envelope."
+Furthermore, "Thus there are measurable 4-dimensional interstices between the 24-cell, 8-cell and 16-cell envelopes. The shapes filling these gaps are 4-pyramids."
+These 4-pyramids are the geometric manifestation of Harmonic Ambiguity. In the Trinity Refactor, we do not view these gaps as empty space. Instead, we map them as Transition Zones. When the state vector of the engine traverses from an Alpha vertex to a Beta vertex, it must pass through this interstitial 4-pyramid. The volume of this pyramid represents the "energy barrier" or "tension" of the modulation. By calculating the trajectory through these interstices, the CPE can model smooth, morphing harmonies rather than abrupt chord changes.
+________________
+3. Harmonic Modeling: Phase Shifts and Superposition
+Having established the geometry, we must now rigorously map musical entities to this structure. The Trinity Refactor moves beyond the simple "Vertex = Chord" mapping to a probabilistic model where harmonic function is determined by the active 16-cell layer.
+3.1. Neo-Riemannian Mapping and the Trinity Sets
+Standard Neo-Riemannian theory utilizes the PLR group (Parallel, Leading-tone, Relative) to transform triads.10 These transformations form a group that acts simply transitively on the set of 24 major and minor triads. This creates a natural bijection between the 24 triads and the 24 vertices of the 24-cell.
+To implement the Trinity Refactor, we must decide which 8 triads belong to Alpha, Beta, and Gamma.
+The 16-cell has 8 vertices. A natural candidate for a harmonic set of size 8 is the Octatonic Collection (Diminished Scale).
+An Octatonic scale (e.g., $C, C\sharp, E\flat, E, F\sharp, G, A, B\flat$) is generated by two diminished seventh chords. It contains a specific subset of triads.
+However, there are only 3 distinct Octatonic collections in the 12-tone system ($OCT_{0,1}, OCT_{1,2}, OCT_{2,3}$). This matches the Trinity index of 3 perfectly.
+The Trinity-Octatonic Map:
+* Alpha 16-Cell: Represents the harmonic space of Octatonic Collection I ($C, C\sharp...$). The 8 vertices map to the 8 triads (4 Major, 4 Minor) diatonic to this scale (e.g., C, Cm, Eb, Ebm, F#, F#m, A, Am).
+* Beta 16-Cell: Represents Octatonic Collection II.
+* Gamma 16-Cell: Represents Octatonic Collection III.
+This mapping is powerful because the Octatonic scale is the "scale of limited transposition" par excellence, often used by Messiaen, Stravinsky, and Bartok to suspend tonality.5 By assigning each 16-cell to an Octatonic collection, the CPE becomes an engine for Octatonic Phase Shifting.
+3.2. Phase Shifts: The Mechanism of Modulation
+In the Trinity Refactor, a Phase Shift is defined as the movement of the harmonic center of gravity from one 16-cell to another. This models modulation not as a change of key note (e.g., C to G), but as a change of harmonic universe.
+* Locked Phase: If the music cycles through $C \to A \to F\sharp \to E\flat$, the engine detects all vertices belonging to Alpha. The system is in "Alpha Phase." The topology is closed and stable.
+* Phase Shift: If the voice leading moves from $C$ (Alpha) to $B$ (Beta), the engine detects a jump across the Trinity partition. This is a Phase Shift.
+* CPE Logic: The engine calculates the Harmonic Distance 12 of this shift. Since Alpha and Beta are orthogonal sets in the $D_4$ lattice, a shift represents a maximal change in harmonic color (a "chromatic" modulation in the truest sense).
+This aligns with observations in Snippet 27 regarding the "Natural/Sharp/Flat" axes. The Trinity decomposition creates axes of stability. Alpha might be the "Natural" axis, while Beta and Gamma represent the "Sharp" and "Flat" directions of deviation, modeled as orthogonal displacements in 4D.
+3.3. Multi-State Superposition
+The most radical innovation of the Trinity Refactor is the modeling of Superposition. Traditional theory demands that a chord be analyzed as either V/V or I. The CPE models it as both, weighted by probability.
+We define the Trinity State Vector ($\Psi$) as a normalized 3-component vector:
+
+
+
+
+$$\Psi = [ w_\alpha, w_\beta, w_\gamma ]$$
+
+
+where $w_x$ represents the activation energy of that 16-cell.
+* Distinct State: $$ - The music is clearly in Alpha (Octatonic I).
+* Ambiguous State: $[0.5, 0.5, 0]$ - The music is pivoting between Alpha and Beta. This occurs, for instance, with the French Augmented Sixth chord, which is a subset of the Whole Tone scale and intersects two Octatonic collections. In the 24-cell, this chord would lie in the "interstice" or 4-pyramid connecting an Alpha vertex and a Beta vertex.
+* Total Singularity: $[0.33, 0.33, 0.33]$ - This is the "Deep Void".14 The harmonic function is maximally entropic. This occurs with the full Chromatic scale or clusters that defy octatonic categorization.
+The CPE uses this vector to drive generative algorithms. If the user requests "high ambiguity," the engine navigates towards vertices that equalize the Trinity weights, effectively "surfing" the interstices of the 24-cell.
+________________
+4. Topological Data Analysis (TDA) of Harmonic Space
+To operationalize "ambiguity" and "structure" as computable metrics, the Trinity Refactor integrates Topological Data Analysis (TDA). TDA provides a mathematical toolkit for quantifying the shape of data, allowing the engine to "listen" to the topology of its own output.15
+4.1. Persistent Homology and the Filtration Process
+The engine treats the active musical buffer (the last $N$ seconds of notes) as a Point Cloud $P$ in the 4-dimensional space of the 24-cell. We apply Persistent Homology to this point cloud.
+The process involves constructing a Vietoris-Rips Complex (or Rips Complex).
+1. Input: A set of points (musical events) in $\mathbb{R}^4$.
+2. Filtration: We expand balls of radius $\epsilon$ around each point.
+3. Simplicial Complex: When balls overlap, we draw edges (1-simplex), triangles (2-simplex), and tetrahedra (3-simplex) between the centers.
+4. Persistence: We track the birth and death of topological features as $\epsilon$ increases from 0 to $\infty$.
+This generates a Persistence Barcode or Diagram, which the engine analyzes for three specific features, known as Betti Numbers.18
+4.2. Betti Numbers: The Metrics of Musical Shape
+The Trinity Refactor assigns specific musical semantics to the first three Betti numbers ($\beta_0, \beta_1, \beta_2$).
+Betti Number
+	Topological Meaning
+	Musical Interpretation in CPE
+	Trinity Context
+	$\beta_0$
+	Connected Components
+	Texture/Cohesion. High $\beta_0$ means disjointed, staccato clusters. Low $\beta_0$ means a unified "wall of sound."
+	Measures if the active notes are confined to one 16-cell or scattered across all three.
+	$\beta_1$
+	1D Loops (Holes)
+	Cycles/Repetition. Persistent $\beta_1$ features indicate cyclic chord progressions (e.g., ii-V-I loops or Neo-Riemannian PLR cycles).
+	A loop traversing $\alpha \to \beta \to \gamma \to \alpha$ represents a "Grand Cycle" of the Trinity.
+	$\beta_2$
+	2D Voids (Cavities)
+	Harmonic Ambiguity. A trapped volume of space. The music encircles a tonal center but never plays it ("Negative Harmony").
+	The Critical Metric. A persistent $\beta_2$ void usually indicates the music is orbiting the "interstices" between the 16-cells.
+	4.3. The Significance of Betti-2 ($\beta_2$): The Void
+The focus on $\beta_2$ is a distinguishing feature of the Trinity Refactor. Snippet 28 notes that in neural decoding, $\beta_2$ features correspond to "non-communicating spaces" or regions where information does not flow. In music, a $\beta_2$ void represents a Stable Dissonance or a Tonal Problem.
+For example, if the engine generates a sequence of chords that forms a sphere in 4D space, the interior of that sphere is a Void. If the center of that sphere corresponds to the Tonic triad, the music is effectively "orbiting the tonic" without resolving.
+* High Persistence $\beta_2$: The ambiguity is deliberate and structural (e.g., Debussy's whole-tone passages).
+* Low Persistence $\beta_2$: The ambiguity is transient noise.
+The CPE uses the lifetime of $\beta_2$ features to control Tension. A long-lived void builds tension. The engine can then "collapse" the void by playing the chord at the geometric center of the cavity, forcing a resolution (Phase Shift to stability).
+________________
+5. Computational Architecture
+Implementing the Trinity Refactor requires a high-performance stack capable of 4D matrix algebra and real-time topological computation in a web environment.
+5.1. Core Tech Stack
+* Language: TypeScript (Application Logic) + C++ (Kernel).
+* Runtime: WebAssembly (WASM) for performance-critical paths.
+* TDA Library: Ripser.20
+* Graphics: Three.js (WebGL 2.0).22
+* Audio: Tone.js / Web Audio API.
+5.2. Topological Computation: Ripser vs. Gudhi
+The choice of TDA library is critical. We compared Gudhi 23 and Ripser.20
+* Gudhi: Comprehensive, supports many complex types (Alpha, Witness), but has a larger footprint and complex bindings for JS.24
+* Ripser: Specialized for Vietoris-Rips complexes. It computes Cohomology rather than Homology, which allows for substantial speedups (40x faster than Gudhi in some benchmarks) due to matrix sparsity optimizations.21 It also has a proven compilation path to WASM via Emscripten.25
+Decision: The CPE utilizes Ripser compiled to WASM. The "Trinity" engine passes a flattened upper-triangular distance matrix of the current note buffer to the WASM module, which returns the persistence pairs.
+Pseudocode for TDA Integration:
+
+
+TypeScript
+
+
+
+
+// TrinityEngine.ts
+
+import { RipserWASM } from './wasm/ripser';
+
+class HarmonicTopologist {
+   private ripser: RipserWASM;
+   private pointCloud: Float32Array; // 4D coordinates flattened
+
+   async analyzeTopology(activeNotes: Note): Promise<BettiProfile> {
+       // 1. Construct Distance Matrix (Euclidean in 4D)
+       const dMatrix = this.computeDistanceMatrix(activeNotes);
+
+       // 2. Pass to WASM
+       // Ripser expects a flattened upper-triangular matrix
+       const persistencePairs = await this.ripser.computeBarcode(dMatrix, {
+           dim: 2, // Compute up to Beta-2
+           threshold: 2.0 // Max filtration radius
+       });
+
+       // 3. Process Barcodes into Betti Lifetimes
+       const betti0 = this.extractLifetimes(persistencePairs, 0);
+       const betti1 = this.extractLifetimes(persistencePairs, 1);
+       const betti2 = this.extractLifetimes(persistencePairs, 2);
+
+       return {
+           cohesion: this.sumLifetimes(betti0),
+           cyclicity: this.maxLifetime(betti1),
+           ambiguity: this.maxLifetime(betti2) // The "Void" score
+       };
+   }
+}
+
+5.3. Visualization: 4D Stereographic Projection
+Visualizing the decomposed 24-cell requires projecting 4D coordinates $(x, y, z, w)$ into 3D space $(x', y', z')$. A simple orthogonal projection drops the $w$ coordinate, which flattens the 16-cells onto each other, obscuring the Trinity structure.
+The CPE employs Stereographic Projection, which preserves angles and gives a better sense of the "insideness" and "outsideness" of the 16-cells.22
+Shader Logic (GLSL):
+The projection formula maps a point $P = (x, y, z, w)$ on the hypersphere (radius $R$) to $P' = (x', y', z')$:
+
+
+
+
+$$P' = \frac{R}{R - w} \begin{pmatrix} x \\ y \\ z \end{pmatrix}$$
+
+
+This creates a visual effect where the 16-cell "at the pole" ($w \approx R$) expands to surround the viewer, while the antipodal 16-cell ($w \approx -R$) contracts into a dense kernel in the center.
+By assigning distinct colors (e.g., Alpha=Red, Beta=Green, Gamma=Blue) and applying this projection, the user can visually identify Phase Shifts: a modulation from Alpha to Beta appears as the Red structure folding inward while the Green structure expands to encompass the screen.
+5.4. Memory and Performance Considerations
+* WASM Memory: The Ripser module requires a shared ArrayBuffer. To avoid garbage collection overhead, the CPE pre-allocates a slab of memory for the distance matrix (e.g., sufficient for 128 active points).
+* Shader Uniforms: The 4D rotation matrix (a $4 \times 4$ matrix) is computed in JavaScript using geometric rotors and passed to the shader as a uniform mat4. This allows for smooth 4D rotation without re-computing vertex positions on the CPU.
+________________
+6. Compositional Applications: The "Ghost Frequency"
+The ultimate goal of the Trinity Refactor is generative composition. The engine allows for the detection and utilization of Ghost Frequencies.
+6.1. Defining Ghost Frequencies
+A "Ghost Frequency" is a musical pitch that is strongly implied by the topological structure of the current harmony but is not physically present.14
+In TDA terms, if a persistent $\beta_1$ loop or $\beta_2$ void exists, the "center" of that feature is the Ghost Frequency.
+For example, if the engine plays $C, E, G, B\flat$ (C7 chord), the topology might suggest a resolution to $F$. If $F$ is not played, it exists as a "negative space" or void. The geometry of the 24-cell allows us to calculate the coordinate of this void center.
+6.2. The Generative Loop
+1. Input: User plays a chord progression.
+2. Analysis: CPE calculates Trinity weights ($\Psi$) and Betti numbers.
+3. Diagnosis: "High $\beta_2$ ambiguity detected. State is stuck in Beta-Gamma interstice."
+4. Action: The engine identifies the "Ghost Vertex"—the vertex in the Alpha 16-cell that is equidistant from the current active nodes.
+5. Generation: The engine generates a melody note corresponding to that Ghost Vertex, collapsing the wavefunction and resolving the ambiguity.
+This creates a system that acts as an "Auto-Complete for Harmony," but one based on the rigorous topology of 4D space rather than simple statistical Markov chains.
+________________
+7. Conclusion
+The Trinity Refactor represents a paradigm shift for the Chronomorphic Polytopal Engine. By decomposing the 24-cell into the Alpha, Beta, and Gamma 16-cells, we gain a coordinate system that natively understands harmonic ambiguity and superposition. The integration of Persistent Homology via the Ripser library allows the engine to quantify the abstract qualities of musical texture—cohesion, cyclicity, and void-like ambiguity—transforming them into actionable data for generative composition.
+This refactor moves the CPE from a static map of chords to a dynamic, breathing topology. It acknowledges that in the post-tonal landscape, the "space between" the chords is just as significant as the chords themselves. Through the Trinity decomposition, we finally have the map to navigate these 4-dimensional interstices.
+________________
+Appendix A: Mathematical Reference
+A.1. Trinity Coordinate Lookup Table
+The following table defines the partition of the 24 vertices of the $D_4$ root system into the three Trinity 16-cells.
+Trinity Set
+	Sub-Group
+	Axis Pairs
+	Vertex Permutation Pattern
+	Count
+	Orthogonality Check
+	Alpha ($\alpha$)
+	$\alpha_{xy}$
+	$\{1, 2\}$
+	$(\pm 1, \pm 1, 0, 0)$
+	4
+	Orthogonal to $\alpha_{zw}$
+	
+
+	$\alpha_{zw}$
+	$\{3, 4\}$
+	$(0, 0, \pm 1, \pm 1)$
+	4
+	Orthogonal to $\alpha_{xy}$
+	Beta ($\beta$)
+	$\beta_{xz}$
+	$\{1, 3\}$
+	$(\pm 1, 0, \pm 1, 0)$
+	4
+	Orthogonal to $\beta_{yw}$
+	
+
+	$\beta_{yw}$
+	$\{2, 4\}$
+	$(0, \pm 1, 0, \pm 1)$
+	4
+	Orthogonal to $\beta_{xz}$
+	Gamma ($\gamma$)
+	$\gamma_{xw}$
+	$\{1, 4\}$
+	$(\pm 1, 0, 0, \pm 1)$
+	4
+	Orthogonal to $\gamma_{yz}$
+	
+
+	$\gamma_{yz}$
+	$\{2, 3\}$
+	$(0, \pm 1, \pm 1, 0)$
+	4
+	Orthogonal to $\gamma_{xw}$
+	Total
+	
+
+	
+
+	
+
+	24
+	
+
+	A.2. Group Structure
+* Symmetry of 24-Cell: $F_4$ (Order 1152)
+* Symmetry of 16-Cell: $B_4$ (Order 384)
+* Decomposition: The partition represents the cosets of $B_4$ in $F_4$.
+* Trinity Index: $ = 3$. The set of cosets is isomorphic to $S_3$ (permutation of 3 elements), representing the permutations of $\{ \alpha, \beta, \gamma \}$.
+A.3. TDA Metrics for Music
+Metric
+	Algorithm
+	Interpretation
+	Persistence Lifetime
+	$Death - Birth$
+	The "salience" or audibility of a feature. Short lifetime = noise; Long lifetime = structure.
+	Persistence Entropy
+	$E = -\sum p_i \log p_i$
+	The complexity of the harmonic texture. High entropy = chaotic/atonal; Low entropy = simple/diatonic.
+	Betti-2 Count
+	$\dim(H_2)$
+	The number of simultaneous harmonic ambiguities (voids).
+	Works cited
+1. Gems of Geometry, accessed January 10, 2026, https://people.iut.ac.ir/sites/default/files/users/samin/page_files/john_barnes_gems_of_geometrybookfi.org1_.pdf
+2. accessed January 10, 2026, https://www.qfbox.info/4d/24-cell#:~:text=An%20equivalent%20decomposition%20of%20the,16%2Dcell%20in%20the%20decomposition.
+3. 24-cell - Wikipedia, accessed January 10, 2026, https://en.wikipedia.org/wiki/24-cell
+4. 16-cell - Wikipedia, accessed January 10, 2026, https://en.wikipedia.org/wiki/16-cell
+5. 24-cell - Wikiversity, accessed January 10, 2026, https://en.wikiversity.org/wiki/24-cell
+6. 24-cell code - Error Correction Zoo, accessed January 10, 2026, https://errorcorrectionzoo.org/c/24cell
+7. A construction of magic 24-cells - arXiv, accessed January 10, 2026, https://arxiv.org/pdf/2002.11525
+8. The 24-Cell, accessed January 10, 2026, https://www.qfbox.info/4d/24-cell
+9. 16-cell - Wikiversity, accessed January 10, 2026, https://en.wikiversity.org/wiki/16-cell
+10. Neo-Riemannian Triadic Progressions – Open Music Theory - VIVA's Pressbooks, accessed January 10, 2026, https://viva.pressbooks.pub/openmusictheory/chapter/neo-riemannian-triadic-progressions/
+11. Can one measure the "distance" between chords? If so, how? - Music Stack Exchange, accessed January 10, 2026, https://music.stackexchange.com/questions/35855/can-one-measure-the-distance-between-chords-if-so-how
+12. Harmonic distance in intervals and chords - UPCommons, accessed January 10, 2026, https://upcommons.upc.edu/bitstreams/691cf968-e1c4-445e-8c1c-db6da520547f/download
+13. (PDF) Harmonic distance in intervals and chords - ResearchGate, accessed January 10, 2026, https://www.researchgate.net/publication/333126121_Harmonic_distance_in_intervals_and_chords
+14. From Moral Gravity to Betti-2 Voids: Composing the Topological Symphony of AI Governance - #5 by beethoven_symphony - CyberNative.AI, accessed January 10, 2026, https://cybernative.ai/t/from-moral-gravity-to-betti-2-voids-composing-the-topological-symphony-of-ai-governance/24979/5
+15. (PDF) Topological Analysis of Musical Transformation in Debussy's Clair de Lune, accessed January 10, 2026, https://www.researchgate.net/publication/395484308_Topological_Analysis_of_Musical_Transformation_in_Debussy's_Clair_de_Lune
+16. Harmonic Landscapes: A Framework for Musical Topology in High-Dimensional Data Analysis | by Brian Curry | Jan, 2026 | Medium, accessed January 10, 2026, https://medium.com/@brian-curry-research/harmonic-landscapes-a-framework-for-musical-topology-in-high-dimensional-data-analysis-daf686ac1b44
+17. Quantifying Music Complexity Using Topological Data Analysis - - ERN: Emerging Researchers National Conference in STEM, accessed January 10, 2026, https://emerging-researchers.org/projects/20106/
+18. Musical modeling through graphs and orbifolds, accessed January 10, 2026, http://repmus.ircam.fr/_media/moreno/MMIM_Bergomi_Tonnetz.pdf
+19. H1 persistent features of the resting-state connectome in healthy subjects - PMC, accessed January 10, 2026, https://pmc.ncbi.nlm.nih.gov/articles/PMC10270719/
+20. ripser - PyPI, accessed January 10, 2026, https://pypi.org/project/ripser/
+21. Ripser: efficient computation of Vietoris–Rips persistence barcodes - GitHub, accessed January 10, 2026, https://github.com/Ripser/ripser
+22. Polytopes and Coxeter Groups - GitHub Pages, accessed January 10, 2026, https://syntopia.github.io/Polytopia/polytopes.html
+23. An Introduction to Topological Data Analysis: Fundamental and Practical Aspects for Data Scientists - Frontiers, accessed January 10, 2026, https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2021.667963/full
+24. Node.js is showing error "node: /lib64/libm.so.6: version `GLIBC_2.27' not found (required by node)" #52241 - GitHub, accessed January 10, 2026, https://github.com/nodejs/node/issues/52241
+25. XY Model and Persistence, accessed January 10, 2026, https://nicksale.github.io/xy-model/
+26. Visualising higher-dimensional space- time and space-scale objects as projections to R - PeerJ, accessed January 10, 2026, https://peerj.com/articles/cs-123.pdf
+27. I made a discovery! I'm calling it "The Color Tree" : r/musictheory - Reddit, accessed January 10, 2026, https://www.reddit.com/r/musictheory/comments/1etydas/i_made_a_discovery_im_calling_it_the_color_tree/
+28. High-Dimensional Classification for Brain Decoding - ResearchGate, accessed January 10, 2026, https://www.researchgate.net/publication/274967308_High-Dimensional_Classification_for_Brain_Decoding/download
