@@ -4,8 +4,22 @@
  * Re-exports topological structures for the Chronomorphic Polytopal Engine.
  */
 
-// Original PPP topology
-export * from './Lattice24.js';
+// Original PPP topology (named exports to avoid computeCoherence conflict with Epistaorthognition)
+export {
+    Lattice24,
+    getDefaultLattice,
+    createLattice,
+    isInsideConvexHull,
+    findNearestVertex,
+    findKNearestVertices,
+    checkConvexity,
+    projectToConvexHull,
+    CIRCUMRADIUS,
+    EDGE_LENGTH,
+    INRADIUS,
+    NUM_VERTICES,
+    NUM_EDGES
+} from './Lattice24.js';
 export * from './Lattice24Provider.js';
 export * from './Simplex5.js';
 export * from './Hypercube8.js';
@@ -71,7 +85,7 @@ export {
 } from './ThreeBodyPhaseSpace.js';
 
 export {
-    // TrinityDecomposition
+    // TrinityDecomposition - Physics types (Ali)
     type ParticleType,
     type ColorCharge,
     type Generation,
@@ -79,6 +93,17 @@ export {
     type Cell16Subset,
     type TrinityDecomposition,
     type AliDecomposition,
+
+    // TrinityDecomposition - Musical types (Phillips)
+    type MusicalFunction,
+    type HarmonicPhase,
+    type OctatonicCollection,
+    type TrinityStateVector,
+    type Musical16Cell,
+    type MusicalTrialecticDecomposition,
+    type PhaseShift,
+
+    // Physics functions (Ali)
     computeTrinityDecomposition,
     computeAliDecomposition,
     phillipsSynthesis,
@@ -87,6 +112,15 @@ export {
     getParticlesByType,
     getParticlesByGeneration,
     getParticlesByColor,
+
+    // Musical functions (Phillips)
+    computeMusicalTrialectic,
+    computeTrinityStateVector,
+    classifyTrinityState,
+    detectPhaseShift,
+    mapThreeBodiesToTrinity,
+
+    // Vertex generation
     generate24CellVertices,
     generate16CellVertices,
     generate8CellVertices,
