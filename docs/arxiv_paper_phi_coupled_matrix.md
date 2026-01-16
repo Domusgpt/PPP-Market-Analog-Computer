@@ -1,6 +1,6 @@
 # Golden Ratio Coupling in the E₈ → H₄ Folding Matrix: Row Norm Identities and Emergent √5 Structure
 
-**Authors:** PPP Framework Research Collaboration
+**Author:** Paul Joseph Phillips, Clear Seas Solutions LLC (paul@clearseas.ai)
 
 **Date:** January 2026
 
@@ -376,4 +376,4 @@ All computations verify to machine precision (ε < 10⁻¹⁵).
 
 ---
 
-*Manuscript prepared January 2026*
+*Manuscript prepared January 2026 by Paul Joseph Phillips*

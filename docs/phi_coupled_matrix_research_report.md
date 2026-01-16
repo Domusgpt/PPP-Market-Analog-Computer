@@ -1,5 +1,7 @@
 # φ-Coupled E8 → H4 Projection Matrix: Complete Research Report
 
+**Author:** Paul Joseph Phillips
+**Affiliation:** Clear Seas Solutions LLC
 **Date:** 2026-01-16
 **Project:** PPP Framework (Polytopal Phase-space Projection)
 **Status:** Verified, Under Further Investigation
@@ -572,4 +574,4 @@ d = 2.141:  4 pairs  (within v0-v7)
 
 ---
 
-*PPP Framework Research — Clear Seas Solutions LLC*
+*Paul Joseph Phillips — Clear Seas Solutions LLC*
