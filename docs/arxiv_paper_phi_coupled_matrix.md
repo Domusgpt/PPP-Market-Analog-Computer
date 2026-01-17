@@ -83,12 +83,12 @@ The E₈ root system consists of 240 vectors in ℝ⁸:
 
 ### 2.3 H₄ Symmetry and Geometric Necessity of φ
 
-The Coxeter group H₄ is the symmetry group of the 600-cell. The 600-cell vertices include points of the form:
-- (±1, ±1, ±1, ±1)/2 (8 vertices)
-- (0, ±1, ±φ, ±1/φ)/2 and permutations (96 vertices)
-- (±1/φ, ±1, ±φ, 0)/2 and permutations (96 vertices)
+The Coxeter group H₄ is the symmetry group of the 600-cell. The 600-cell has 120 vertices in three types:
+- **Type 1:** Permutations of (±1, 0, 0, 0) — 8 vertices, **no φ**
+- **Type 2:** All (±½, ±½, ±½, ±½) — 16 vertices, **no φ**
+- **Type 3:** Even permutations of (0, ±½, ±φ/2, ±1/(2φ)) — 96 vertices, **contains φ**
 
-**The golden ratio appears in 192 of the 120 vertices.** Any projection matrix that maps E₈ roots to H₄-symmetric structures must incorporate φ to achieve this geometry. This is why the Moxness coefficients contain φ—it is required, not arbitrary.
+**The golden ratio appears in 96 of the 120 vertices** (all Type 3 vertices). Any projection matrix that maps E₈ roots to H₄-symmetric structures must incorporate φ to achieve this geometry. This is why the Moxness coefficients contain φ—it is required, not arbitrary.
 
 ---
 
@@ -194,11 +194,21 @@ The row and column norm patterns are *transposed*: where rows have 3−φ, the c
 - **det(U) = 0**
 - **rank(U) = 7**
 
-**Theorem 5 (Null Space).** The null space of **U** is one-dimensional, spanned by a vector with the linear dependency:
+**Theorem 5 (Null Space).** The right null space of **U** is one-dimensional, spanned by:
+
+$$\mathbf{v} = (0, 0, 0, 0, 1, 1, 1, 1)^T$$
+
+**Proof.** Direct computation verifies U**v** = **0**. The null vector has zeros in the first four components and ones in the last four, meaning:
+
+$$\sum_{j=4}^{7} \text{Col}_j = \mathbf{0}$$
+
+The last four columns of **U** sum to the zero vector. This confirms rank(**U**) = 7. □
+
+**Remark (Row Dependency).** The rows of **U** satisfy a distinct linear relationship:
 
 $$\varphi \cdot \text{Row}_0 - \varphi \cdot \text{Row}_3 - \text{Row}_4 + \text{Row}_7 = \mathbf{0}$$
 
-This relationship confirms **U** is a true projection that reduces dimension from 8 to 7.
+This left null space relationship involves φ as a coefficient, showing the golden ratio appears even in the matrix's dependency structure.
 
 ---
 
@@ -212,11 +222,17 @@ When E₈ roots (with components in {0, ±½, ±1}) are projected by **U**, the 
 |------|-------------|-------|----------------|
 | 0.382 | 1/φ² | 12 | = 2 − φ |
 | 0.618 | 1/φ | 8 | = φ − 1 |
+| 0.727 | √(3−φ)/φ | 4 | — |
+| 0.874 | √2/φ | 40 | — |
 | 1.000 | 1 | 16 | — |
+| 1.070 | √3/φ | 8 | — |
 | 1.176 | √(3−φ) | 72 | — |
+| 1.328 | √(5−2φ) | 8 | — |
 | 1.414 | √2 | 56 | — |
 | 1.618 | φ | 12 | — |
 | 1.732 | √3 | 4 | — |
+
+**Total: 240 roots** (complete E₈ projection)
 
 ### 5.2 Twin 16-Cells
 
