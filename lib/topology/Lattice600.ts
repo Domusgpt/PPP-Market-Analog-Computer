@@ -369,38 +369,191 @@ function computeEdges(vertices: Lattice600Vertex[]): Edge[] {
 }
 
 // =============================================================================
-// 24-CELL DECOMPOSITION
+// 24-CELL DECOMPOSITION (GROUP-THEORETIC)
 // =============================================================================
 
 /**
- * Decompose the 600-cell into 5 disjoint 24-cells.
+ * Quaternion multiplication for 4D vectors (as quaternions).
+ * q1 = (w1, x1, y1, z1), q2 = (w2, x2, y2, z2)
+ */
+function quaternionMultiply(q1: Vector4D, q2: Vector4D): Vector4D {
+    const [w1, x1, y1, z1] = q1;
+    const [w2, x2, y2, z2] = q2;
+
+    return [
+        w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2,
+        w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2,
+        w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2,
+        w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2,
+    ];
+}
+
+/**
+ * Quaternion conjugate (inverse for unit quaternions).
+ */
+function quaternionConjugate(q: Vector4D): Vector4D {
+    return [q[0], -q[1], -q[2], -q[3]];
+}
+
+/**
+ * Check if two 4D vectors are approximately equal.
+ */
+function vectors4DEqual(v1: Vector4D, v2: Vector4D, tol = 1e-4): boolean {
+    return Math.abs(v1[0] - v2[0]) < tol &&
+           Math.abs(v1[1] - v2[1]) < tol &&
+           Math.abs(v1[2] - v2[2]) < tol &&
+           Math.abs(v1[3] - v2[3]) < tol;
+}
+
+/**
+ * Find an element ω of order 10 in the binary icosahedral group 2I.
+ * This is needed for the proper coset decomposition 2I = 2T ∪ ω·2T ∪ ω²·2T ∪ ω³·2T ∪ ω⁴·2T.
+ */
+function findOmegaOrder10(vertices: Lattice600Vertex[]): Vector4D | null {
+    // Check Type 3 vertices (index 24 onwards) for an element with order 10
+    for (let i = 24; i < vertices.length; i++) {
+        const candidate = vertices[i].coordinates;
+        let power = candidate;
+
+        // Compute powers until we get back to identity (1,0,0,0)
+        for (let k = 1; k <= 20; k++) {
+            if (Math.abs(power[0] - 1) < 1e-6 &&
+                Math.abs(power[1]) < 1e-6 &&
+                Math.abs(power[2]) < 1e-6 &&
+                Math.abs(power[3]) < 1e-6) {
+                if (k === 10) {
+                    return candidate;
+                }
+                break;
+            }
+            power = quaternionMultiply(power, candidate);
+        }
+    }
+    return null;
+}
+
+/**
+ * Decompose the 600-cell into 5 disjoint 24-cells using proper group theory.
  *
- * This decomposition is crucial for the three-body problem:
- * - Body 1 maps to 24-cell A
- * - Body 2 maps to 24-cell B
- * - Body 3 maps to 24-cell C
- * - Remaining 2 cells can represent interaction potentials or virtual particles
+ * CORRECT METHOD: The 600-cell vertices are the binary icosahedral group 2I.
+ * The first 24 vertices (Type 1 + Type 2) form the binary tetrahedral group 2T.
+ * The cosets 2T, ω·2T, ω²·2T, ω³·2T, ω⁴·2T partition 2I into 5 disjoint 24-cells.
  *
- * The 5 disjoint 24-cells partition the 120 vertices:
- * 5 × 24 = 120
+ * This is crucial for the three-body problem:
+ * - Body 1 maps to 24-cell A (coset 2T)
+ * - Body 2 maps to 24-cell B (coset ω·2T)
+ * - Body 3 maps to 24-cell C (coset ω²·2T)
+ * - Remaining 2 cells for interaction potentials
+ *
+ * The 5 disjoint 24-cells partition the 120 vertices: 5 × 24 = 120
  */
 function computeDisjoint24Cells(vertices: Lattice600Vertex[]): Cell24Subset[] {
     const cells: Cell24Subset[] = [];
 
-    // The 600-cell can be partitioned into 5 disjoint 24-cells
-    // We use the vertex indices modulo 5 as a simple partitioning
-    // (In practice, this should use the proper geometric decomposition)
+    // Find ω with order 10 (ω⁵ = -1, ω¹⁰ = 1)
+    const omega = findOmegaOrder10(vertices);
 
-    // Better approach: use the compound symmetry
-    // The 600-cell has a compound of 5 24-cells where each 24-cell
-    // uses every 5th vertex in a specific ordering
+    if (!omega) {
+        console.warn('[Lattice600] Could not find ω with order 10, falling back to naive decomposition');
+        // Fallback to simple decomposition (less accurate)
+        return computeDisjoint24CellsNaive(vertices);
+    }
+
+    // The binary tetrahedral group 2T consists of the first 24 vertices (Type 1 + Type 2)
+    const vertices2T: Vector4D[] = vertices.slice(0, 24).map(v => v.coordinates);
+
+    // Generate coset representatives: 1, ω, ω², ω³, ω⁴
+    const cosetReps: Vector4D[] = [];
+    let rep: Vector4D = [1, 0, 0, 0];
+    for (let k = 0; k < 5; k++) {
+        cosetReps.push([...rep] as Vector4D);
+        rep = quaternionMultiply(rep, omega);
+    }
+
+    // Inverse coset representatives for checking membership
+    const cosetRepsInverse = cosetReps.map(q => quaternionConjugate(q));
+
+    // Assign each vertex to a coset
+    const cellAssignments: number[] = new Array(vertices.length).fill(-1);
+
+    for (let i = 0; i < vertices.length; i++) {
+        const v = vertices[i].coordinates;
+
+        for (let k = 0; k < 5; k++) {
+            // Compute ω^(-k) · v (left multiplication)
+            const product = quaternionMultiply(cosetRepsInverse[k], v);
+
+            // Check if product is in 2T
+            let found = false;
+            for (const tVert of vertices2T) {
+                if (vectors4DEqual(product, tVert)) {
+                    cellAssignments[i] = k;
+                    found = true;
+                    break;
+                }
+            }
+            if (found) break;
+
+            // Also check -product (since -1 ∈ 2T)
+            const negProduct: Vector4D = [-product[0], -product[1], -product[2], -product[3]];
+            for (const tVert of vertices2T) {
+                if (vectors4DEqual(negProduct, tVert)) {
+                    cellAssignments[i] = k;
+                    found = true;
+                    break;
+                }
+            }
+            if (found) break;
+        }
+    }
+
+    // Build the Cell24Subset structures
+    for (let cellId = 0; cellId < 5; cellId++) {
+        const cellVertices: number[] = [];
+        const cellCoords: Vector4D[] = [];
+
+        for (let i = 0; i < vertices.length; i++) {
+            if (cellAssignments[i] === cellId) {
+                cellVertices.push(i);
+                cellCoords.push(vertices[i].coordinates);
+            }
+        }
+
+        cells.push({
+            id: cellId,
+            vertexIds: cellVertices,
+            vertices: cellCoords,
+            isDisjoint: true,
+            label: `24-Cell-${String.fromCharCode(65 + cellId)}` // A, B, C, D, E
+        });
+
+        // Update vertex cell indices
+        for (const vi of cellVertices) {
+            (vertices[vi] as { cell24Index: number }).cell24Index = cellId;
+        }
+    }
+
+    // Verify decomposition
+    const counts = cells.map(c => c.vertexIds.length);
+    const total = counts.reduce((a, b) => a + b, 0);
+    if (total !== 120 || !counts.every(c => c === 24)) {
+        console.warn(`[Lattice600] Decomposition warning: cells have ${counts.join(', ')} vertices (expected 24 each)`);
+    }
+
+    return cells;
+}
+
+/**
+ * Naive fallback decomposition using modular arithmetic.
+ * This does NOT respect the H4 geometry but provides a partition.
+ */
+function computeDisjoint24CellsNaive(vertices: Lattice600Vertex[]): Cell24Subset[] {
+    const cells: Cell24Subset[] = [];
 
     for (let cellId = 0; cellId < 5; cellId++) {
         const cellVertices: number[] = [];
         const cellCoords: Vector4D[] = [];
 
-        // Select vertices for this 24-cell
-        // The proper decomposition uses specific geometric criteria
         for (let i = cellId; i < vertices.length; i += 5) {
             if (cellVertices.length < 24) {
                 cellVertices.push(i);
@@ -416,7 +569,6 @@ function computeDisjoint24Cells(vertices: Lattice600Vertex[]): Cell24Subset[] {
             label: `24-Cell-${String.fromCharCode(65 + cellId)}` // A, B, C, D, E
         });
 
-        // Update vertex cell indices
         for (const vi of cellVertices) {
             (vertices[vi] as { cell24Index: number }).cell24Index = cellId;
         }

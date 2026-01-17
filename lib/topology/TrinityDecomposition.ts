@@ -62,7 +62,19 @@ export interface SMParticle {
     readonly isAntiparticle: boolean;
 }
 
-/** 16-cell subset representing a color/generation */
+/**
+ * 8-vertex subset representing a color/generation.
+ *
+ * NOTE: These are NOT 16-cells (cross-polytopes). Each subset is a
+ * duoprism (□ × □) consisting of two orthogonal squares in ℝ⁴.
+ * The subsets partition the 24-cell based on coordinate plane pairing:
+ * - α: (xy, zw) planes
+ * - β: (xz, yw) planes
+ * - γ: (xw, yz) planes
+ *
+ * Historical note: The "Cell16Subset" name is retained for backward
+ * compatibility but the geometric structure is a duoprism, not a 16-cell.
+ */
 export interface Cell16Subset {
     readonly label: string;
     readonly color: ColorCharge;
@@ -265,19 +277,29 @@ function generate8CellVertices(): Vector4D[] {
 }
 
 // =============================================================================
-// TRINITY DECOMPOSITION (3 × 16-CELL)
+// TRINITY DECOMPOSITION (3 × 8-VERTEX DUOPRISMS)
 // =============================================================================
 
 /**
- * Decompose the 24-cell into three disjoint 16-cells.
+ * Decompose the 24-cell into three disjoint 8-vertex subsets.
  *
- * The 24 vertices split into three sets of 8, where each set forms a 16-cell.
- * This corresponds to:
- * - α (Red): Vertices where sum of non-zero coordinates has specific pattern
- * - β (Green): Second orthogonal subset
- * - γ (Blue): Third orthogonal subset
+ * MATHEMATICAL NOTE: These subsets are NOT 16-cells (cross-polytopes).
+ * Each subset is a duoprism (□ × □) consisting of two orthogonal squares.
  *
- * The three 16-cells are related by 120° rotations in 4D.
+ * The decomposition is based on coordinate plane pairing:
+ * - α: Vertices in (xy) or (zw) planes → indices (0,1) or (2,3)
+ * - β: Vertices in (xz) or (yw) planes → indices (0,2) or (1,3)
+ * - γ: Vertices in (xw) or (yz) planes → indices (0,3) or (1,2)
+ *
+ * This corresponds to the 3 ways to partition {0,1,2,3} into two pairs:
+ * - (01|23), (02|13), (03|12)
+ *
+ * Physical/Musical interpretation:
+ * - α (Red): Color charge red / Generation 1 / Octatonic I
+ * - β (Green): Color charge green / Generation 2 / Octatonic II
+ * - γ (Blue): Color charge blue / Generation 3 / Octatonic III
+ *
+ * The three subsets are related by coordinate permutations, not 120° rotations.
  */
 export function computeTrinityDecomposition(): TrinityDecomposition {
     const vertices = generate24CellVertices();
