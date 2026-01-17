@@ -1,0 +1,11 @@
+E8→H4 Folding Analysis
+==================================================
+
+Matrix determinant: -16.000000
+Matrix rank: 8
+
+This is a PROJECTION matrix, not a rotation.
+det ≠ 1 is expected and correct.
+
+Vertices at unit scale (left): 0
+Vertices at φ scale (left): 24

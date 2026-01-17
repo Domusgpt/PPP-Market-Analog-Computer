@@ -1,0 +1,129 @@
+{
+  "results": [
+    {
+      "particle": "up",
+      "ratio": 4.227014556487837,
+      "phi_exponent": 3,
+      "exact_exponent": 2.9955539124430133,
+      "predicted_ratio": 4.23606797749979,
+      "error_pct": 0.2141800292137013,
+      "is_coxeter": false,
+      "deviation_from_int": 0.004446087556986722
+    },
+    {
+      "particle": "tau",
+      "ratio": 3477.228280018971,
+      "phi_exponent": 17,
+      "exact_exponent": 16.944701604429376,
+      "predicted_ratio": 3571.000280033584,
+      "error_pct": 2.6967455819179533,
+      "is_coxeter": true,
+      "deviation_from_int": 0.05529839557062388
+    },
+    {
+      "particle": "muon",
+      "ratio": 206.76828298766566,
+      "phi_exponent": 11,
+      "exact_exponent": 11.079525653272569,
+      "predicted_ratio": 199.0050249987407,
+      "error_pct": 3.754569064825116,
+      "is_coxeter": true,
+      "deviation_from_int": 0.07952565327256877
+    },
+    {
+      "particle": "Z",
+      "ratio": 178449.68174592144,
+      "phi_exponent": 25,
+      "exact_exponent": 25.128355779668137,
+      "predicted_ratio": 167761.000005961,
+      "error_pct": 5.989745476362971,
+      "is_coxeter": false,
+      "deviation_from_int": 0.12835577966813716
+    },
+    {
+      "particle": "W",
+      "ratio": 157293.8652809365,
+      "phi_exponent": 25,
+      "exact_exponent": 24.86612020949931,
+      "predicted_ratio": 167761.000005961,
+      "error_pct": 6.654509192923412,
+      "is_coxeter": false,
+      "deviation_from_int": 0.1338797905006892
+    },
+    {
+      "particle": "strange",
+      "ratio": 182.77924054442775,
+      "phi_exponent": 11,
+      "exact_exponent": 10.823256656597659,
+      "predicted_ratio": 199.0050249987407,
+      "error_pct": 8.877257836274351,
+      "is_coxeter": true,
+      "deviation_from_int": 0.17674334340234132
+    },
+    {
+      "particle": "Higgs",
+      "ratio": 245108.13574078775,
+      "phi_exponent": 26,
+      "exact_exponent": 25.787925641655058,
+      "predicted_ratio": 271442.9999963162,
+      "error_pct": 10.744182022329401,
+      "is_coxeter": false,
+      "deviation_from_int": 0.21207435834494248
+    },
+    {
+      "particle": "charm",
+      "ratio": 2485.328003120163,
+      "phi_exponent": 16,
+      "exact_exponent": 16.246815884167713,
+      "predicted_ratio": 2206.9995468961474,
+      "error_pct": 11.198862116975821,
+      "is_coxeter": false,
+      "deviation_from_int": 0.24681588416771305
+    },
+    {
+      "particle": "bottom",
+      "ratio": 8180.0559472773875,
+      "phi_exponent": 19,
+      "exact_exponent": 18.72242908406905,
+      "predicted_ratio": 9349.000106963316,
+      "error_pct": 14.290173162874206,
+      "is_coxeter": true,
+      "deviation_from_int": 0.2775709159309514
+    },
+    {
+      "particle": "top",
+      "ratio": 338082.88647168456,
+      "phi_exponent": 26,
+      "exact_exponent": 26.456220956483808,
+      "predicted_ratio": 271442.9999963162,
+      "error_pct": 19.711109062880542,
+      "is_coxeter": false,
+      "deviation_from_int": 0.4562209564838078
+    },
+    {
+      "particle": "down",
+      "ratio": 9.138962027221387,
+      "phi_exponent": 5,
+      "exact_exponent": 4.597864599403436,
+      "predicted_ratio": 11.090169943749476,
+      "error_pct": 21.350432474893815,
+      "is_coxeter": false,
+      "deviation_from_int": 0.4021354005965643
+    }
+  ],
+  "monte_carlo": {
+    "n_good_matches": 9,
+    "our_mean_error": 7.1578027204107695,
+    "random_mean": 211.71485411839674,
+    "random_std": 55.407522848383465,
+    "p_value": 0.0,
+    "significant_0.05": 1.0,
+    "significant_0.01": 1.0
+  },
+  "coxeter_test": {
+    "n_coxeter_matches": 4,
+    "n_total_good": 9,
+    "expected_by_chance": 2.0,
+    "p_value": 0.1178310009308774
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "e8_roots": 240,
+  "matrix": {
+    "determinant": 1.0000001024269625,
+    "rank": 8.0,
+    "full_rank": 1.0
+  },
+  "600cell": {
+    "vertices": 120,
+    "cells": [
+      24,
+      24,
+      24,
+      24,
+      24
+    ]
+  },
+  "trinity": {
+    "alpha": 8,
+    "beta": 8,
+    "gamma": 8
+  },
+  "three_body": {
+    "initial_energy": -1.2871419917663258,
+    "final_energy": -1.2871422981587024,
+    "conservation_pct": 99.99997619591478,
+    "mean_e8_distance": 0.7222950610745917
+  },
+  "phillips": {
+    "total_triads": 512,
+    "valid_triads": 32,
+    "best_balance": 0.0,
+    "color_neutral_achieved": true
+  }
+}

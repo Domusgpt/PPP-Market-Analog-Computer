@@ -1,0 +1,58 @@
+{
+  "e8_root_count": 240,
+  "h4_copies": {
+    "h4_left": 64,
+    "h4_left_phi": 16,
+    "h4_right": 8,
+    "h4_right_phi": 24
+  },
+  "600cell_vertices": 120,
+  "24cell_decomposition": [
+    24,
+    24,
+    24,
+    24,
+    24
+  ],
+  "standard_model": {
+    "24cell": 24,
+    "16cell_gluons": 8,
+    "8cell_matter": 16,
+    "trinity_alpha": 8,
+    "trinity_beta": 8,
+    "trinity_gamma": 8
+  },
+  "figure8": {
+    "initial_energy": -1.2871419917663258,
+    "final_energy": -1.2871422981587024,
+    "energy_conservation": 99.99997619591478,
+    "mean_lattice_distance": 0.7222534635480407,
+    "unique_e8_nodes": 10
+  },
+  "lagrange": {
+    "initial_energy": 2.767949192431122,
+    "energy_conservation": 99.99998565137044
+  },
+  "phillips_synthesis": {
+    "alpha": [
+      -1.0,
+      -1.0,
+      0.0,
+      0.0
+    ],
+    "beta": [
+      -1.0,
+      0.0,
+      -1.0,
+      0.0
+    ],
+    "gamma_synthesized": [
+      1.0,
+      0.0,
+      0.0,
+      -1.0
+    ],
+    "balance_distance": 0.6666666666666666,
+    "color_neutral": false
+  }
+}

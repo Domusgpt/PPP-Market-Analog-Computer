@@ -1,30 +1,34 @@
 /**
- * Trinity Decomposition - Standard Model Particle Mapping
+ * Trinity Decomposition - Dual Mapping System
  *
  * @package @clear-seas/cpe
- * @version 1.0.0
+ * @version 2.0.0
  * @license MIT
  * @author Clear Seas Solutions LLC
  *
- * This module implements Ahmed Farag Ali's "Quantum Spacetime Imprints" framework,
- * mapping Standard Model particles to the vertices of the 24-cell polytope.
+ * This module implements TWO convergent derivations of the 24-cell decomposition:
  *
- * The 24-cell naturally decomposes into:
- * - 1 × 16-cell (8 vertices): Maps to 8 gluons (strong force carriers)
- * - 1 × Tesseract (16 vertices): Maps to fermions + EW bosons + Higgs
+ * 1. MUSICAL (Phillips, 2025-2026) - Original derivation for harmonic ambiguity
+ *    - α = Thesis / Home / Diatonic (Octatonic Collection I)
+ *    - β = Antithesis / Tension / Chromatic (Octatonic Collection II)
+ *    - γ = Synthesis / Resolution (Octatonic Collection III)
  *
- * Alternatively, the 24-cell decomposes into 3 × 16-cells (Trinity):
- * - Set α (8 vertices): Red color charge / Generation 1
- * - Set β (8 vertices): Green color charge / Generation 2
- * - Set γ (8 vertices): Blue color charge / Generation 3
+ * 2. PHYSICS (Ali, 2025) - Convergent validation for particle physics
+ *    - α = Red color charge / Generation 1
+ *    - β = Green color charge / Generation 2
+ *    - γ = Blue color charge / Generation 3
  *
- * The Phillips Synthesis emerges: combining any two 16-cell projections
- * geometrically reveals the third, encoding QCD's color confinement.
+ * The Trinity Index: |F₄|/|B₄| = 1152/384 = 3
+ * This index matches: 3 Octatonic collections, 3 fermion generations, 3 color charges
+ *
+ * The Phillips Synthesis: Given α and β, γ is geometrically determined.
+ * - Music: Resolution from tension
+ * - Physics: Color confinement (RGB → white)
+ * - Logic: Synthesis from thesis/antithesis
  *
  * References:
+ * - Phillips, P. "The Trinity Refactor" CPE Documentation (2026)
  * - Ali, A.F. "Quantum Spacetime Imprints" EPJC (2025)
- * - Ali, A.F. "The Mass Gap of the Space-time and its Shape" arXiv:2403.02655 (2024)
- * - Phillips, P.R. "Trinity Dialectic Logic" PPP Framework
  */
 
 import { Vector4D, MATH_CONSTANTS } from '../../types/index.js';
@@ -87,6 +91,59 @@ export interface AliDecomposition {
         readonly vertices: Vector4D[];
         readonly particles: SMParticle[];
     };
+}
+
+// =============================================================================
+// MUSICAL TRIALECTIC TYPES (Phillips Original Derivation)
+// =============================================================================
+
+/** Musical function in the trialectic system */
+export type MusicalFunction = 'thesis' | 'antithesis' | 'synthesis';
+
+/** Harmonic phase state */
+export type HarmonicPhase = 'diatonic' | 'chromatic' | 'resolution';
+
+/** Octatonic collection (only 3 exist in 12-tone system) */
+export type OctatonicCollection = 1 | 2 | 3;
+
+/**
+ * Trinity State Vector - Ψ = [wα, wβ, wγ]
+ * Represents the weighted activation of each 16-cell.
+ *
+ * Interpretation:
+ * - [1, 0, 0] = Pure α (stable, diatonic, thesis)
+ * - [0.5, 0.5, 0] = Ambiguous (pivoting between α and β)
+ * - [0.33, 0.33, 0.33] = Maximum entropy (chromatic chaos, full superposition)
+ */
+export interface TrinityStateVector {
+    readonly alpha: number;  // Weight of α 16-cell
+    readonly beta: number;   // Weight of β 16-cell
+    readonly gamma: number;  // Weight of γ 16-cell
+}
+
+/** Musical 16-cell with dialectic semantics */
+export interface Musical16Cell {
+    readonly axisPairs: [number, number][];  // Coordinate axis pairs
+    readonly dialectic: MusicalFunction;      // Thesis/Antithesis/Synthesis
+    readonly harmonic: HarmonicPhase;         // Diatonic/Chromatic/Resolution
+    readonly octatonic: OctatonicCollection;  // Octatonic collection I/II/III
+    readonly vertices: Vector4D[];
+    readonly vertexIds: number[];
+}
+
+/** Full musical trialectic decomposition */
+export interface MusicalTrialecticDecomposition {
+    readonly alpha: Musical16Cell;  // Thesis / Diatonic / OCT-I
+    readonly beta: Musical16Cell;   // Antithesis / Chromatic / OCT-II
+    readonly gamma: Musical16Cell;  // Synthesis / Resolution / OCT-III
+}
+
+/** Phase shift event when crossing between 16-cells */
+export interface PhaseShift {
+    readonly from: MusicalFunction;
+    readonly to: MusicalFunction;
+    readonly tension: number;  // Energy barrier (interstice volume)
+    readonly type: 'local' | 'modulation' | 'grand_cycle';
 }
 
 // =============================================================================
@@ -436,6 +493,250 @@ export function phillipsSynthesis(
     }
 
     return bestGamma;
+}
+
+// =============================================================================
+// MUSICAL TRIALECTIC DECOMPOSITION
+// =============================================================================
+
+/**
+ * Compute the musical trialectic decomposition.
+ * This is the Phillips original derivation from music theory.
+ *
+ * The axis pairs correspond to orthogonal planes in 4D:
+ * - α: {xy, zw} planes → Thesis / Diatonic / Octatonic I
+ * - β: {xz, yw} planes → Antithesis / Chromatic / Octatonic II
+ * - γ: {xw, yz} planes → Synthesis / Resolution / Octatonic III
+ */
+export function computeMusicalTrialectic(): MusicalTrialecticDecomposition {
+    const trinity = computeTrinityDecomposition();
+
+    return {
+        alpha: {
+            axisPairs: [[0, 1], [2, 3]],
+            dialectic: 'thesis',
+            harmonic: 'diatonic',
+            octatonic: 1,
+            vertices: trinity.alpha.vertices,
+            vertexIds: trinity.alpha.vertexIds
+        },
+        beta: {
+            axisPairs: [[0, 2], [1, 3]],
+            dialectic: 'antithesis',
+            harmonic: 'chromatic',
+            octatonic: 2,
+            vertices: trinity.beta.vertices,
+            vertexIds: trinity.beta.vertexIds
+        },
+        gamma: {
+            axisPairs: [[0, 3], [1, 2]],
+            dialectic: 'synthesis',
+            harmonic: 'resolution',
+            octatonic: 3,
+            vertices: trinity.gamma.vertices,
+            vertexIds: trinity.gamma.vertexIds
+        }
+    };
+}
+
+/**
+ * Compute the Trinity State Vector Ψ = [wα, wβ, wγ] for a 4D point.
+ *
+ * The weights are computed based on distance to each 16-cell.
+ * Closer to a 16-cell = higher weight for that component.
+ *
+ * @param point - 4D position in the 24-cell space
+ * @returns Normalized Trinity State Vector (components sum to 1)
+ */
+export function computeTrinityStateVector(point: Vector4D): TrinityStateVector {
+    const trinity = computeTrinityDecomposition();
+
+    // Compute minimum distance to each 16-cell
+    const distToCell = (cell: Cell16Subset): number => {
+        let minDist = Infinity;
+        for (const vertex of cell.vertices) {
+            const dist = Math.sqrt(
+                (point[0] - vertex[0]) ** 2 +
+                (point[1] - vertex[1]) ** 2 +
+                (point[2] - vertex[2]) ** 2 +
+                (point[3] - vertex[3]) ** 2
+            );
+            if (dist < minDist) minDist = dist;
+        }
+        return minDist;
+    };
+
+    const dAlpha = distToCell(trinity.alpha);
+    const dBeta = distToCell(trinity.beta);
+    const dGamma = distToCell(trinity.gamma);
+
+    // Convert distances to weights (inverse relationship)
+    // Using softmax-like transformation for smooth weights
+    const epsilon = 0.001;
+    const wAlpha = 1 / (dAlpha + epsilon);
+    const wBeta = 1 / (dBeta + epsilon);
+    const wGamma = 1 / (dGamma + epsilon);
+
+    // Normalize to sum to 1
+    const total = wAlpha + wBeta + wGamma;
+
+    return {
+        alpha: wAlpha / total,
+        beta: wBeta / total,
+        gamma: wGamma / total
+    };
+}
+
+/**
+ * Classify the Trinity state based on the state vector.
+ *
+ * @param state - Trinity State Vector
+ * @returns Classification of the harmonic state
+ */
+export function classifyTrinityState(state: TrinityStateVector): {
+    dominant: MusicalFunction | 'ambiguous' | 'superposition';
+    entropy: number;
+    description: string;
+} {
+    const { alpha, beta, gamma } = state;
+
+    // Compute entropy (Shannon) - higher = more ambiguous
+    const entropy = -[alpha, beta, gamma]
+        .filter(w => w > 0)
+        .reduce((sum, w) => sum + w * Math.log2(w), 0);
+
+    // Maximum entropy for 3 components is log2(3) ≈ 1.585
+    const maxEntropy = Math.log2(3);
+    const normalizedEntropy = entropy / maxEntropy;
+
+    // Determine dominant state
+    const threshold = 0.5;
+    let dominant: MusicalFunction | 'ambiguous' | 'superposition';
+    let description: string;
+
+    if (alpha > threshold) {
+        dominant = 'thesis';
+        description = 'Stable diatonic state (Home key)';
+    } else if (beta > threshold) {
+        dominant = 'antithesis';
+        description = 'Chromatic tension (Modulation in progress)';
+    } else if (gamma > threshold) {
+        dominant = 'synthesis';
+        description = 'Resolution achieved';
+    } else if (normalizedEntropy > 0.9) {
+        dominant = 'superposition';
+        description = 'Maximum ambiguity (Full chromatic)';
+    } else {
+        dominant = 'ambiguous';
+        description = 'Harmonic pivot point';
+    }
+
+    return { dominant, entropy: normalizedEntropy, description };
+}
+
+/**
+ * Detect phase shift between two Trinity states.
+ *
+ * @param from - Previous state
+ * @param to - Current state
+ * @returns Phase shift information or null if no shift
+ */
+export function detectPhaseShift(
+    from: TrinityStateVector,
+    to: TrinityStateVector
+): PhaseShift | null {
+    const fromClass = classifyTrinityState(from);
+    const toClass = classifyTrinityState(to);
+
+    // No shift if same dominant state
+    if (fromClass.dominant === toClass.dominant) return null;
+
+    // Can't have shift from/to ambiguous states (not a discrete phase)
+    if (fromClass.dominant === 'ambiguous' ||
+        fromClass.dominant === 'superposition' ||
+        toClass.dominant === 'ambiguous' ||
+        toClass.dominant === 'superposition') {
+        return null;
+    }
+
+    // Compute tension as the entropy change
+    const tension = Math.abs(toClass.entropy - fromClass.entropy);
+
+    // Classify the shift type
+    let type: 'local' | 'modulation' | 'grand_cycle';
+
+    // Grand cycle: α → β → γ → α (or reverse)
+    const isGrandCycle =
+        (fromClass.dominant === 'thesis' && toClass.dominant === 'antithesis') ||
+        (fromClass.dominant === 'antithesis' && toClass.dominant === 'synthesis') ||
+        (fromClass.dominant === 'synthesis' && toClass.dominant === 'thesis');
+
+    if (isGrandCycle && tension > 0.3) {
+        type = 'grand_cycle';
+    } else if (tension > 0.2) {
+        type = 'modulation';
+    } else {
+        type = 'local';
+    }
+
+    return {
+        from: fromClass.dominant as MusicalFunction,
+        to: toClass.dominant as MusicalFunction,
+        tension,
+        type
+    };
+}
+
+/**
+ * Map three bodies to the Trinity 16-cells.
+ * Each body is assigned to one 16-cell based on its phase space position.
+ *
+ * This creates the fundamental correspondence:
+ * - Body 1 → α (Thesis)
+ * - Body 2 → β (Antithesis)
+ * - Body 3 → γ (Synthesis)
+ *
+ * When all three bodies are in their designated cells, the system is "locked"
+ * (stable periodic orbit). When bodies cross into other cells, the system
+ * exhibits chaotic behavior.
+ *
+ * @param body1Pos - 4D position of body 1
+ * @param body2Pos - 4D position of body 2
+ * @param body3Pos - 4D position of body 3
+ * @returns Trinity state vectors for each body and system stability
+ */
+export function mapThreeBodiesToTrinity(
+    body1Pos: Vector4D,
+    body2Pos: Vector4D,
+    body3Pos: Vector4D
+): {
+    body1State: TrinityStateVector;
+    body2State: TrinityStateVector;
+    body3State: TrinityStateVector;
+    isLocked: boolean;
+    lockingScore: number;
+} {
+    const body1State = computeTrinityStateVector(body1Pos);
+    const body2State = computeTrinityStateVector(body2Pos);
+    const body3State = computeTrinityStateVector(body3Pos);
+
+    // System is "locked" when each body dominates its assigned cell
+    // Body1 → α, Body2 → β, Body3 → γ
+    const lockingScore = (
+        body1State.alpha +
+        body2State.beta +
+        body3State.gamma
+    ) / 3;
+
+    const isLocked = lockingScore > 0.6;
+
+    return {
+        body1State,
+        body2State,
+        body3State,
+        isLocked,
+        lockingScore
+    };
 }
 
 // =============================================================================
