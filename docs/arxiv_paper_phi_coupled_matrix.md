@@ -310,9 +310,9 @@ The presence of φ in these results is not circular but reflects the geometric n
 
 [3] H. S. M. Coxeter, *Regular Polytopes*, 3rd ed. Dover Publications, 1973.
 
-[4] J. G. Moxness, "The 3D visualization of E₈ using an H₄ folding matrix," 2014. DOI: 10.13140/RG.2.1.3830.1921.
+[4] J. G. Moxness, "The 3D visualization of E₈ using an H₄ folding matrix," 2014. DOI: 10.13140/RG.2.1.3830.1921. *Note: Not peer-reviewed; all matrix properties independently verified.*
 
-[5] J. G. Moxness, "Mapping the fourfold H₄ 600-cells emerging from E₈," 2018.
+[5] J. G. Moxness, "Mapping the fourfold H₄ 600-cells emerging from E₈," 2018. *Note: Not peer-reviewed; see verification code in Appendix.*
 
 [6] J. E. Humphreys, *Reflection Groups and Coxeter Groups*. Cambridge University Press, 1990.
 
