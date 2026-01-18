@@ -93,14 +93,60 @@ Row 7: [c, -c, -c,  c, -a, -a,  a,  a]
 
 ---
 
+## Empirical Test Results (January 2026)
+
+### Test: E8 Root Projection Comparison
+
+We applied both matrices to all 240 E8 roots and checked if outputs land on valid 600-cell vertices.
+
+#### Actual Moxness Matrix Results
+
+```
+Input:  240 E8 roots
+Output: 240 unique 4D points
+Norm shells: 2 (norm=2.000 and norm=3.236=2φ)
+Shell ratio: 3.236/2.000 = φ ✓
+
+600-cell match: 240/240 = 100%
+  - 120 points at scale 2.0 match 600-cell
+  - 120 points at scale 2φ match 600-cell
+
+VERDICT: ✓ VALID E8→H4 PROJECTION
+```
+
+#### PPP Codebase Matrix Results
+
+```
+Input:  240 E8 roots
+Output: 226 unique 4D points
+Norm shells: 11 (0.382, 0.618, 0.727, 0.874, 1.0, 1.07, 1.176, 1.328, 1.414, 1.618, 1.732)
+
+600-cell match: 36/226 = 16%
+  - Only 36 projections land on ANY scaled 600-cell vertices
+  - 190 projections do NOT match 600-cell at any scale
+
+VERDICT: ✗ NOT A VALID E8→H4 PROJECTION
+```
+
+### Conclusion from Testing
+
+The PPP matrix does **not** project E8 roots to H4/600-cell vertices. It produces:
+- Wrong number of unique points (226 instead of 120 or 240)
+- Too many norm shells (11 instead of 2)
+- Only 16% of outputs land on valid 600-cell vertices
+
+The algebraic properties (√5-coupling, rank-7) are real but **unrelated** to E8→H4 geometry.
+
+---
+
 ## What the PPP Matrix Actually Is
 
-The PPP matrix appears to be a **φ-coupled Hadamard-like construction** that:
+The PPP matrix is a **φ-coupled Hadamard-like construction** that:
 
 1. Uses normalized golden ratio coefficients (a, b, c) where b/a = 1/φ and c/a = φ
 2. Applies a Hadamard sign pattern to create orthogonal-like blocks
 3. Has interesting algebraic properties (√5 coupling, rank-7 anomaly)
-4. Was likely developed for visualization/encoding purposes within PPP
+4. **Does NOT perform E8→H4 folding** despite claims in the code comments
 
 ### Verified Properties of PPP Matrix
 
@@ -109,7 +155,8 @@ The PPP matrix appears to be a **φ-coupled Hadamard-like construction** that:
 | √5-Coupling Theorem | ✓ Verified | `validate_paper_claims.ts` |
 | Rank 7 | ✓ Verified | Algebraic computation |
 | Null space [0,0,0,0,1,1,1,1]ᵀ | ✓ Verified | Direct calculation |
-| φ-family scaling | ✓ Verified | `track_a_investigation.ts` |
+| φ-family scaling | ✓ Verified | Trivially true (φ inputs → φ outputs) |
+| E8→H4 projection | ✗ FALSE | `test_ppp_matrix_projection.ts` |
 | Derived from Moxness | ✗ FALSE | Different coefficients entirely |
 
 ---
