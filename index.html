@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polytopal Projection Processing • Engineering Overview</title>
+    <title>Process-Based Visual Computation for 4D Geometric Cognition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <script type="module" src="scripts/console-protect.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,13 +29,6 @@
             pointer-events: none;
             z-index: -1;
         }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 520px;
-            margin: 0 auto;
-            height: 320px;
-        }
         .section-card {
             background: rgba(6, 20, 40, 0.88);
             border: 1px solid rgba(104, 178, 255, 0.25);
@@ -44,462 +36,435 @@
             padding: 1.75rem;
             box-shadow: 0 22px 50px -34px rgba(0, 89, 190, 0.65);
         }
-        .info-card {
-            position: relative;
-            outline: none;
-        }
-        .info-card:focus-visible {
-            outline: 2px solid rgba(134, 214, 255, 0.75);
-            outline-offset: 6px;
-        }
-        .info-more {
-            display: none;
-            margin-top: 1rem;
-            padding: 1rem 1.25rem;
-            border-radius: 0.85rem;
-            background: rgba(12, 40, 72, 0.9);
-            border: 1px solid rgba(126, 207, 255, 0.35);
-            color: rgba(200, 230, 255, 0.85);
-            font-size: 0.82rem;
-            line-height: 1.5;
-            box-shadow: 0 18px 34px -26px rgba(0, 140, 255, 0.65);
-        }
-        .info-card:hover .info-more,
-        .info-card:focus-within .info-more {
-            display: block;
-        }
-        .metric-value {
-            font-size: 2.55rem;
-            font-weight: 700;
-            background: linear-gradient(120deg, #58c5ff, #8a6fff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
         .section-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
             letter-spacing: 0.18em;
             text-transform: uppercase;
             color: rgba(146, 212, 255, 0.82);
         }
-        .embed-shell {
-            position: relative;
-            border-radius: 1rem;
-            border: 1px solid rgba(98, 182, 255, 0.25);
-            background: rgba(4, 12, 26, 0.94);
-            overflow: hidden;
-            aspect-ratio: 16 / 9;
+        .stat-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(70, 128, 255, 0.18);
+            border: 1px solid rgba(110, 182, 255, 0.4);
+            font-size: 0.8rem;
+            color: rgba(214, 238, 255, 0.92);
         }
-        .embed-shell iframe {
+        table {
             width: 100%;
-            height: 100%;
-            border: none;
+            border-collapse: collapse;
         }
-        .discreet-text {
-            font-size: 0.78rem;
-            color: rgba(165, 214, 255, 0.68);
-            line-height: 1.55;
+        th, td {
+            border: 1px solid rgba(120, 190, 255, 0.25);
+            padding: 0.85rem 1rem;
+            text-align: left;
+            font-size: 0.9rem;
         }
-        .list-grid {
+        th {
+            background: rgba(12, 36, 64, 0.85);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.75rem;
+            color: rgba(190, 225, 255, 0.85);
+        }
+        .code-block {
+            background: rgba(8, 24, 46, 0.95);
+            border-radius: 0.85rem;
+            border: 1px solid rgba(105, 175, 255, 0.3);
+            padding: 1rem 1.25rem;
+            font-size: 0.85rem;
+            color: rgba(216, 245, 255, 0.85);
+            overflow-x: auto;
+        }
+        .demo-canvas {
+            width: 100%;
+            height: 360px;
+            background: rgba(4, 18, 34, 0.9);
+            border-radius: 0.85rem;
+            border: 1px solid rgba(110, 182, 255, 0.35);
+        }
+        .demo-grid {
             display: grid;
-            gap: 1rem;
+            gap: 1.5rem;
         }
         @media (min-width: 1024px) {
-            .list-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+            .demo-grid {
+                grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
             }
         }
     </style>
 </head>
 <body class="antialiased">
-    <div class="max-w-6xl mx-auto px-4 md:px-8 py-12 md:py-16 space-y-24">
+    <div class="max-w-6xl mx-auto px-4 md:px-8 py-12 md:py-16 space-y-20">
         <header class="space-y-6 text-center md:text-left">
-            <p class="section-title">PPP Engineering Status • Paul Phillips · Clear Seas Solutions</p>
-            <h1 class="text-4xl md:text-5xl font-extrabold leading-tight text-white">Polytopal Projection Processing Platform</h1>
-            <p class="text-base md:text-lg text-blue-100/90 max-w-3xl mx-auto md:mx-0">
-                PPP is an internal toolset maintained by Paul Phillips. This document is the single source of truth for what the current build does,
-                how to operate it, and where each capability lives in this repository—no partner language, no sales copy, just the implementation.
+            <p class="section-title">Polytopal Projection Processing · Research Report</p>
+            <h1 class="text-4xl md:text-5xl font-extrabold leading-tight text-white">Process-Based Visual Computation for 4D Geometric Cognition</h1>
+            <p class="text-base md:text-lg text-blue-100/90 max-w-3xl">
+                The machine never needs to understand 4D mathematics. By perceiving stereographic projections and manipulating six rotation controls,
+                the rendering process itself computes the geometric relationships. This document refactors the PPP narrative into a process-based cognitive
+                architecture for 4D topology learning.
             </p>
+            <div class="flex flex-wrap gap-3">
+                <span class="stat-chip">Stereographic Projection</span>
+                <span class="stat-chip">6-Plane Rotation Control</span>
+                <span class="stat-chip">Layered Translucency</span>
+                <span class="stat-chip">Process-Based Computation</span>
+            </div>
         </header>
 
-        <main class="space-y-24">
-            <section id="snapshot" class="space-y-8">
-                <h2 class="text-2xl md:text-3xl font-semibold text-white">Release Snapshot</h2>
-                <div class="grid gap-6 md:grid-cols-3">
-                    <article class="section-card space-y-2">
-                        <p class="metric-value">Hypercube Runtime v2025.10</p>
-                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">WebGL transport stack</p>
-                        <ul class="text-sm space-y-1 text-blue-100/70">
-                            <li>• Deterministic renderer with uniform inspector & spinor overlay</li>
-                            <li>• Recorder / player parity across 64 mapped channels</li>
-                            <li>• Auto-stream baseline plus playback + live ingress orchestration</li>
-                        </ul>
-                    </article>
-                    <article class="section-card space-y-2">
-                        <p class="metric-value">Calibration Suite</p>
-                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">Dataset automation</p>
-                        <ul class="text-sm space-y-1 text-blue-100/70">
-                            <li>• Toolkit sequencing canonical motion plans with parity metrics</li>
-                            <li>• Dataset builder exporting manifests & telemetry bundles</li>
-                            <li>• Insight engine narrating drift, fidelity, and remediation guidance</li>
-                        </ul>
-                    </article>
-                    <article class="section-card space-y-2">
-                        <p class="metric-value">Sonic Geometry</p>
-                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">Quaternion-coupled telemetry</p>
-                        <ul class="text-sm space-y-1 text-blue-100/70">
-                            <li>• Double-quaternion bridge with Hopf fiber analytics</li>
-                            <li>• Signal, transduction, manifold, topology, continuum & lattice exports</li>
-                            <li>• Hybrid (audio + data) or analysis-only modes with cloned payload APIs</li>
-                        </ul>
-                    </article>
-                </div>
-            </section>
-
-            <section id="metrics" class="space-y-6">
-                <h2 class="text-2xl md:text-3xl font-semibold text-white">Capability Observations</h2>
-                <p class="text-sm text-blue-100/75 max-w-3xl">
-                    The figures below summarise what the current toolchain has demonstrated during internal QA on a 2025 workstation-class laptop with an RTX 3070.
-                    They are not guarantees—performance depends on the dataset, browser, and GPU configuration.
+        <main class="space-y-16">
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">The Rendering Pipeline Becomes an Implicit 4D Calculator</h2>
+                <p class="text-blue-100/85">
+                    The central insight holds: a machine learning system can develop 4D geometric cognition without ever performing explicit 4D computations.
+                    When a 4D polytope is stereographically projected to 3D with layered translucency, the complex relationships between vertices, edges,
+                    and cells are computed by the rendering process itself. The system only needs to observe how visual properties transform as it manipulates
+                    six rotation dials.
                 </p>
-                <div class="grid gap-6 md:grid-cols-3">
-                    <article class="section-card info-card space-y-2" tabindex="0">
-                        <p class="metric-value">≈60 FPS</p>
-                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">Visual transport</p>
-                        <p class="text-sm text-blue-100/75">Hypercube aims for VSync-limited playback. On an RTX 3070 auto-stream scenes held ≈60 FPS while rendering six-plane rotations and the spinor overlay.</p>
-                        <div class="info-more">
-                            <p><strong>Validate it yourself:</strong></p>
-                            <ul>
-                                <li>Toggle the auto stream, open DevTools Performance panel, and record a short run to inspect frame pacing.</li>
-                                <li>In the full console build (with <code>PPP_CONFIG.exposeApi !== false</code>) call <code>PPP.sonicGeometry.engine?.getPerformanceMetrics()</code> while playback is active.</li>
-                                <li>Document measurements in <a href="DEV_TRACK.md">DEV_TRACK.md</a> to keep the observation current.</li>
-                            </ul>
-                        </div>
-                    </article>
-                    <article class="section-card info-card space-y-2" tabindex="0">
-                        <p class="metric-value">64 Channels</p>
-                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">Synchronized ingest</p>
-                        <p class="text-sm text-blue-100/75">DataMapper and the recorder pipeline accept 64 scalar channels—the limit defined in <code>scripts/constants.js</code>—and mirror them into shader uniforms and sonic telemetry.</p>
-                        <div class="info-more">
-                            <p><strong>Where it is defined:</strong> see <code>DATA_CHANNEL_COUNT</code> in <a href="scripts/constants.js">scripts/constants.js</a> and the mapping loop in <a href="scripts/app.js">scripts/app.js</a>.</p>
-                            <p><strong>Watch for:</strong> exceeding the limit will truncate values; update the constant and shader uniforms together if you need more streams.</p>
-                        </div>
-                    </article>
-                    <article class="section-card info-card space-y-2" tabindex="0">
-                        <p class="metric-value">Multi-context</p>
-                        <p class="text-blue-100/80 text-sm uppercase tracking-wide">WebGL fan-out</p>
-                        <p class="text-sm text-blue-100/75">Local load tests spawned 20+ contexts for calibration capture without renderer crashes; memory footprint grows with recorder buffers.</p>
-                        <div class="info-more">
-                            <p><strong>Reproduce:</strong> launch multiple console tabs or embed instances while monitoring GPU memory in the browser task manager.</p>
-                            <p><strong>Notes:</strong> document multi-context findings in <a href="DEV_TRACK.md">DEV_TRACK.md</a>; throttle recorder retention if you notice slowdowns.</p>
-                        </div>
-                    </article>
-                </div>
+                <ul class="space-y-3 text-blue-100/80">
+                    <li>• Stereographic projection is conformal, preserving local angles while encoding depth through scale distortion.</li>
+                    <li>• Structure-from-motion principles extend naturally: 3D projections plus 4D rotation yield 4D understanding.</li>
+                    <li>• 4D CNNs already estimate topology at &gt;80% accuracy using only volumetric observation.</li>
+                </ul>
             </section>
 
-            <section id="use-cases" class="space-y-6">
-                <h2 class="text-2xl md:text-3xl font-semibold text-white">Operational Use Cases</h2>
-                <div class="list-grid">
-                    <article class="section-card info-card space-y-3" tabindex="0">
-                        <h3 class="text-xl font-semibold text-white">Autonomous & Defense Systems</h3>
-                        <ul class="text-sm space-y-2 text-blue-100/75">
-                            <li>GPS-denied navigation experiments can reuse the WebSocket/Serial adapters and spinor parity metrics to cross-check IMU feeds against visual projections.</li>
-                            <li>Sensor-fusion dashboards can consume recorder exports plus sonic telemetry for remote QA without relying solely on logs.</li>
-                            <li>Swarm coordination research gains a common parity manifest that keeps visual state, channel telemetry, and sonic descriptors aligned frame-by-frame.</li>
-                        </ul>
-                        <div class="info-more">
-                            <p><strong>Relevant modules:</strong> <a href="scripts/LiveQuaternionAdapters.js">LiveQuaternionAdapters.js</a>, <a href="scripts/liveTelemetry.js">liveTelemetry.js</a>, <a href="docs/telemetry-schemas.md">telemetry schemas</a>.</p>
-                            <p><strong>Try this:</strong> feed a recorded IMU dataset through the recorder/player pair, then compare spinor overlays against INS ground truth to evaluate drift.</p>
-                        </div>
-                    </article>
-                    <article class="section-card info-card space-y-3" tabindex="0">
-                        <h3 class="text-xl font-semibold text-white">Quantum & High-Dimensional Analytics</h3>
-                        <ul class="text-sm space-y-2 text-blue-100/75">
-                            <li>Geometric quantum error tracking prototypes can visualise syndrome evolution via PPP rotations while logging manifold and topology payloads for regression.</li>
-                            <li>Continuum and lattice telemetry provide robotics-grade ingestion even when resonance audio is disabled.</li>
-                            <li>Manifold/topology logs can highlight drift and harmonic anomalies inside CI without requiring access to the renderer.</li>
-                        </ul>
-                        <div class="info-more">
-                            <p><strong>Relevant modules:</strong> <a href="scripts/SonicGeometryEngine.js">SonicGeometryEngine.js</a>, <a href="scripts/SpinorTopologyWeave.js">SpinorTopologyWeave.js</a>, <a href="samples/telemetry/topology.json">topology sample</a>.</p>
-                            <p><strong>Try this:</strong> replay a calibration manifest in headless mode (<a href="scripts/headlessRunner.js">headlessRunner.js</a>) and feed the topology stream into your CI regression harness.</p>
-                        </div>
-                    </article>
-                    <article class="section-card info-card space-y-3" tabindex="0">
-                        <h3 class="text-xl font-semibold text-white">Industrial & Scientific Platforms</h3>
-                        <ul class="text-sm space-y-2 text-blue-100/75">
-                            <li>Manufacturing QA teams can script mapping presets, capture recorder snapshots, and compare spinor overlays to detect variance.</li>
-                            <li>Climate, biomedical, and materials modelling pipelines can archive calibration datasets and replay them with consistent parity manifests.</li>
-                            <li>API exposure (<code>window.PPP</code> when enabled) supports automated reporting and dataset packaging for downstream analytics.</li>
-                        </ul>
-                        <div class="info-more">
-                            <p><strong>Relevant modules:</strong> <a href="scripts/mappingPresets.js">mappingPresets.js</a>, <a href="scripts/CalibrationDatasetBuilder.js">CalibrationDatasetBuilder.js</a>, <a href="samples/calibration/ppp-calibration-dataset-summary.json">calibration summary</a>.</p>
-                            <p><strong>Try this:</strong> define presets in <code>PPP_CONFIG.mappingPresets</code>, run the calibration toolkit, and snapshot overlays to compare variations between production lots.</p>
-                        </div>
-                    </article>
-                    <article class="section-card info-card space-y-3" tabindex="0">
-                        <h3 class="text-xl font-semibold text-white">Hierarchical Agentic Systems</h3>
-                        <ul class="text-sm space-y-2 text-blue-100/75">
-                            <li>PPP can provide the “System 1” geometric substrate within a Hierarchical Agentic Operating System, feeding shadow projections into symbolic planners and vision transformers.</li>
-                            <li>Topology, continuum, and constellation telemetry let multimodal agents consume geometric state alongside text or audio streams.</li>
-                            <li>Calibration manifests act as deterministic checkpoints for multi-agent alignment and regression testing.</li>
-                        </ul>
-                        <div class="info-more">
-                            <p><strong>Relevant modules:</strong> <a href="scripts/SpinorContinuumConstellation.js">SpinorContinuumConstellation.js</a>, <a href="samples/telemetry/constellation.json">constellation sample</a>, <a href="tests/liveTelemetry.test.js">live telemetry tests</a>.</p>
-                            <p><strong>Try this:</strong> export a manifest, load it within an agent sandbox, and map the continuum payload into your policy embeddings to evaluate multi-agent coordination.</p>
-                        </div>
-                    </article>
-                </div>
-            </section>
-
-            <section id="demo" class="space-y-6">
-                <h2 class="text-2xl md:text-3xl font-semibold text-white">Control Surface & Output Reference</h2>
-                <p class="text-sm text-blue-100/80 max-w-3xl">
-                    The iframe streams <code>hypercube-core-webgl-framework.html?mode=embed</code>. In embed mode PPP auto-streams synthetic data, keeps the console lock active, and hides the operator controls.
-                    Use the expandable reference items below to understand what the full console exposes when launched directly.
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">System Blueprint: Build the 4D Cognition Engine</h2>
+                <p class="text-blue-100/85">
+                    The report is not only descriptive; it is a build plan. The system is a set of interoperable modules that turn sensor or synthetic
+                    data into 4D rotation control, render stereographic projections, and emit machine-readable topology streams for learning pipelines.
                 </p>
-                <div class="embed-shell">
-                    <iframe title="PPP Hypercube Demo" src="hypercube-core-webgl-framework.html?mode=embed" allow="fullscreen" loading="lazy"></iframe>
-                </div>
-                <figure class="section-card space-y-3">
-                    <img src="assets/images/hypercube-console-reference.svg" alt="Annotated diagram of the Hypercube control surface" loading="lazy" class="w-full">
-                    <figcaption class="discreet-text">
-                        Reference diagram matching the live console layout. Capture fresh screenshots per release by opening the full console and exporting from the browser dev tools.
-                    </figcaption>
-                </figure>
-                <div class="section-card space-y-4">
-                    <details open>
-                        <summary class="text-white text-lg font-semibold">Data input & mapping (left column)</summary>
-                        <p class="text-sm text-blue-100/75">
-                            The textarea (<code>#dataInput</code>) accepts JSON arrays. Imported values pass through <code>DataMapper</code>, which normalises length, clamps ranges, and maps channels to shader uniforms.
-                            Mapping presets live in <code>scripts/mappingPresets.js</code>; the selector (<code>#mappingSelect</code>) swaps between them without reloading.
-                        </p>
-                        <ul class="text-sm text-blue-100/70 space-y-2">
-                            <li><strong>Apply / Randomise:</strong> Buttons call <code>applyDataArray</code> with the provided values or generate a seeded pattern.</li>
-                            <li><strong>Auto-stream toggle:</strong> Runs the synthetic generator every ~140 ms; stop before loading recorder payloads to avoid mixing sources.</li>
-                            <li><strong>Status message & uniform preview:</strong> <code>#statusMessage</code> and <code>#uniformPreview</code> mirror the renderer uniforms for auditing.</li>
-                        </ul>
-                    </details>
-                    <details>
-                        <summary class="text-white text-lg font-semibold">Recorder & playback</summary>
-                        <p class="text-sm text-blue-100/75">
-                            <code>DataRecorder</code> captures channel arrays plus uniform snapshots. <code>DataPlayer</code> replays them with timeline scrubbing, loop control, and optional uniform reapplication.
-                        </p>
-                        <ul class="text-sm text-blue-100/70 space-y-2">
-                            <li><strong>Recorder buttons:</strong> Start/stop capture, download JSON, or clear the buffer. Recordings include metadata for parity manifests.</li>
-                            <li><strong>Playback controls:</strong> Load a JSON export, play/pause/step frames, and select whether recorded uniforms override the current mapping.</li>
-                            <li><strong>Timeline slider:</strong> Seek to precise percentages; <code>setTimelineDisplay</code> keeps elapsed time and total duration visible.</li>
-                        </ul>
-                    </details>
-                    <details>
-                        <summary class="text-white text-lg font-semibold">Live ingest adapters</summary>
-                        <p class="text-sm text-blue-100/75">
-                            The WebSocket and Web Serial adapters live in <code>scripts/LiveQuaternionAdapters.js</code>. Buttons flip connection state; status labels report latency, reconnect attempts, and dropped frames.
-                        </p>
-                        <ul class="text-sm text-blue-100/70 space-y-2">
-                            <li>Adapters sanitise quaternion frames before sending them to <code>applyLiveFrame</code>, ensuring channel counts do not exceed the configured limit.</li>
-                            <li>Metrics propagate into <code>liveTelemetry</code>, which aggregates min/max latency and frame counts for dashboards.</li>
-                        </ul>
-                    </details>
-                    <details>
-                        <summary class="text-white text-lg font-semibold">Sonic geometry controls</summary>
-                        <p class="text-sm text-blue-100/75">
-                            <code>SonicGeometryEngine</code> derives resonance, signal, transduction, manifold, topology, continuum, lattice, and constellation payloads. Toggle analysis/audio via <code>#sonicGeometryToggle</code>.
-                        </p>
-                        <ul class="text-sm text-blue-100/70 space-y-2">
-                            <li><strong>Mode selector:</strong> Chooses between hybrid (audio+data) or analysis-only. Both modes maintain telemetry callbacks.</li>
-                            <li><strong>Helper text:</strong> Summaries pull from <code>getLastSummary()</code> to share coherence, gate, and drift status at a glance.</li>
-                            <li><strong>API access:</strong> <code>PPP.sonicGeometry.on*</code> listeners clone payloads so consumers cannot mutate shared state.</li>
-                        </ul>
-                    </details>
-                    <details>
-                        <summary class="text-white text-lg font-semibold">Calibration toolkit & dataset builder</summary>
-                        <p class="text-sm text-blue-100/75">
-                            Calibration components orchestrate scripted motion plans. Use the sequence selector to run canonical captures; dataset builder compiles parity manifests and narrative insights.
-                        </p>
-                        <ul class="text-sm text-blue-100/70 space-y-2">
-                            <li>Toolkit captures spinor overlays via <code>renderer.captureFrame()</code> while recording calibrated channel frames.</li>
-                            <li>Dataset builder exports <code>PPP.calibration.dataset</code> manifests and enables a download button once generation completes.</li>
-                            <li>Insights list highlights frames with low fidelity or notable drift using <code>CalibrationInsightEngine</code>.</li>
-                        </ul>
-                    </details>
-                    <details>
-                        <summary class="text-white text-lg font-semibold">Channel monitor & development log</summary>
-                        <p class="text-sm text-blue-100/75">
-                            The monitor canvas charts live averages and peaks; <code>DevelopmentTracker</code> records annotated milestones. Both surfaces help QA runs remain auditable.
-                        </p>
-                        <ul class="text-sm text-blue-100/70 space-y-2">
-                            <li>Highlight ranges and smoothing factors can be set via <code>PPP.setMonitorHighlight</code> and <code>PPP.setMonitorSmoothing</code> while the API is exposed.</li>
-                            <li>The development log supports custom commentary through <code>PPP.recordDevelopmentEntry()</code>, keeping release notes co-located with the runtime.</li>
-                        </ul>
-                    </details>
-                </div>
-                <p class="discreet-text">Need the full operator surface? Open <code>hypercube-core-webgl-framework.html</code> directly. The embed mode remains read-only by design.</p>
-            </section>
-
-            <section id="purpose" class="space-y-6">
-                <h2 class="text-2xl md:text-3xl font-semibold text-white">Intent: PPP as a Perception Rosetta</h2>
-                <div class="section-card space-y-3">
-                    <p class="text-sm text-blue-100/80">
-                        PPP is being shaped as an intermediate language for machine perception—something that lets synthetic agents translate between raw sensor feeds,
-                        geometric intuition, and symbolic policy. The stack aims to make geometric cognition as accessible as language-based reasoning.
-                    </p>
-                    <ul class="text-sm text-blue-100/75 space-y-2">
-                        <li><strong>4D ↔ 3D correspondence:</strong> The renderer works in 4D with six-plane rotations while sonic telemetry deals in 3D six-degree-of-freedom bodies. Mapping policies between the spaces offers a common frame for world awareness and robotic actuation.</li>
-                        <li><strong>Spinor double rotations:</strong> Dual-quaternion bridges expose left/right components, Hopf fibres, and carrier lattices that multi-agent systems can ingest to understand shared orientation states without relying purely on language tokens.</li>
-                        <li><strong>Topological wayfinding:</strong> Research is underway into how 120/600-cell relationships, Clifford rotations, and convex inverse dual rotations can support error correction, dead reckoning, and drift mitigation inside INS pipelines. These explorations are speculative but grounded in the geometry PPP already models.</li>
-                        <li><strong>Fractal and non-Euclidean extensions:</strong> PPP’s mapping layer and telemetry builders make it feasible to experiment with fractal regressions or non-Euclidean polytopes; identifying niches where those structures match sensor behaviour remains an open research thread.</li>
-                    </ul>
-                    <p class="text-sm text-blue-100/75">
-                        The long-term goal is ubiquity: a toolchain that any data-driven system—LLM-based agents, swarm controllers, or scientific workflows—can use to translate between raw measurements and an adaptable, stereoscopic understanding of environment and intent.
-                        Everything shipped here is a step toward that Rosetta stone; documented capabilities reflect what exists today, and speculative items are clearly marked for ongoing validation.
-                    </p>
-                </div>
-            </section>
-
-            <section id="platform" class="space-y-6">
-                <h2 class="text-2xl md:text-3xl font-semibold text-white">Platform Stack</h2>
                 <div class="grid gap-6 md:grid-cols-2">
-                    <article class="section-card space-y-3">
-                        <h3 class="text-xl font-semibold text-white">Transport & Mapping</h3>
-                        <ul class="text-sm space-y-2 text-blue-100/75">
-                            <li><strong>DataMapper</strong> normalises up to 64 channels with smoothing, range remaps, and preset registration (`scripts/DataMapper.js`).</li>
-                            <li><strong>HypercubeRenderer</strong> projects polytopal uniforms with deterministic shader parameters (`scripts/HypercubeRenderer.js`).</li>
-                            <li><strong>DevelopmentTracker</strong> captures session logs surfaced within the console and via <code>PPP.recordDevelopmentEntry()</code>.</li>
-                            <li><strong>Recorder / Player</strong> export and replay channel streams with timeline, loop, and uniform snapshot support.</li>
-                        </ul>
-                    </article>
-                    <article class="section-card space-y-3">
-                        <h3 class="text-xl font-semibold text-white">Live Ingest & Telemetry</h3>
-                        <ul class="text-sm space-y-2 text-blue-100/75">
-                            <li><strong>LiveQuaternionAdapters</strong> manage WebSocket / Web Serial cadence, latencies, and reconnect state (`scripts/LiveQuaternionAdapters.js`).</li>
-                            <li><strong>liveTelemetry</strong> aggregates per-frame metrics and status narratives for dashboards (`scripts/liveTelemetry.js`).</li>
-                            <li><strong>Headless runner</strong> reproduces sonic telemetry without DOM / audio dependencies for CI pipelines (`scripts/headlessRunner.js`).</li>
-                            <li><strong>Telemetry schemas</strong> are versioned in `docs/telemetry-schemas.md` with JSON exemplars under `samples/`.</li>
-                        </ul>
-                    </article>
-                </div>
-            </section>
-
-            <section id="calibration" class="space-y-6">
-                <h2 class="text-2xl md:text-3xl font-semibold text-white">Calibration Lifecycle</h2>
-                <div class="section-card space-y-3">
-                    <p class="text-sm text-blue-100/80">The calibration toolkit converts canonical motion plans into reproducible datasets, preserving parity across the visual transport and sonic geometry engines.</p>
-                    <ul class="text-sm space-y-2 text-blue-100/75">
-                        <li><strong>CalibrationToolkit</strong> executes scripted sequences, captures spinor overlays, and funnels samples to the dataset builder.</li>
-                        <li><strong>CalibrationDatasetBuilder</strong> aggregates manifests with per-sequence scores, carrier gate ratios, and drift deltas.</li>
-                        <li><strong>CalibrationInsightEngine</strong> produces operator narratives highlighting deviations, regressions, and follow-up actions.</li>
-                        <li><strong>Release checks</strong> land as Node tests (`npm test`) covering the builder, insight engine, live telemetry, and sonic geometry modules.</li>
-                    </ul>
-                    <div class="border border-white/10 rounded-2xl bg-white/5 p-4 text-sm text-blue-100/75 space-y-2">
-                        <p class="font-semibold text-white">Cloud calibration standard</p>
-                        <p>Formalize cloud test runs with deterministic plans, run metadata, and hashed artifacts so calibration can be reproduced across compute clusters.</p>
-                        <ul class="list-disc pl-5 space-y-1">
-                            <li><a href="docs/PPP-Cloud-Calibration.md">PPP Cloud Calibration Standard</a> details required artifacts and acceptance checks.</li>
-                            <li>Run the cloud builder with <code>node scripts/ppp-cloud-calibration.js --plan samples/calibration/ppp-cloud-plan.json</code>.</li>
-                            <li>Artifacts land under <code>dist/cloud-calibration</code> for upload to audit storage.</li>
+                    <div>
+                        <h3 class="font-semibold text-white">Core Execution Loop</h3>
+                        <ol class="space-y-2 text-blue-100/80 list-decimal list-inside">
+                            <li>Ingest raw signals or synthetic datasets.</li>
+                            <li>Map channels into a 4D state vector (x, y, z, w).</li>
+                            <li>Apply six-plane rotations (XY, XZ, XW, YZ, YW, ZW).</li>
+                            <li>Stereographically project into 3D geometry.</li>
+                            <li>Render with layered translucency + thickness/opacity cues.</li>
+                            <li>Export frame-level topology + telemetry for ML.</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white">Subsystem Outputs</h3>
+                        <ul class="space-y-2 text-blue-100/80">
+                            <li>• Projection frames (RGB + alpha) for vision models.</li>
+                            <li>• Graph payloads (vertices, edges, adjacency lists).</li>
+                            <li>• Rotation state (6 angles + quaternion factorization).</li>
+                            <li>• Derived telemetry (depth scale, opacity maps, metrics).</li>
                         </ul>
                     </div>
-                    <p class="discreet-text">Reference artefacts: `samples/calibration/ppp-calibration-dataset-summary.json`, `samples/calibration/ppp-calibration-insights.json`.</p>
                 </div>
             </section>
 
-            <section id="sonic" class="space-y-6">
-                <h2 class="text-2xl md:text-3xl font-semibold text-white">Sonic Geometry Telemetry</h2>
-                <div class="section-card space-y-3">
-                    <p class="text-sm text-blue-100/80">Quaternion spinor analysis mirrors the visual transport, enabling robotics and multimodal teams to ingest harmonic descriptors even when audio is muted.</p>
-                    <ul class="text-sm space-y-2 text-blue-100/75">
-                        <li><strong>SonicGeometryEngine</strong> synthesises carriers, adaptive gating, and performance metrics (`scripts/SonicGeometryEngine.js`).</li>
-                        <li><strong>Resonance & signal fabrics</strong> supply `PPP.sonicGeometry.get*` helpers across resonance, signal, transduction, and manifold payloads.</li>
-                        <li><strong>Topology, continuum, lattice, constellation</strong> builders expose higher-order harmonic diagnostics for downstream automation.</li>
-                        <li><strong>APIs</strong> clone payloads to prevent mutation; listeners are available via `onAnalysis`, `onSignal`, `onTopology`, etc.</li>
-                    </ul>
-                    <p class="discreet-text">Sample payloads ship in `samples/telemetry/*.json`; refer to `tests/sonicGeometryEngine.test.js` for regression coverage.</p>
-                </div>
-            </section>
-
-            <section id="governance" class="space-y-6">
-                <h2 class="text-2xl md:text-3xl font-semibold text-white">Operational Guidance</h2>
-                <div class="section-card space-y-4">
-                    <ul class="text-sm space-y-2 text-blue-100/75">
-                        <li><strong>Security posture:</strong> Console access remains gated; DevTools invocation raises the PPP overlay with contact instructions for authorized keys.</li>
-                        <li><strong>Runtime configuration:</strong> Inject <code>window.PPP_CONFIG</code> before loading the bundle to register callbacks, presets, or telemetry hooks.</li>
-                        <li><strong>Testing discipline:</strong> Execute <code>npm test</code> to validate calibration, sonic, and telemetry suites before distributing artifacts.</li>
-                        <li><strong>Dataset workflow:</strong> Run the calibration plan prior to export so manifests, parity scores, insights, and recorder payloads remain synchronized.</li>
-                    </ul>
-                    <p class="discreet-text">Contact: Paul Phillips · Clear Seas Solutions — for sandbox credentials, dataset publishing, and live ingest coordination.</p>
-                </div>
-            </section>
-
-            <section id="dimensionality" class="space-y-6">
-                <h2 class="text-2xl md:text-3xl font-semibold text-white">Dimensional Workload Comparison</h2>
-                <p class="text-sm text-blue-100/75 max-w-3xl">
-                    PPP processes rotations across six planes simultaneously, doubling the degrees of freedom compared with conventional 3D stacks while sustaining synchronized visual and sonic transport.
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">Implementation Demo: Live 4D Cognition Loop</h2>
+                <p class="text-blue-100/85">
+                    This demo runs the core system loop in-browser: 4D state encoding, six-plane rotations, stereographic projection, and telemetry export.
+                    Use the controls to adjust rotation speed and observe the live telemetry payload that an ML pipeline would ingest.
                 </p>
-                <div class="chart-container">
-                    <canvas id="dimensionsChart"></canvas>
+                <div class="flex flex-wrap gap-4 items-center">
+                    <button id="cognitionStart" class="px-4 py-2 rounded-full bg-blue-500/80 text-white text-sm font-semibold">Start</button>
+                    <button id="cognitionStop" class="px-4 py-2 rounded-full bg-slate-700/80 text-white text-sm font-semibold">Stop</button>
+                    <label class="text-sm text-blue-100/80" for="cognitionSpeed">Rotation speed</label>
+                    <input id="cognitionSpeed" type="range" min="0.2" max="2.5" step="0.1" value="1" class="w-40">
+                    <span id="cognitionSpeedValue" class="text-sm text-blue-100/80">1×</span>
                 </div>
+                <div class="demo-grid">
+                    <canvas id="cognitionCanvas" class="demo-canvas"></canvas>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.25em] text-blue-100/70">Telemetry</p>
+                            <pre id="cognitionTelemetry" class="code-block"></pre>
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.25em] text-blue-100/70">Topology</p>
+                            <pre id="cognitionTopology" class="code-block"></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">How Stereographic Projection Maps 4D Shadows</h2>
+                <p class="text-blue-100/85">
+                    Stereographic projection maps a 4D point (x, y, z, w) to 3D space by projecting from a “north pole” on the 3-sphere. The formula is
+                    a single line of shader code and produces the characteristic nested-cell appearance of projected polytopes.
+                </p>
+                <pre class="code-block"><code>P' = (x, y, z) / (1 - w)</code></pre>
+                <div class="grid gap-6 md:grid-cols-3">
+                    <div>
+                        <h3 class="font-semibold text-white">Connectivity Preservation</h3>
+                        <p class="text-blue-100/80">Adjacency survives the projection intact; edges remain connected where the 4D graph dictates.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white">Conformality</h3>
+                        <p class="text-blue-100/80">Local angles persist, keeping small regions faithful even as distances distort.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white">Depth Encoding</h3>
+                        <p class="text-blue-100/80">Scale distortion encodes the 4th dimension directly as size, eliminating explicit depth math.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">Core Modules & Responsibilities</h2>
+                <div class="grid gap-6 md:grid-cols-3">
+                    <div>
+                        <h3 class="font-semibold text-white">4D State Encoder</h3>
+                        <p class="text-blue-100/80">Normalizes input channels and constructs 4D vectors with stable scaling and smoothing.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white">Rotation Engine</h3>
+                        <p class="text-blue-100/80">Maintains six rotation planes, supports Clifford rotations, and exposes quaternion factors.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white">Projection Renderer</h3>
+                        <p class="text-blue-100/80">Projects 4D vertices into 3D, renders wireframe + translucency, and exports depth cues.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white">Topology Extractor</h3>
+                        <p class="text-blue-100/80">Exports graph topology and visibility metadata for ML models.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white">Telemetry Bus</h3>
+                        <p class="text-blue-100/80">Streams per-frame metrics, rotation state, and encoded visual channels.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white">Dataset Recorder</h3>
+                        <p class="text-blue-100/80">Captures frames, metadata, and labels into reproducible training bundles.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">Six Rotation Planes Reveal 4D Structure Through Motion</h2>
+                <p class="text-blue-100/85">
+                    Four-dimensional space admits six independent rotation planes: XY, XZ, XW, YZ, YW, and ZW. The familiar rotations (XY, XZ, YZ)
+                    behave like ordinary 3D spins, while the exotic planes (XW, YW, ZW) produce the signature “inside-out” swap between inner and outer
+                    structures. Clifford rotations (simultaneous orthogonal plane rotations) reveal 4D symmetries with a single fixed point.
+                </p>
+                <div class="grid gap-6 md:grid-cols-2">
+                    <div>
+                        <h3 class="font-semibold text-white">Familiar Rotations</h3>
+                        <ul class="space-y-2 text-blue-100/80">
+                            <li>• XY, XZ, YZ behave like 3D rotations.</li>
+                            <li>• Anchor 4D intuition to known 3D motion.</li>
+                            <li>• Provide stable reference frames for learning.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white">Exotic Rotations</h3>
+                        <ul class="space-y-2 text-blue-100/80">
+                            <li>• XW, YW, ZW swap interior/exterior geometry.</li>
+                            <li>• Reveal hidden cells and structural symmetries.</li>
+                            <li>• Enable active vision by exposing 4D parallax.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">Data & Telemetry Schema</h2>
+                <p class="text-blue-100/85">
+                    Frame-level output must be machine-consumable. Use the schema below to coordinate vision models, topology learners, and downstream
+                    control systems.
+                </p>
+                <pre class="code-block"><code>{\n  \"frame\": 128,\n  \"rotation\": { \"xy\": 0.32, \"xz\": 0.12, \"xw\": 1.21, \"yz\": 0.55, \"yw\": 0.02, \"zw\": 0.74 },\n  \"quaternion\": { \"left\": [0.98, 0.1, 0.02, 0.0], \"right\": [0.95, 0.08, 0.28, 0.02] },\n  \"projection\": { \"radius\": 1.0, \"depthScale\": 0.62 },\n  \"geometry\": { \"vertices\": 120, \"edges\": 720, \"cells\": 24 },\n  \"telemetry\": { \"opacityMean\": 0.42, \"lineWidthMean\": 1.6, \"overlapDensity\": 0.18 }\n}</code></pre>
+            </section>
+
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">Layered Translucency Performs Holographic Computation</h2>
+                <p class="text-blue-100/85">
+                    Porter-Duff alpha compositing provides the mathematical basis for emergent visual computation. Overlapping translucent layers encode
+                    intersection, union, and difference relationships directly in the compositing result—analog math performed per pixel.
+                </p>
+                <pre class="code-block"><code>Result = Source + Destination × (1 − Source_α)</code></pre>
+                <ul class="space-y-3 text-blue-100/80">
+                    <li>• Intersection regions reveal spatial coincidence and geometric AND operations.</li>
+                    <li>• Moiré patterns encode frequency differences as analog multiplication.</li>
+                    <li>• Holographic principles show 2D interference patterns can encode 3D structure.</li>
+                </ul>
+            </section>
+
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">Process-Based Mathematics Computes Through Rules</h2>
+                <p class="text-blue-100/85">
+                    Declarative math describes what is; process-based math describes how it becomes. Rendering pipelines and cellular automata share this
+                    paradigm: local rules scale to emergent computation. The GPU executes the rules, and the image is the computed result.
+                </p>
+                <div class="grid gap-6 md:grid-cols-2">
+                    <div>
+                        <h3 class="font-semibold text-white">Process Evidence</h3>
+                        <ul class="space-y-2 text-blue-100/80">
+                            <li>• Game of Life demonstrates emergent computation from local rules.</li>
+                            <li>• Optical systems perform Fourier transforms intrinsically.</li>
+                            <li>• Analog hardware solved equations through mechanical processes.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white">PPP Implication</h3>
+                        <ul class="space-y-2 text-blue-100/80">
+                            <li>• The renderer is the calculator; observation replaces explicit math.</li>
+                            <li>• The same projection rules scale across domains.</li>
+                            <li>• GPU parallelism embodies the computation rather than symbolically solving it.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">Visual Parameters Encode Cognitive Channels</h2>
+                <p class="text-blue-100/85">
+                    Visual parameters provide distinct channels for encoding 4D structure. Line thickness, color, opacity, and layer order encode w-depth,
+                    cell identity, temporal sequence, and conceptual relationships without auxiliary metadata.
+                </p>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Information Channel</th>
+                                <th>Implementation</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-blue-100/80">
+                            <tr>
+                                <td>Line thickness</td>
+                                <td>w-depth, edge importance, topological significance</td>
+                                <td>Fragment shader scales line width by projected w-coordinate</td>
+                            </tr>
+                            <tr>
+                                <td>Color / hue</td>
+                                <td>Axis membership, cell identity, rotation phase</td>
+                                <td>Vertex shader assigns color by 4D position</td>
+                            </tr>
+                            <tr>
+                                <td>Opacity</td>
+                                <td>Depth in 4D, certainty, activation weight</td>
+                                <td>Alpha gradient α = f(w)</td>
+                            </tr>
+                            <tr>
+                                <td>Layer order</td>
+                                <td>Temporal sequence, hierarchy, causal structure</td>
+                                <td>Depth buffer or OIT accumulation order</td>
+                            </tr>
+                            <tr>
+                                <td>Intersection patterns</td>
+                                <td>Relationship synthesis and emergent structure</td>
+                                <td>Emergent from compositing overlapping structures</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">Machine Perception Extracts Topology From Shadows</h2>
+                <p class="text-blue-100/85">
+                    Wireframe parsing networks (L-CNN, HAWP) already infer graph topology from projections. PointNet reveals that networks naturally identify
+                    critical points—sparse sets that encode the essential shape. These tools can interpret 4D wireframe shadows without explicit 4D math.
+                </p>
+                <ul class="space-y-3 text-blue-100/80">
+                    <li>• Projection provides vertices, edges, depth ordering, and connectivity graphs.</li>
+                    <li>• Rotation controls provide temporal sequences across six planes.</li>
+                    <li>• Active vision yields better topology inference than passive observation.</li>
+                </ul>
+            </section>
+
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">Scale Invariance Enables Slow-Time Training</h2>
+                <p class="text-blue-100/85">
+                    Universal homology patterns are scale invariant; time is a scalar multiplier. Training on slow, deliberate rotations allows the system to
+                    observe topology without motion blur. The learned topology generalizes to rapid rotations because the geometric relationships are identical.
+                </p>
+                <ul class="space-y-3 text-blue-100/80">
+                    <li>• Slow simulation denoises topology, accelerating concept formation.</li>
+                    <li>• Fractal self-similarity makes patterns consistent across speeds.</li>
+                    <li>• Musical training data validates the transfer of shape-based resolution patterns.</li>
+                </ul>
+            </section>
+
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">Dialectical Synthesis Emerges From Visual Overlap</h2>
+                <p class="text-blue-100/85">
+                    Overlapping translucent polytopal shadows create new structure not present in either source. Intersection regions, unions, and moiré
+                    patterns encode relationship math as analog computation, supporting concept combination through visual interference.
+                </p>
+                <ul class="space-y-3 text-blue-100/80">
+                    <li>• Intersection regions provide geometric AND operations.</li>
+                    <li>• Union regions provide geometric OR operations.</li>
+                    <li>• Exclusive overlap provides XOR-style contrast between concepts.</li>
+                </ul>
+            </section>
+
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">Implementation Requires Minimal Complexity</h2>
+                <p class="text-blue-100/85">
+                    A WebGL/WebGPU implementation remains compact: a vertex buffer of 4 floats per vertex, a rotation state of 6 angles, and a single
+                    projection parameter. Order-independent transparency (weighted blended OIT) handles translucent layering in a single pass.
+                </p>
+                <pre class="code-block"><code>vec3 stereographicProject(vec4 p4d, float R) {
+    float scale = R / (R - p4d.w);
+    return p4d.xyz * scale;
+}</code></pre>
+                <div class="grid gap-6 md:grid-cols-2">
+                    <div>
+                        <h3 class="font-semibold text-white">Minimal State</h3>
+                        <ul class="space-y-2 text-blue-100/80">
+                            <li>• 4D vertex buffer (x, y, z, w)</li>
+                            <li>• Edge index buffer</li>
+                            <li>• Six rotation angles</li>
+                            <li>• Projection radius R</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white">Proven Feasibility</h3>
+                        <ul class="space-y-2 text-blue-100/80">
+                            <li>• satshi/polytope (Three.js)</li>
+                            <li>• mwalczyk/polychora (OpenGL)</li>
+                            <li>• humke-4d-geometry (dual projections + slices)</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">Integration Plan</h2>
+                <p class="text-blue-100/85">
+                    Build the system iteratively so each subsystem is testable. The plan below assumes WebGL/WebGPU, but the same module boundaries apply
+                    to native stacks.
+                </p>
+                <ol class="space-y-3 text-blue-100/80 list-decimal list-inside">
+                    <li>Stand up the 4D state encoder and rotation engine with deterministic test vectors.</li>
+                    <li>Implement stereographic projection and render a wireframe tesseract.</li>
+                    <li>Add layered translucency with order-independent blending.</li>
+                    <li>Export topology graphs and telemetry metadata for every frame.</li>
+                    <li>Capture datasets (slow rotations) and validate with topology parsing networks.</li>
+                    <li>Instrument active vision loops to optimize rotation sequences.</li>
+                </ol>
+            </section>
+
+            <section class="section-card space-y-6">
+                <h2 class="text-2xl font-semibold text-white">Validation of the Core Insight</h2>
+                <p class="text-blue-100/85">
+                    The machine doesn’t need to understand 4D mathematics. It needs to see a stereographic shadow, manipulate the six rotation dials, and
+                    observe how visual properties change. The rendering pipeline is the computation engine, and perception is the learning mechanism.
+                </p>
+                <ol class="space-y-3 text-blue-100/80 list-decimal list-inside">
+                    <li>See a 3D shadow with topology-preserving projection.</li>
+                    <li>Manipulate six rotations to reveal 4D parallax and symmetry.</li>
+                    <li>Observe changes in thickness, color, opacity, and overlap.</li>
+                    <li>Learn pattern shapes through slow, scale-invariant observation.</li>
+                </ol>
             </section>
         </main>
-
-        <footer class="text-sm text-blue-100/50 border-t border-blue-900/60 pt-8">
-            Maintained by PPP Engineering • Status v2025.10 • Contact: Paul Phillips · Clear Seas Solutions
-        </footer>
     </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const chartCanvas = document.getElementById('dimensionsChart');
-    if (chartCanvas) {
-        const ctx = chartCanvas.getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['3D Spatial Computation', '4D PPP Kernel'],
-                datasets: [{
-                    label: 'Rotational Degrees of Freedom',
-                    data: [3, 6],
-                    backgroundColor: ['rgba(90, 180, 255, 0.45)', 'rgba(140, 120, 255, 0.5)'],
-                    borderColor: ['rgba(90, 180, 255, 0.9)', 'rgba(140, 120, 255, 0.9)'],
-                    borderWidth: 2,
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            color: '#d8f5ff',
-                            font: { size: 12 }
-                        },
-                        grid: {
-                            color: 'rgba(104, 178, 255, 0.15)',
-                            drawBorder: false
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            color: '#d8f5ff',
-                            font: { size: 12 }
-                        },
-                        grid: {
-                            display: false
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: '#d8f5ff',
-                            font: { size: 12 }
-                        }
-                    }
-                }
-            }
-        });
-    }
-});
-</script>
+    <script type="module" src="scripts/cognition-demo.js"></script>
 </body>
 </html>
