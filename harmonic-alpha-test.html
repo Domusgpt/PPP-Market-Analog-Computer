@@ -388,6 +388,30 @@
                     <button class="btn btn-scenario" onclick="runScenario('recovery')">Recovery</button>
                     <button class="btn btn-scenario" onclick="runScenario('volatile')">High Volatility</button>
                 </div>
+
+                <!-- REAL MARKET SCENARIOS -->
+                <div class="panel" style="border: 2px solid #ff6b6b;">
+                    <h2 style="color: #ff6b6b;">Real Market Scenarios</h2>
+                    <p style="font-size: 0.75rem; color: #808090; margin-bottom: 1rem;">
+                        Based on actual historical market data
+                    </p>
+                    <button class="btn btn-scenario" style="width: 100%; margin-bottom: 0.5rem; background: linear-gradient(135deg, #ff6b6b33, #ff6b6b11);"
+                            onclick="runRealScenario('AUGUST_2024_BLACK_MONDAY')">
+                        Aug 5, 2024 Black Monday
+                    </button>
+                    <button class="btn btn-scenario" style="width: 100%; margin-bottom: 0.5rem; background: linear-gradient(135deg, #ffd93d33, #ffd93d11);"
+                            onclick="runRealScenario('BITCOIN_2022_2024_CYCLE')">
+                        BTC 2022-24 Fear→Greed
+                    </button>
+                    <button class="btn btn-scenario" style="width: 100%; margin-bottom: 0.5rem; background: linear-gradient(135deg, #ff990033, #ff990011);"
+                            onclick="runRealScenario('JULY_2024_CRYPTO_CRASH')">
+                        July 2024 Crypto Crash
+                    </button>
+                    <button class="btn btn-scenario" style="width: 100%; background: linear-gradient(135deg, #6bcb7733, #6bcb7711);"
+                            onclick="runRealScenario('CRYPTO_WINTER_2022')">
+                        2022 Crypto Winter
+                    </button>
+                </div>
             </div>
 
             <!-- Right Column -->
@@ -455,6 +479,7 @@
         import { MockWebEngine } from './scripts/MockWasmEngine.js';
         import { MarketLarynxSonification } from './scripts/MarketLarynxSonification.js';
         import { MarketSentimentTools } from './src/agent/mcp/tools.js';
+        import { ALL_SCENARIOS, ScenarioRunner } from './scripts/RealMarketScenarios.js';
 
         // Initialize components
         const engine = new MockWebEngine('tension-canvas');
@@ -769,9 +794,62 @@
             requestAnimationFrame(mainLoop);
         }
 
+        // Real Scenario Runner
+        const scenarioRunner = new ScenarioRunner(engine, sonification);
+        let realScenarioRunning = false;
+
+        scenarioRunner.onUpdate = (result, step, total) => {
+            const pct = Math.round((step / total) * 100);
+            log(`[${result.note}] Day ${result.day}: Tension=${result.output.tension.toFixed(2)} ${result.output.regime}`, 'info');
+        };
+
+        scenarioRunner.onGammaEvent = (result) => {
+            log(`GAMMA EVENT DETECTED on Day ${result.day}!`, 'gamma');
+        };
+
+        scenarioRunner.onComplete = (results) => {
+            realScenarioRunning = false;
+            const analysis = scenarioRunner.analyze();
+            log(`=== SCENARIO COMPLETE ===`, 'success');
+            log(`Max Tension: ${analysis.maxTension.toFixed(2)}`, 'info');
+            log(`Gamma Events: ${analysis.gammaEventCount} on days [${analysis.gammaEventDays.join(', ')}]`, analysis.gammaEventCount > 0 ? 'gamma' : 'info');
+            log(`Crash Detected: ${analysis.crashDetected ? 'YES' : 'NO'}`, analysis.crashDetected ? 'warning' : 'info');
+            log(`Regime Distribution: ${JSON.stringify(analysis.regimeDistribution)}`, 'info');
+        };
+
+        window.runRealScenario = async (scenarioKey) => {
+            if (realScenarioRunning) {
+                log('Scenario already running!', 'warning');
+                return;
+            }
+
+            const scenario = ALL_SCENARIOS[scenarioKey];
+            if (!scenario) {
+                log(`Unknown scenario: ${scenarioKey}`, 'error');
+                return;
+            }
+
+            // Stop auto mode
+            isAutoMode = false;
+            document.getElementById('btn-auto').textContent = 'Start Auto Mode';
+            document.getElementById('btn-auto').classList.remove('active');
+
+            // Reset engine
+            engine.reset_market_larynx();
+            tensionHistory = [];
+
+            log(`=== RUNNING: ${scenario.name} ===`, 'warning');
+            log(scenario.description, 'info');
+
+            realScenarioRunning = true;
+            scenarioRunner.load(scenario);
+            await scenarioRunner.run();
+        };
+
         // Start
         mainLoop();
         log('System started - use sliders or run scenarios to test', 'success');
+        log('Try "Aug 5, 2024 Black Monday" for real crash detection!', 'warning');
     </script>
 </body>
 </html>
