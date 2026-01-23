@@ -1,22 +1,25 @@
 #!/usr/bin/env node
 /**
+ * DEPRECATED - This file contains MANUALLY TYPED data, not API-fetched data.
+ *
+ * For a REAL backtest using verified API data, use: RealBacktest.js
+ *
+ * ============================================================================
+ * HONESTY NOTICE:
+ * The HISTORICAL_DATA_2024 array below was manually typed from memory, not
+ * fetched from APIs. This makes it unsuitable for valid backtesting because:
+ * 1. The data may contain errors from human memory
+ * 2. There's no verification trail
+ * 3. Cherry-picking bias is possible
+ *
+ * Use RealBacktest.js instead, which fetches data from:
+ * - CoinGecko API (BTC prices)
+ * - Alternative.me API (Fear & Greed Index)
+ * ============================================================================
+ *
+ * Original description (for reference):
  * Harmonic Alpha Historical Backtest
- *
- * REAL EXPERIMENT: Feed verified historical data and test if the system
- * can detect regime changes EARLIER than traditional indicators.
- *
- * Data Sources:
- * - BTC Price: CoinGecko historical API
- * - Fear & Greed: Alternative.me historical
- * - VIX: Yahoo Finance historical
- *
  * Test Period: 2024 (full year with multiple regimes)
- * Key Events to Detect:
- * - Jan-Mar 2024: Bull run to $73k ATH
- * - Apr-Jun 2024: Correction to $56k
- * - Jul-Aug 2024: Recovery attempt
- * - Aug 5 2024: "Black Monday" flash crash
- * - Sep-Dec 2024: Rally to $100k+
  */
 
 // ============================================================================
