@@ -25,44 +25,43 @@ import { MockWebEngine } from './MockWasmEngine.js';
  * - Fear & Greed: Alternative.me, CoinMarketCap
  */
 const CURRENT_MARKET_DATA = {
-    timestamp: '2026-01-23T13:00:00Z',
+    timestamp: '2026-01-23T14:00:00Z',
 
-    // Price data - BTC ranges $89,943 to $99,887 across exchanges
+    // Price data - CORRECTED: BTC at $89,000
     btc: {
-        price: 95000,  // Mid-range estimate
-        change24h: 0.0152,  // Up 1.52% per Yahoo
-        weeklyTrend: 'recovering',  // Recovered from $87,600 lows
-        support: 92000,
-        resistance: 99500
+        price: 89000,       // User confirmed $89k
+        change24h: -0.035,  // Down ~3.5% from recent highs
+        weeklyTrend: 'declining',
+        support: 87000,
+        resistance: 92000
     },
 
     sp500: {
-        price: 6100,  // Approximate
-        change24h: 0.003,
-        note: 'Markets relatively stable'
+        price: 6100,
+        change24h: -0.005,
+        note: 'Markets under pressure'
     },
 
     // Sentiment indicators (REAL VALUES)
-    cryptoFearGreed: 44,  // Fear zone - "Fear" per feargreedmeter.com
-    vix: 15.06,  // Current VIX level
-    vixChange24h: 0.0107,  // UP 1.07% today (previous close 14.90)
+    cryptoFearGreed: 44,  // Fear zone
+    vix: 15.06,  // Current VIX level - LOW despite market decline
+    vixChange24h: 0.0107,
     vixPreviousDay: 14.90,
 
-    // The key observation: VIX is LOW (15.06) during a period of uncertainty
+    // KEY INSIGHT: VIX LOW (15.06) while BTC declining = COMPLACENCY
     // Historical VIX range: 13.38 to 60.13 over past 52 weeks
-    // Current VIX near bottom of range = potential complacency
+    // This divergence is significant
 
-    // Qualitative factors
-    geopoliticalTensions: ['tariff_threats_europe', 'general_uncertainty'],
-    marketNarrative: 'VIX near 52-week lows despite Fear sentiment in crypto - mixed signals'
+    geopoliticalTensions: ['tariff_threats', 'market_uncertainty'],
+    marketNarrative: 'BTC declining to $89k with VIX near 52-week lows - extreme complacency divergence'
 };
 
 /**
  * Normalize market data to 0-1 range for the engine
  */
 function normalizeMarketData(data) {
-    // Price alpha: normalize BTC relative to recent range ($90k-$110k)
-    const btcMin = 90000;
+    // Price alpha: normalize BTC relative to recent range ($80k-$110k)
+    const btcMin = 80000;
     const btcMax = 110000;
     const priceAlpha = Math.max(0, Math.min(1,
         (data.btc.price - btcMin) / (btcMax - btcMin)

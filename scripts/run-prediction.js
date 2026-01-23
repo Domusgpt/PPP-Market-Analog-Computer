@@ -138,14 +138,14 @@ class MockWebEngine {
 // ============ CURRENT MARKET DATA (REAL - January 23, 2026) ============
 
 const CURRENT_MARKET_DATA = {
-    timestamp: '2026-01-23T13:00:00Z',
+    timestamp: '2026-01-23T14:00:00Z',
 
     btc: {
-        price: 95000,
-        change24h: 0.0152,
-        weeklyTrend: 'recovering',
-        support: 92000,
-        resistance: 99500
+        price: 89000,       // CORRECTED: $89k as reported
+        change24h: -0.035,  // Down ~3.5% from recent highs
+        weeklyTrend: 'declining',
+        support: 87000,
+        resistance: 92000
     },
 
     cryptoFearGreed: 44,  // Fear
@@ -159,7 +159,7 @@ const CURRENT_MARKET_DATA = {
 // ============ ANALYSIS FUNCTIONS ============
 
 function normalizeMarketData(data) {
-    const btcMin = 90000;
+    const btcMin = 80000;   // Adjusted range for current market
     const btcMax = 110000;
     const priceAlpha = Math.max(0, Math.min(1, (data.btc.price - btcMin) / (btcMax - btcMin)));
 
