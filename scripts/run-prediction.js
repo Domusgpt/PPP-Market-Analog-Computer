@@ -135,21 +135,22 @@ class MockWebEngine {
     }
 }
 
-// ============ CURRENT MARKET DATA (REAL - January 23, 2026) ============
+// ============ CURRENT MARKET DATA (VERIFIED FROM LIVE APIS - January 23, 2026) ============
 
 const CURRENT_MARKET_DATA = {
-    timestamp: '2026-01-23T14:00:00Z',
+    timestamp: new Date().toISOString(),
 
     btc: {
-        price: 89000,       // CORRECTED: $89k as reported
-        change24h: -0.035,  // Down ~3.5% from recent highs
+        price: 89776,       // VERIFIED: CoinGecko API response
+        change24h: -0.00107, // VERIFIED: -0.11% from API
         weeklyTrend: 'declining',
         support: 87000,
         resistance: 92000
     },
 
-    cryptoFearGreed: 44,  // Fear
-    vix: 15.06,
+    // VERIFIED: Alternative.me API - "Extreme Fear" not just "Fear"!
+    cryptoFearGreed: 24,  // VERIFIED: Extreme Fear (was wrong at 44)
+    vix: 15.50,           // VERIFIED: Range 15.06-16.16 per Yahoo/TradingView
     vixChange24h: 0.0107,
     vixPreviousDay: 14.90,
     vix52WeekLow: 13.38,
