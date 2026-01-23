@@ -39,6 +39,8 @@ pub use geometry::{
 };
 pub use cognitive::{
     TrinityState, DialecticEngine, CognitiveRule,
+    MarketLarynx, MarketLarynxConfig, MarketLarynxResult,
+    MarketRegime, GammaEvent, TopologicalFeature, MusicalInterval,
 };
 pub use rendering::{
     RenderEngine, RenderConfig, PixelRule,

@@ -128,7 +128,7 @@ fn run_headless(config: EngineConfig) {
 fn run_benchmark(config: EngineConfig) {
     log::info!("Running performance benchmark");
 
-    let mut engine = GeometricCognitionEngine::new(config);
+    let mut engine = GeometricCognitionEngine::new(config.clone());
     let delta_time = 1.0 / 60.0;
 
     let start = std::time::Instant::now();
