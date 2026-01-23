@@ -479,37 +479,65 @@ impl MarketLarynx {
         features
     }
 
-    /// Compute crash probability based on TDA features
+    /// Compute crash probability based on TDA features AND tension
+    /// Falls back to tension-based calculation when TDA data is insufficient
     fn compute_crash_probability(&self, features: &[TopologicalFeature]) -> f64 {
-        if features.is_empty() {
-            return 0.0;
-        }
-
-        let mut crash_score = 0.0;
-        let mut total_weight = 0.0;
-
-        for feature in features {
-            let weight = feature.persistence;
-            total_weight += weight;
-
-            match feature.dimension {
-                2 => {
-                    // Voids strongly indicate crashes
-                    crash_score += weight * 2.0;
-                }
-                1 => {
-                    // Loops indicate volatility, moderate crash indicator
-                    crash_score += weight * 0.5;
-                }
-                _ => {}
-            }
-        }
-
-        if total_weight > 0.0 {
-            (crash_score / total_weight).clamp(0.0, 1.0)
+        // Calculate smoothed tension
+        let smoothed_tension = if self.tension_history.is_empty() {
+            self.tension
         } else {
-            0.0
-        }
+            self.tension_history.iter().sum::<f64>() / self.tension_history.len() as f64
+        };
+
+        // Base probability from tension (always available)
+        // Higher tension = higher crash probability
+        let tension_prob = if smoothed_tension > 0.8 {
+            0.7 + (smoothed_tension - 0.8) * 1.5  // 0.7-1.0 range
+        } else if smoothed_tension > 0.6 {
+            0.4 + (smoothed_tension - 0.6) * 1.5  // 0.4-0.7 range
+        } else if smoothed_tension > 0.4 {
+            0.2 + (smoothed_tension - 0.4) * 1.0  // 0.2-0.4 range
+        } else {
+            smoothed_tension * 0.5  // 0.0-0.2 range
+        };
+
+        // If we have TDA features, boost or reduce based on topology
+        let tda_modifier = if features.is_empty() {
+            1.0  // No modification if no TDA data
+        } else {
+            let mut crash_score = 0.0;
+            let mut total_weight = 0.0;
+
+            for feature in features {
+                let weight = feature.persistence;
+                total_weight += weight;
+
+                match feature.dimension {
+                    2 => {
+                        // Voids strongly indicate crashes - big boost
+                        crash_score += weight * 2.0;
+                    }
+                    1 => {
+                        // Loops indicate volatility - moderate boost
+                        crash_score += weight * 0.8;
+                    }
+                    0 => {
+                        // Connected components - slight reduction (stability)
+                        crash_score -= weight * 0.3;
+                    }
+                    _ => {}
+                }
+            }
+
+            if total_weight > 0.0 {
+                1.0 + (crash_score / total_weight).clamp(-0.5, 1.0)
+            } else {
+                1.0
+            }
+        };
+
+        // Final probability: tension-based * TDA modifier
+        (tension_prob * tda_modifier).clamp(0.0, 1.0)
     }
 
     /// Get the current tension level
