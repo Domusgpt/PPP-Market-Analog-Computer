@@ -11,5 +11,8 @@
     "playwright": "^1.57.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.2"
   }
 }
