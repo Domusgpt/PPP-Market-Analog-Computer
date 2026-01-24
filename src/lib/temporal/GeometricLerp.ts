@@ -443,6 +443,19 @@ export class GeometricLerp {
       };
     }
 
+    // Check if timestamp exactly matches kA (exact keyframe hit)
+    if (timestamp === kA.timestamp) {
+      return {
+        timestamp,
+        rotation: { ...kA.rotation },
+        rotor: Rotor4D.fromPlaneAngles(kA.rotation),
+        velocity: this.computeVelocity(kA.rotation, kB.rotation, kB.timestamp - kA.timestamp),
+        interpolationFactor: 0,
+        keyframeA: kA,
+        keyframeB: kB
+      };
+    }
+
     // Compute interpolation factor
     const duration = kB.timestamp - kA.timestamp;
     const t = duration > 0 ? (timestamp - kA.timestamp) / duration : 0;

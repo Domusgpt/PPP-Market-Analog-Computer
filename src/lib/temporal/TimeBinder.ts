@@ -362,6 +362,21 @@ export class TimeBinder {
       };
     }
 
+    // Check if target exactly matches tickA's timestamp (exact hit in middle of buffer)
+    if (targetTime === tickA.timestamp) {
+      this.metrics.exactHits++;
+      return {
+        timestamp,
+        priceVector: { ...tickA.priceVector },
+        rotation: { ...tickA.rotation },
+        interpolationFactor: 0,
+        tickA,
+        tickB,
+        phaseOffset: 0,
+        isExact: true
+      };
+    }
+
     // Interpolation needed
     const gap = tickB.timestamp - tickA.timestamp;
 
@@ -433,6 +448,20 @@ export class TimeBinder {
         tickA,
         tickB: null,
         phaseOffset: timestamp - tickA.timestamp,
+        isExact: true
+      };
+    }
+
+    // Check if timestamp exactly matches tickA (exact hit in middle of buffer)
+    if (timestamp === tickA.timestamp) {
+      return {
+        timestamp,
+        priceVector: { ...tickA.priceVector },
+        rotation: { ...tickA.rotation },
+        interpolationFactor: 0,
+        tickA,
+        tickB,
+        phaseOffset: 0,
         isExact: true
       };
     }
