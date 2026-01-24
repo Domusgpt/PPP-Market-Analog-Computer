@@ -69,6 +69,10 @@ getrandom = { version = "0.2", optional = true }
 num-traits = "0.2"
 rand = "0.8"
 
+# HTTP client for API calls
+ureq = { version = "2.9", features = ["json"] }
+chrono = "0.4"
+
 [dev-dependencies]
 approx = "0.5"
 
@@ -87,3 +91,7 @@ crate-type = ["cdylib", "rlib"]
 [[bin]]
 name = "gce"
 path = "src/main.rs"
+
+[[bin]]
+name = "predict"
+path = "src/bin/predict.rs"

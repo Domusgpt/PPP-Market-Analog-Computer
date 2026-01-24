@@ -283,4 +283,141 @@ impl WebEngine {
             TrinityComponent::Beta,
         )
     }
+
+    // ============================================================
+    // MARKET LARYNX (HARMONIC ALPHA) METHODS
+    // ============================================================
+
+    /// Enable market analysis mode (Harmonic Alpha)
+    #[wasm_bindgen]
+    pub fn enable_market_mode(&mut self) {
+        self.engine.cognitive_layer_mut().set_market_mode(true);
+    }
+
+    /// Disable market analysis mode
+    #[wasm_bindgen]
+    pub fn disable_market_mode(&mut self) {
+        self.engine.cognitive_layer_mut().set_market_mode(false);
+    }
+
+    /// Check if market mode is enabled
+    #[wasm_bindgen]
+    pub fn is_market_mode(&self) -> bool {
+        self.engine.cognitive_layer().is_market_mode()
+    }
+
+    /// Set market price (Thesis/Alpha) - normalized 0-1
+    #[wasm_bindgen]
+    pub fn set_market_price(&mut self, price: f64) {
+        self.engine.cognitive_layer_mut().set_market_price(price);
+    }
+
+    /// Set market sentiment directly (Antithesis/Beta) - normalized 0-1
+    #[wasm_bindgen]
+    pub fn set_market_sentiment(&mut self, sentiment: f64) {
+        self.engine.cognitive_layer_mut().set_market_sentiment(sentiment);
+    }
+
+    /// Set market sentiment from embedding vector (from Voyage AI)
+    #[wasm_bindgen]
+    pub fn set_market_sentiment_embedding(&mut self, embedding: &[f64]) {
+        self.engine.cognitive_layer_mut().set_market_sentiment_embedding(embedding);
+    }
+
+    /// Get current market tension (0.0 to 1.0)
+    #[wasm_bindgen]
+    pub fn get_market_tension(&self) -> f64 {
+        self.engine.cognitive_layer().market_tension()
+    }
+
+    /// Check if market gamma event (crash warning) is active
+    #[wasm_bindgen]
+    pub fn is_market_gamma_active(&self) -> bool {
+        self.engine.cognitive_layer().is_market_gamma_active()
+    }
+
+    /// Get full market larynx state as JSON
+    #[wasm_bindgen]
+    pub fn get_market_state(&mut self) -> String {
+        let cognitive = self.engine.cognitive_layer_mut();
+        let larynx = cognitive.market_larynx_mut();
+
+        // Step the larynx to get current result
+        let result = larynx.step(1.0 / 60.0);
+
+        serde_json::json!({
+            "tension": result.tension,
+            "smoothed_tension": result.smoothed_tension,
+            "regime": format!("{:?}", result.regime),
+            "consonance": result.consonance,
+            "interval_ratio": result.interval_ratio,
+            "gamma_active": result.gamma_active,
+            "crash_probability": result.crash_probability,
+            "sonification": {
+                "frequencies": result.sonification_frequencies,
+                "fundamental": result.sonification_frequencies[0],
+                "harmonic1": result.sonification_frequencies[1],
+                "harmonic2": result.sonification_frequencies[2]
+            },
+            "tda": {
+                "feature_count": result.tda_features.len(),
+                "voids": result.tda_features.iter().filter(|f| f.dimension == 2).count(),
+                "loops": result.tda_features.iter().filter(|f| f.dimension == 1).count()
+            }
+        }).to_string()
+    }
+
+    /// Get market regime as string: "Bull", "MildBull", "Neutral", "MildBear", "Bear", "CrashRisk", "GammaEvent"
+    #[wasm_bindgen]
+    pub fn get_market_regime(&self) -> String {
+        format!("{:?}", self.engine.cognitive_layer().market_regime())
+    }
+
+    /// Get sonification frequencies for the current market state [fundamental, harmonic1, harmonic2]
+    #[wasm_bindgen]
+    pub fn get_market_sonification_frequencies(&mut self) -> Vec<f64> {
+        let cognitive = self.engine.cognitive_layer_mut();
+        let larynx = cognitive.market_larynx_mut();
+        let result = larynx.step(1.0 / 60.0);
+        result.sonification_frequencies.to_vec()
+    }
+
+    /// Get the TDA crash probability (0.0 to 1.0)
+    #[wasm_bindgen]
+    pub fn get_crash_probability(&mut self) -> f64 {
+        let cognitive = self.engine.cognitive_layer_mut();
+        let larynx = cognitive.market_larynx_mut();
+        let result = larynx.step(1.0 / 60.0);
+        result.crash_probability
+    }
+
+    /// Configure market larynx parameters
+    #[wasm_bindgen]
+    pub fn configure_market_larynx(
+        &mut self,
+        gamma_threshold: f64,
+        smoothing_window: usize,
+        tension_decay: f64,
+        sentiment_sensitivity: f64,
+        base_frequency: f64
+    ) {
+        use crate::cognitive::MarketLarynxConfig;
+
+        let config = MarketLarynxConfig {
+            gamma_threshold,
+            smoothing_window,
+            tension_decay,
+            sentiment_sensitivity,
+            base_frequency,
+            tda_persistence_threshold: 0.1,
+        };
+
+        self.engine.cognitive_layer_mut().market_larynx_mut().set_config(config);
+    }
+
+    /// Reset market larynx state
+    #[wasm_bindgen]
+    pub fn reset_market_larynx(&mut self) {
+        self.engine.cognitive_layer_mut().market_larynx_mut().reset();
+    }
 }

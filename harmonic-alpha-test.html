@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harmonic Alpha - Market Larynx Test</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2a 50%, #0a1a1a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            border-bottom: 1px solid rgba(255, 100, 100, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        header p {
+            color: #808090;
+            margin-top: 0.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .panel {
+            background: rgba(20, 20, 40, 0.8);
+            border: 1px solid rgba(100, 100, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .panel h2 {
+            font-size: 1rem;
+            color: #a0a0ff;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(100, 100, 255, 0.2);
+        }
+
+        .tension-display {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .tension-value {
+            font-size: 4rem;
+            font-weight: bold;
+            font-family: 'Consolas', monospace;
+        }
+
+        .regime-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+
+        .regime-Bull { background: rgba(0, 200, 100, 0.3); border: 2px solid #00ff88; color: #00ff88; }
+        .regime-MildBull { background: rgba(100, 200, 0, 0.3); border: 2px solid #88ff00; color: #88ff00; }
+        .regime-Neutral { background: rgba(200, 200, 0, 0.3); border: 2px solid #ffff00; color: #ffff00; }
+        .regime-MildBear { background: rgba(255, 150, 0, 0.3); border: 2px solid #ff9900; color: #ff9900; }
+        .regime-Bear { background: rgba(255, 50, 0, 0.3); border: 2px solid #ff3300; color: #ff3300; }
+        .regime-CrashRisk { background: rgba(255, 0, 0, 0.4); border: 2px solid #ff0000; color: #ff0000; }
+        .regime-GammaEvent { background: rgba(255, 0, 255, 0.4); border: 2px solid #ff00ff; color: #ff00ff; animation: pulse 0.5s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        .control-group {
+            margin-bottom: 1rem;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: #808090;
+            margin-bottom: 0.25rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 8px;
+            background: rgba(100, 100, 255, 0.3);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            border-radius: 50%;
+            cursor: grab;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, rgba(100, 100, 255, 0.4), rgba(255, 100, 100, 0.4));
+            border: 1px solid rgba(200, 100, 255, 0.5);
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, rgba(150, 150, 255, 0.5), rgba(255, 150, 150, 0.5));
+            transform: translateY(-2px);
+        }
+
+        .btn.active {
+            background: linear-gradient(135deg, #ff6b6b, #6bcb77);
+            border-color: #fff;
+        }
+
+        .btn-scenario {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .metric {
+            background: rgba(30, 30, 60, 0.6);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.7rem;
+            color: #606080;
+            text-transform: uppercase;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Consolas', monospace;
+            color: #e0e0ff;
+        }
+
+        .frequencies {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .freq-chip {
+            background: rgba(100, 100, 255, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-family: 'Consolas', monospace;
+        }
+
+        .canvas-container {
+            position: relative;
+            background: #050510;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 300px;
+        }
+
+        #tension-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .gamma-alert {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 0, 100, 0.1);
+            pointer-events: none;
+            z-index: 1000;
+            animation: gamma-flash 0.2s infinite;
+        }
+
+        .gamma-alert.active {
+            display: block;
+        }
+
+        @keyframes gamma-flash {
+            0%, 100% { background: rgba(255, 0, 100, 0.1); }
+            50% { background: rgba(255, 0, 255, 0.2); }
+        }
+
+        .news-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(20, 20, 40, 0.8);
+            border: 1px solid rgba(100, 100, 255, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .status-bar {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #606080;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .log-output {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Consolas', monospace;
+            font-size: 0.8rem;
+            height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid rgba(100, 100, 255, 0.1);
+        }
+
+        .log-entry.warning { color: #ffd93d; }
+        .log-entry.error { color: #ff6b6b; }
+        .log-entry.success { color: #6bcb77; }
+        .log-entry.gamma { color: #ff00ff; font-weight: bold; }
+
+        .interval-display {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(30, 30, 60, 0.4);
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .interval-name {
+            font-size: 1.2rem;
+            color: #a0a0ff;
+        }
+
+        .interval-ratio {
+            font-size: 0.9rem;
+            color: #808090;
+            font-family: 'Consolas', monospace;
+        }
+
+        .tda-display {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .tda-feature {
+            flex: 1;
+            background: rgba(30, 30, 60, 0.4);
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .tda-count {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .tda-voids { color: #ff6b6b; }
+        .tda-loops { color: #6bcb77; }
+    </style>
+</head>
+<body>
+    <div class="gamma-alert" id="gamma-alert"></div>
+
+    <div class="container">
+        <header>
+            <h1>Harmonic Alpha - Market Larynx Test</h1>
+            <p>Music Theory to Financial Markets | Crash Detection via TDA</p>
+        </header>
+
+        <div class="grid">
+            <!-- Left Column -->
+            <div>
+                <!-- Tension Display -->
+                <div class="panel">
+                    <h2>Market Tension</h2>
+                    <div class="tension-display" id="tension-display">
+                        <div class="tension-value" id="tension-value">0.00</div>
+                        <div class="regime-badge regime-Neutral" id="regime-badge">NEUTRAL</div>
+                    </div>
+
+                    <div class="interval-display">
+                        <div class="interval-name" id="interval-name">Perfect Fifth</div>
+                        <div class="interval-ratio" id="interval-ratio">Ratio: 1.500 | Consonance: 95%</div>
+                    </div>
+
+                    <div class="tda-display">
+                        <div class="tda-feature">
+                            <div class="tda-count tda-voids" id="tda-voids">0</div>
+                            <div>Voids (Crash)</div>
+                        </div>
+                        <div class="tda-feature">
+                            <div class="tda-count tda-loops" id="tda-loops">0</div>
+                            <div>Loops (Volatility)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="panel">
+                    <h2>Manual Controls</h2>
+
+                    <div class="control-group">
+                        <label>Price (Thesis/Alpha): <span id="price-val">0.50</span></label>
+                        <input type="range" id="price-slider" min="0" max="1" step="0.01" value="0.5">
+                    </div>
+
+                    <div class="control-group">
+                        <label>Sentiment (Antithesis/Beta): <span id="sentiment-val">0.50</span></label>
+                        <input type="range" id="sentiment-slider" min="0" max="1" step="0.01" value="0.5">
+                    </div>
+
+                    <div style="margin-top: 1rem;">
+                        <button class="btn" id="btn-audio">Enable Audio</button>
+                        <button class="btn" id="btn-auto">Start Auto Mode</button>
+                        <button class="btn" id="btn-reset">Reset</button>
+                    </div>
+                </div>
+
+                <!-- Scenarios -->
+                <div class="panel">
+                    <h2>Test Scenarios</h2>
+                    <button class="btn btn-scenario" onclick="runScenario('bull')">Bull Market</button>
+                    <button class="btn btn-scenario" onclick="runScenario('bear')">Bear Market</button>
+                    <button class="btn btn-scenario" onclick="runScenario('crash')">Crash Sequence</button>
+                    <button class="btn btn-scenario" onclick="runScenario('recovery')">Recovery</button>
+                    <button class="btn btn-scenario" onclick="runScenario('volatile')">High Volatility</button>
+                </div>
+
+                <!-- REAL MARKET SCENARIOS -->
+                <div class="panel" style="border: 2px solid #ff6b6b;">
+                    <h2 style="color: #ff6b6b;">Real Market Scenarios</h2>
+                    <p style="font-size: 0.75rem; color: #808090; margin-bottom: 1rem;">
+                        Based on actual historical market data
+                    </p>
+                    <button class="btn btn-scenario" style="width: 100%; margin-bottom: 0.5rem; background: linear-gradient(135deg, #ff6b6b33, #ff6b6b11);"
+                            onclick="runRealScenario('AUGUST_2024_BLACK_MONDAY')">
+                        Aug 5, 2024 Black Monday
+                    </button>
+                    <button class="btn btn-scenario" style="width: 100%; margin-bottom: 0.5rem; background: linear-gradient(135deg, #ffd93d33, #ffd93d11);"
+                            onclick="runRealScenario('BITCOIN_2022_2024_CYCLE')">
+                        BTC 2022-24 Fear→Greed
+                    </button>
+                    <button class="btn btn-scenario" style="width: 100%; margin-bottom: 0.5rem; background: linear-gradient(135deg, #ff990033, #ff990011);"
+                            onclick="runRealScenario('JULY_2024_CRYPTO_CRASH')">
+                        July 2024 Crypto Crash
+                    </button>
+                    <button class="btn btn-scenario" style="width: 100%; background: linear-gradient(135deg, #6bcb7733, #6bcb7711);"
+                            onclick="runRealScenario('CRYPTO_WINTER_2022')">
+                        2022 Crypto Winter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <!-- Metrics -->
+                <div class="panel">
+                    <h2>Metrics</h2>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <div class="metric-label">Crash Probability</div>
+                            <div class="metric-value" id="crash-prob">0%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Consonance</div>
+                            <div class="metric-value" id="consonance">95%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Frame</div>
+                            <div class="metric-value" id="frame-count">0</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1rem;">
+                        <label style="font-size: 0.8rem; color: #808090;">Sonification Frequencies:</label>
+                        <div class="frequencies" id="frequencies">
+                            <span class="freq-chip">110 Hz</span>
+                            <span class="freq-chip">165 Hz</span>
+                            <span class="freq-chip">220 Hz</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tension History Chart -->
+                <div class="panel">
+                    <h2>Tension History</h2>
+                    <div class="canvas-container">
+                        <canvas id="tension-canvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- News Input -->
+                <div class="panel">
+                    <h2>Market News (Sentiment Source)</h2>
+                    <textarea class="news-input" id="news-input" placeholder="Enter market news headlines here...">Market shows steady growth with positive earnings reports.</textarea>
+                    <button class="btn" style="margin-top: 0.5rem;" id="btn-analyze-news">Analyze Sentiment</button>
+                </div>
+
+                <!-- Log Output -->
+                <div class="panel">
+                    <h2>Event Log</h2>
+                    <div class="log-output" id="log-output"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <span>Engine: <span id="engine-status">Mock WASM</span></span>
+            <span>Market Mode: <span id="market-mode">Enabled</span></span>
+            <span>Audio: <span id="audio-status">Off</span></span>
+            <span>Update Rate: <span id="update-rate">60 FPS</span></span>
+        </div>
+    </div>
+
+    <script type="module">
+        import { MockWebEngine } from './scripts/MockWasmEngine.js';
+        import { MarketLarynxSonification } from './scripts/MarketLarynxSonification.js';
+        import { MarketSentimentTools } from './src/agent/mcp/tools.js';
+        import { ALL_SCENARIOS, ScenarioRunner } from './scripts/RealMarketScenarios.js';
+
+        // Initialize components
+        const engine = new MockWebEngine('tension-canvas');
+        const sonification = new MarketLarynxSonification({
+            baseFrequency: 110,
+            masterVolume: 0.3,
+            onRegimeChange: (newRegime, oldRegime) => {
+                log(`Regime change: ${oldRegime} -> ${newRegime}`, 'warning');
+            },
+            onGammaEvent: (tension, regime) => {
+                log(`GAMMA EVENT! Tension: ${tension.toFixed(2)}, Regime: ${regime}`, 'gamma');
+            }
+        });
+        const sentimentTools = new MarketSentimentTools();
+
+        // State
+        let isRunning = true;
+        let isAutoMode = false;
+        let audioEnabled = false;
+        let tensionHistory = [];
+        const maxHistory = 100;
+
+        // DOM elements
+        const tensionDisplay = document.getElementById('tension-display');
+        const tensionValue = document.getElementById('tension-value');
+        const regimeBadge = document.getElementById('regime-badge');
+        const priceSlider = document.getElementById('price-slider');
+        const sentimentSlider = document.getElementById('sentiment-slider');
+        const priceVal = document.getElementById('price-val');
+        const sentimentVal = document.getElementById('sentiment-val');
+        const crashProb = document.getElementById('crash-prob');
+        const consonanceEl = document.getElementById('consonance');
+        const frameCount = document.getElementById('frame-count');
+        const frequenciesEl = document.getElementById('frequencies');
+        const intervalName = document.getElementById('interval-name');
+        const intervalRatio = document.getElementById('interval-ratio');
+        const tdaVoids = document.getElementById('tda-voids');
+        const tdaLoops = document.getElementById('tda-loops');
+        const gammaAlert = document.getElementById('gamma-alert');
+        const logOutput = document.getElementById('log-output');
+        const canvas = document.getElementById('tension-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Initialize engine
+        engine.enable_market_mode();
+        log('Harmonic Alpha system initialized', 'success');
+
+        // Logging
+        function log(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logOutput.insertBefore(entry, logOutput.firstChild);
+            if (logOutput.children.length > 50) {
+                logOutput.removeChild(logOutput.lastChild);
+            }
+        }
+
+        // Update display
+        function updateDisplay() {
+            const state = JSON.parse(engine.get_market_state());
+
+            // Tension value
+            tensionValue.textContent = state.tension.toFixed(2);
+
+            // Regime badge
+            regimeBadge.textContent = state.regime.toUpperCase();
+            regimeBadge.className = `regime-badge regime-${state.regime}`;
+
+            // Tension display background
+            const hue = 120 - state.tension * 120; // Green to Red
+            tensionDisplay.style.background = `rgba(${state.tension * 255}, ${(1-state.tension) * 200}, 100, 0.2)`;
+
+            // Metrics
+            crashProb.textContent = `${Math.round(state.crash_probability * 100)}%`;
+            consonanceEl.textContent = `${Math.round(state.consonance * 100)}%`;
+            frameCount.textContent = engine.frame_count();
+
+            // Frequencies
+            frequenciesEl.innerHTML = state.sonification.frequencies
+                .map(f => `<span class="freq-chip">${Math.round(f)} Hz</span>`)
+                .join('');
+
+            // Interval
+            const intervals = {
+                1.0: 'Unison', 1.5: 'Perfect Fifth', 1.333: 'Perfect Fourth',
+                1.25: 'Major Third', 1.2: 'Minor Third', 1.067: 'Minor Second',
+                1.414: 'Tritone'
+            };
+            const ratio = state.interval_ratio;
+            const name = intervals[Object.keys(intervals).reduce((a, b) =>
+                Math.abs(b - ratio) < Math.abs(a - ratio) ? b : a
+            )] || 'Mixed';
+            intervalName.textContent = name;
+            intervalRatio.textContent = `Ratio: ${ratio.toFixed(3)} | Consonance: ${Math.round(state.consonance * 100)}%`;
+
+            // TDA features
+            tdaVoids.textContent = state.tda.voids;
+            tdaLoops.textContent = state.tda.loops;
+
+            // Gamma alert
+            gammaAlert.classList.toggle('active', state.gamma_active);
+
+            // Record history
+            tensionHistory.push(state.tension);
+            if (tensionHistory.length > maxHistory) tensionHistory.shift();
+
+            // Draw chart
+            drawChart();
+        }
+
+        // Draw tension history chart
+        function drawChart() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+            const w = rect.width;
+            const h = rect.height;
+
+            // Clear
+            ctx.fillStyle = '#050510';
+            ctx.fillRect(0, 0, w, h);
+
+            // Draw grid
+            ctx.strokeStyle = 'rgba(100, 100, 255, 0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i++) {
+                const y = h * i / 10;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(w, y);
+                ctx.stroke();
+            }
+
+            // Draw threshold lines
+            ctx.strokeStyle = 'rgba(255, 100, 100, 0.3)';
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(0, h * 0.15);
+            ctx.lineTo(w, h * 0.15);
+            ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(255, 255, 0, 0.3)';
+            ctx.beginPath();
+            ctx.moveTo(0, h * 0.5);
+            ctx.lineTo(w, h * 0.5);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw tension line
+            if (tensionHistory.length > 1) {
+                const gradient = ctx.createLinearGradient(0, 0, 0, h);
+                gradient.addColorStop(0, '#ff0000');
+                gradient.addColorStop(0.5, '#ffff00');
+                gradient.addColorStop(1, '#00ff00');
+
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+
+                for (let i = 0; i < tensionHistory.length; i++) {
+                    const x = (i / (maxHistory - 1)) * w;
+                    const y = h - tensionHistory[i] * h;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+
+                // Fill area
+                ctx.lineTo(w, h);
+                ctx.lineTo(0, h);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(100, 100, 255, 0.1)';
+                ctx.fill();
+            }
+        }
+
+        // Event handlers
+        priceSlider.addEventListener('input', (e) => {
+            priceVal.textContent = parseFloat(e.target.value).toFixed(2);
+            engine.set_market_price(parseFloat(e.target.value));
+        });
+
+        sentimentSlider.addEventListener('input', (e) => {
+            sentimentVal.textContent = parseFloat(e.target.value).toFixed(2);
+            engine.set_market_sentiment(parseFloat(e.target.value));
+        });
+
+        document.getElementById('btn-audio').addEventListener('click', async () => {
+            if (!audioEnabled) {
+                await sonification.initialize();
+                await sonification.enable();
+                audioEnabled = true;
+                document.getElementById('btn-audio').textContent = 'Disable Audio';
+                document.getElementById('btn-audio').classList.add('active');
+                document.getElementById('audio-status').textContent = 'On';
+                log('Audio enabled', 'success');
+            } else {
+                sonification.disable();
+                audioEnabled = false;
+                document.getElementById('btn-audio').textContent = 'Enable Audio';
+                document.getElementById('btn-audio').classList.remove('active');
+                document.getElementById('audio-status').textContent = 'Off';
+                log('Audio disabled');
+            }
+        });
+
+        document.getElementById('btn-auto').addEventListener('click', () => {
+            isAutoMode = !isAutoMode;
+            document.getElementById('btn-auto').textContent = isAutoMode ? 'Stop Auto Mode' : 'Start Auto Mode';
+            document.getElementById('btn-auto').classList.toggle('active', isAutoMode);
+            log(isAutoMode ? 'Auto mode started' : 'Auto mode stopped');
+        });
+
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            engine.reset_market_larynx();
+            tensionHistory = [];
+            priceSlider.value = 0.5;
+            sentimentSlider.value = 0.5;
+            priceVal.textContent = '0.50';
+            sentimentVal.textContent = '0.50';
+            log('System reset', 'warning');
+        });
+
+        document.getElementById('btn-analyze-news').addEventListener('click', async () => {
+            const news = document.getElementById('news-input').value;
+            if (!news.trim()) return;
+
+            log(`Analyzing: "${news.substring(0, 50)}..."`);
+            try {
+                const result = await sentimentTools.fetchMarketSentiment(news);
+                engine.set_market_sentiment(result.sentiment);
+                sentimentSlider.value = result.sentiment;
+                sentimentVal.textContent = result.sentiment.toFixed(2);
+                log(`Sentiment: ${result.sentiment.toFixed(2)} (${result.regime})`, 'success');
+            } catch (error) {
+                log(`Analysis error: ${error.message}`, 'error');
+            }
+        });
+
+        // Scenarios
+        window.runScenario = async (scenario) => {
+            log(`Running scenario: ${scenario}`, 'warning');
+            isAutoMode = false;
+            document.getElementById('btn-auto').textContent = 'Start Auto Mode';
+            document.getElementById('btn-auto').classList.remove('active');
+
+            const sequences = {
+                bull: { price: [0.6, 0.65, 0.7, 0.72, 0.75, 0.78, 0.8], sentiment: [0.6, 0.65, 0.68, 0.7, 0.72, 0.75, 0.78] },
+                bear: { price: [0.5, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2], sentiment: [0.55, 0.5, 0.45, 0.4, 0.35, 0.3, 0.25] },
+                crash: { price: [0.7, 0.65, 0.5, 0.3, 0.15, 0.1, 0.05], sentiment: [0.6, 0.5, 0.3, 0.2, 0.15, 0.1, 0.05] },
+                recovery: { price: [0.2, 0.25, 0.35, 0.45, 0.55, 0.6, 0.65], sentiment: [0.25, 0.3, 0.4, 0.5, 0.55, 0.6, 0.65] },
+                volatile: { price: [0.5, 0.7, 0.3, 0.8, 0.2, 0.7, 0.4], sentiment: [0.5, 0.4, 0.6, 0.3, 0.7, 0.35, 0.55] }
+            };
+
+            const seq = sequences[scenario];
+            if (!seq) return;
+
+            for (let i = 0; i < seq.price.length; i++) {
+                priceSlider.value = seq.price[i];
+                sentimentSlider.value = seq.sentiment[i];
+                priceVal.textContent = seq.price[i].toFixed(2);
+                sentimentVal.textContent = seq.sentiment[i].toFixed(2);
+                engine.set_market_price(seq.price[i]);
+                engine.set_market_sentiment(seq.sentiment[i]);
+
+                // Wait for animation
+                await new Promise(r => setTimeout(r, 500));
+
+                // Process several frames
+                for (let j = 0; j < 30; j++) {
+                    engine.update(1/60);
+                    if (audioEnabled) sonification.updateFromWasm(engine);
+                    await new Promise(r => setTimeout(r, 16));
+                }
+            }
+            log(`Scenario ${scenario} complete`, 'success');
+        };
+
+        // Main loop
+        function mainLoop() {
+            if (isAutoMode) {
+                // Random walk for auto mode
+                const currentPrice = parseFloat(priceSlider.value);
+                const currentSentiment = parseFloat(sentimentSlider.value);
+
+                const newPrice = Math.max(0, Math.min(1, currentPrice + (Math.random() - 0.5) * 0.05));
+                const newSentiment = Math.max(0, Math.min(1, currentSentiment + (Math.random() - 0.5) * 0.03));
+
+                priceSlider.value = newPrice;
+                sentimentSlider.value = newSentiment;
+                priceVal.textContent = newPrice.toFixed(2);
+                sentimentVal.textContent = newSentiment.toFixed(2);
+
+                engine.set_market_price(newPrice);
+                engine.set_market_sentiment(newSentiment);
+            }
+
+            // Update engine
+            engine.update(1/60);
+
+            // Update audio
+            if (audioEnabled) {
+                sonification.updateFromWasm(engine);
+            }
+
+            // Update display
+            updateDisplay();
+
+            requestAnimationFrame(mainLoop);
+        }
+
+        // Real Scenario Runner
+        const scenarioRunner = new ScenarioRunner(engine, sonification);
+        let realScenarioRunning = false;
+
+        scenarioRunner.onUpdate = (result, step, total) => {
+            const pct = Math.round((step / total) * 100);
+            log(`[${result.note}] Day ${result.day}: Tension=${result.output.tension.toFixed(2)} ${result.output.regime}`, 'info');
+        };
+
+        scenarioRunner.onGammaEvent = (result) => {
+            log(`GAMMA EVENT DETECTED on Day ${result.day}!`, 'gamma');
+        };
+
+        scenarioRunner.onComplete = (results) => {
+            realScenarioRunning = false;
+            const analysis = scenarioRunner.analyze();
+            log(`=== SCENARIO COMPLETE ===`, 'success');
+            log(`Max Tension: ${analysis.maxTension.toFixed(2)}`, 'info');
+            log(`Gamma Events: ${analysis.gammaEventCount} on days [${analysis.gammaEventDays.join(', ')}]`, analysis.gammaEventCount > 0 ? 'gamma' : 'info');
+            log(`Crash Detected: ${analysis.crashDetected ? 'YES' : 'NO'}`, analysis.crashDetected ? 'warning' : 'info');
+            log(`Regime Distribution: ${JSON.stringify(analysis.regimeDistribution)}`, 'info');
+        };
+
+        window.runRealScenario = async (scenarioKey) => {
+            if (realScenarioRunning) {
+                log('Scenario already running!', 'warning');
+                return;
+            }
+
+            const scenario = ALL_SCENARIOS[scenarioKey];
+            if (!scenario) {
+                log(`Unknown scenario: ${scenarioKey}`, 'error');
+                return;
+            }
+
+            // Stop auto mode
+            isAutoMode = false;
+            document.getElementById('btn-auto').textContent = 'Start Auto Mode';
+            document.getElementById('btn-auto').classList.remove('active');
+
+            // Reset engine
+            engine.reset_market_larynx();
+            tensionHistory = [];
+
+            log(`=== RUNNING: ${scenario.name} ===`, 'warning');
+            log(scenario.description, 'info');
+
+            realScenarioRunning = true;
+            scenarioRunner.load(scenario);
+            await scenarioRunner.run();
+        };
+
+        // Start
+        mainLoop();
+        log('System started - use sliders or run scenarios to test', 'success');
+        log('Try "Aug 5, 2024 Black Monday" for real crash detection!', 'warning');
+    </script>
+</body>
+</html>
