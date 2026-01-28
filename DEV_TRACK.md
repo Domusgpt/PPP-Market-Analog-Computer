@@ -108,3 +108,8 @@ This log captures the iterative development of the Polytopal Projection Platform
 - Fused flux continua, topology axes, manifold voices, and carrier matrices into a SpinorContinuumLattice payload with orientation residuals, synergy metrics, and carrier-weighted projections for robotics-grade telemetry.
 - Wired the continuum lattice through SonicGeometryEngine analysis/transmission payloads alongside new PPP APIs (`getLattice`, `onLattice`) and `PPP_CONFIG.onSonicLattice` callbacks.
 - Updated sonic helper copy, control panel messaging, README guidance, DEV_TRACK history, and development logs to document the continuum lattice channel beside analysis, signal, transduction, manifold, topology, and continuum streams.
+
+## Session 24 – PPP core refactor roadmap
+- Expanded the PPP Core integration/refactor roadmap with target-state architecture, phase deliverables, and acceptance criteria.
+- Clarified adapter contract requirements, UI integration patterns, and QA gates to support multi-dashboard migration.
+- Added a walkthrough agenda and tooling expectations to guide future sessions.
