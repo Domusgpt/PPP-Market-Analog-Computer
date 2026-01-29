@@ -108,3 +108,23 @@ This log captures the iterative development of the Polytopal Projection Platform
 - Fused flux continua, topology axes, manifold voices, and carrier matrices into a SpinorContinuumLattice payload with orientation residuals, synergy metrics, and carrier-weighted projections for robotics-grade telemetry.
 - Wired the continuum lattice through SonicGeometryEngine analysis/transmission payloads alongside new PPP APIs (`getLattice`, `onLattice`) and `PPP_CONFIG.onSonicLattice` callbacks.
 - Updated sonic helper copy, control panel messaging, README guidance, DEV_TRACK history, and development logs to document the continuum lattice channel beside analysis, signal, transduction, manifold, topology, and continuum streams.
+
+## Session 24 – PPP core refactor roadmap
+- Expanded the PPP Core integration/refactor roadmap with target-state architecture, phase deliverables, and acceptance criteria.
+- Clarified adapter contract requirements, UI integration patterns, and QA gates to support multi-dashboard migration.
+- Added a walkthrough agenda and tooling expectations to guide future sessions.
+
+## Session 25 – Tooling readiness notes
+- Documented the environment setup steps (npm install + test) in the refactor plan to formalize tooling readiness.
+
+## Session 26 – Phase 0 completion (inventory + contracts)
+- Delivered the Phase 0 inventory/contract document that maps PPP Core modules, input/output contracts, and telemetry references.
+- Linked Phase 0 outputs in the refactor roadmap to mark the baseline alignment work as complete.
+
+## Session 27 – HEMOC branch reconnaissance
+- Reviewed the HEMOC branch assets (moire encoder + WebGPU backend) and documented integration findings.
+- Linked the HEMOC findings document into the Phase 0 outputs for future Phase 1 adapter work.
+
+## Session 28 – Telemetry scalability guidance
+- Documented a layered telemetry strategy to preserve analog/topological dynamics while enabling agentic signals.
+- Linked the telemetry guidance into the Phase 0 outputs for Phase 1/2 planning.
