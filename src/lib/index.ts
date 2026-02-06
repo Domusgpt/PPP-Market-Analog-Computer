@@ -36,6 +36,12 @@ export * from './temporal';
 // Fusion module - Data bifurcation
 export * from './fusion';
 
+// Contracts - adapter/core boundaries
+export * from './contracts';
+
+// Adapters - external ingestion helpers
+export * from './adapters';
+
 // Convenience re-exports
 export {
   getTimeBinder,
