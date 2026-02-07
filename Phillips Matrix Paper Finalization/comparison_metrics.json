@@ -1,0 +1,43 @@
+{
+  "baez": {
+    "outer_shells": 8,
+    "inner_shells": 8,
+    "outer_radius_range": [
+      0.30901699437494745,
+      1.618033988749895
+    ],
+    "inner_radius_range": [
+      0.19098300562505255,
+      1.0
+    ]
+  },
+  "phillips": {
+    "left_shells": 21,
+    "right_shells": 21,
+    "left_radius_range": [
+      0.3819660112501051,
+      1.8190703654270628
+    ],
+    "right_radius_range": [
+      0.6180339887498949,
+      2.9433176791886795
+    ],
+    "phi_scaling_exact": true,
+    "phi_scaling_mean": 1.6180339887498951
+  },
+  "matrix_properties": {
+    "phillips_frobenius_sq": 20.0,
+    "phillips_column_norms_sq": [
+      3.618033988749895,
+      2.5,
+      2.5,
+      1.381966011250105,
+      3.618033988749895,
+      2.5,
+      2.5,
+      1.381966011250105
+    ],
+    "phillips_UL_row_norm_sq": 1.381966011250105,
+    "phillips_UR_row_norm_sq": 3.618033988749895
+  }
+}

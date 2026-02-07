@@ -32,6 +32,17 @@ from .e8_projection import (
     normalize_icosian,
     BAEZ_MATRIX,
     BAEZ_CONJUGATE_MATRIX,
+    # Phillips 8×8 pipeline
+    PhillipsProjectionPipeline,
+    PhillipsProjected,
+    PhillipsProjectedPoint,
+    project_e8_phillips,
+    project_root_phillips,
+    compare_projections,
+    PHILLIPS_MATRIX,
+    PHILLIPS_U_L,
+    PHILLIPS_U_R,
+    COLUMN_TRICHOTOMY,
 )
 
 __all__ = [
@@ -56,4 +67,14 @@ __all__ = [
     "normalize_icosian",
     "BAEZ_MATRIX",
     "BAEZ_CONJUGATE_MATRIX",
+    "PhillipsProjectionPipeline",
+    "PhillipsProjected",
+    "PhillipsProjectedPoint",
+    "project_e8_phillips",
+    "project_root_phillips",
+    "compare_projections",
+    "PHILLIPS_MATRIX",
+    "PHILLIPS_U_L",
+    "PHILLIPS_U_R",
+    "COLUMN_TRICHOTOMY",
 ]
