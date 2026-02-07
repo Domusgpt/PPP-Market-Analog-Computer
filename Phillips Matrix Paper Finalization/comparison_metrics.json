@@ -2,42 +2,65 @@
   "baez": {
     "outer_shells": 8,
     "inner_shells": 8,
-    "outer_radius_range": [
-      0.30901699437494745,
-      1.618033988749895
-    ],
-    "inner_radius_range": [
-      0.19098300562505255,
-      1.0
-    ]
+    "outer_radius_range": [0.30901699437494745, 1.618033988749895],
+    "inner_radius_range": [0.19098300562505255, 1.0]
   },
   "phillips": {
     "left_shells": 21,
     "right_shells": 21,
-    "left_radius_range": [
-      0.3819660112501051,
-      1.8190703654270628
-    ],
-    "right_radius_range": [
-      0.6180339887498949,
-      2.9433176791886795
-    ],
+    "left_radius_range": [0.3819660112501051, 1.8190703654270628],
+    "right_radius_range": [0.6180339887498949, 2.9433176791886795],
     "phi_scaling_exact": true,
-    "phi_scaling_mean": 1.6180339887498951
+    "phi_scaling_mean": 1.6180339887498951,
+    "unique_left_projections": 226,
+    "unique_right_projections": 226,
+    "collision_pairs": 14,
+    "collision_vector": [0, 1, 0, 1, 0, 1, 0, 1],
+    "collision_types": {"perm_perm": 6, "half_half": 8}
   },
   "matrix_properties": {
     "phillips_frobenius_sq": 20.0,
+    "phillips_rank": 4,
+    "phillips_amplification": 5.0,
     "phillips_column_norms_sq": [
-      3.618033988749895,
-      2.5,
-      2.5,
-      1.381966011250105,
-      3.618033988749895,
-      2.5,
-      2.5,
-      1.381966011250105
+      3.618033988749895, 2.5, 2.5, 1.381966011250105,
+      3.618033988749895, 2.5, 2.5, 1.381966011250105
     ],
     "phillips_UL_row_norm_sq": 1.381966011250105,
-    "phillips_UR_row_norm_sq": 3.618033988749895
+    "phillips_UR_row_norm_sq": 3.618033988749895,
+    "phillips_column_trichotomy": {
+      "expanded": [0, 4],
+      "stable": [1, 2, 5, 6],
+      "contracted": [3, 7]
+    }
+  },
+  "eigenstructure": {
+    "UTU_eigenvalues": [0, 0, 0, 0, 3.14125983, 5.0, 5.0, 6.85874017],
+    "eigenvalue_5_multiplicity": 2,
+    "eigenvalue_sum": 20.0,
+    "nonzero_eigenvalue_sum": 20.0,
+    "outer_eigenvalue_sum": 10.0,
+    "full_matrix_eigenvalues": [1.879, -1.638, -0.650, 0.291, 0, 0, 0, 0],
+    "is_normal": false,
+    "all_eigenvalues_real": true
+  },
+  "gram_matrices": {
+    "UL_ULT_diagonal": 1.381966011250105,
+    "UL_ULT_off_diagonal_values": [0, 0.5, 0.11803398874989485],
+    "cross_gram_diagonal": 2.23606797749979,
+    "cross_gram_diagonal_identity": "phi*(3-phi) = sqrt(5)"
+  },
+  "round_trip_energy": {
+    "min_amplification": 0.263932,
+    "max_amplification": 5.986068,
+    "mean_amplification": 2.5,
+    "unique_amplification_values": 21
+  },
+  "test_counts": {
+    "phillips_tests": 83,
+    "baez_tests": 50,
+    "other_tests": 148,
+    "total": 281,
+    "failures": 0
   }
 }

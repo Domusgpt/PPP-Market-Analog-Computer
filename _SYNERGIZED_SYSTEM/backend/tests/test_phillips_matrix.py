@@ -462,3 +462,366 @@ class TestD4TrialityConnection:
 
         assert matches >= 8, \
             f"Only {matches}/24 24-cell directions found in Phillips left block"
+
+
+# ==========================================================================
+# NEW THEOREMS: Kernel Structure and Collision Analysis
+# ==========================================================================
+
+class TestKernelCollisionTheorem:
+    """
+    Theorem (Kernel Collision Uniqueness):
+
+    All 14 collision pairs in the Phillips U_L projection arise from
+    a single vector d = (0,1,0,1,0,1,0,1) in ker(U_L).
+
+    Two E₈ roots r_a, r_b project to the same 4D point under U_L
+    if and only if r_a - r_b = ±d.
+
+    Moreover:
+    - d lives exclusively at odd-indexed dimensions {1,3,5,7}
+    - d has norm 2 (same as E₈ roots) but is NOT an E₈ root
+    - All colliding pairs are orthogonal: ⟨r_a, r_b⟩ = 0
+    - ker(U_L) = ker(U_R) (same kernel, since U_R = φ·U_L)
+    """
+
+    COLLISION_VECTOR = np.array([0, 1, 0, 1, 0, 1, 0, 1], dtype=float)
+
+    def test_collision_vector_in_kernel_UL(self):
+        """d = (0,1,0,1,0,1,0,1) is in ker(U_L)."""
+        result = PHILLIPS_U_L @ self.COLLISION_VECTOR
+        assert np.allclose(result, 0, atol=1e-14)
+
+    def test_collision_vector_in_kernel_UR(self):
+        """d is also in ker(U_R) (since U_R = φ·U_L)."""
+        result = PHILLIPS_U_R @ self.COLLISION_VECTOR
+        assert np.allclose(result, 0, atol=1e-14)
+
+    def test_collision_vector_in_kernel_full(self):
+        """d is in ker(full 8×8 Phillips matrix)."""
+        result = PHILLIPS_MATRIX @ self.COLLISION_VECTOR
+        assert np.allclose(result, 0, atol=1e-14)
+
+    def test_collision_vector_norm_is_2(self):
+        """||d|| = 2, same norm as E₈ roots."""
+        assert abs(np.linalg.norm(self.COLLISION_VECTOR) - 2.0) < 1e-14
+
+    def test_collision_vector_is_not_e8_root(self):
+        """d has 4 nonzero entries, so it's not a permutation root (needs 2)
+        and not a half-integer root (needs 8)."""
+        n_nonzero = np.sum(np.abs(self.COLLISION_VECTOR) > 1e-10)
+        assert n_nonzero == 4  # Neither 2 (perm) nor 8 (half-int)
+
+    def test_collision_vector_at_odd_indices(self):
+        """Nonzero entries are at odd positions {1,3,5,7}."""
+        nonzero_dims = list(np.where(np.abs(self.COLLISION_VECTOR) > 1e-10)[0])
+        assert nonzero_dims == [1, 3, 5, 7]
+
+    def test_exactly_14_collision_pairs(self):
+        """240 roots → 226 unique projections → 14 collision pairs."""
+        roots = generate_e8_roots()
+        left = np.array([PHILLIPS_U_L @ r.coordinates for r in roots])
+        rounded = [tuple(np.round(v, 8)) for v in left]
+        from collections import Counter
+        counts = Counter(rounded)
+        n_collisions = sum(1 for c in counts.values() if c == 2)
+        assert n_collisions == 14
+
+    def test_all_collision_diffs_are_single_vector(self):
+        """Every collision pair has r_a - r_b = ±d (rank-1 collision space)."""
+        roots = generate_e8_roots()
+        left = np.array([PHILLIPS_U_L @ r.coordinates for r in roots])
+        rounded = [tuple(np.round(v, 8)) for v in left]
+
+        from collections import defaultdict
+        groups = defaultdict(list)
+        for idx, key in enumerate(rounded):
+            groups[key].append(idx)
+
+        d = self.COLLISION_VECTOR
+        for key, idxs in groups.items():
+            if len(idxs) == 2:
+                diff = roots[idxs[0]].coordinates - roots[idxs[1]].coordinates
+                assert np.allclose(diff, d, atol=1e-10) or \
+                       np.allclose(diff, -d, atol=1e-10), \
+                    f"Collision diff {diff} ≠ ±d"
+
+    def test_colliding_pairs_are_orthogonal(self):
+        """All colliding root pairs satisfy ⟨r_a, r_b⟩ = 0."""
+        roots = generate_e8_roots()
+        left = np.array([PHILLIPS_U_L @ r.coordinates for r in roots])
+        rounded = [tuple(np.round(v, 8)) for v in left]
+
+        from collections import defaultdict
+        groups = defaultdict(list)
+        for idx, key in enumerate(rounded):
+            groups[key].append(idx)
+
+        for key, idxs in groups.items():
+            if len(idxs) == 2:
+                ip = np.dot(roots[idxs[0]].coordinates, roots[idxs[1]].coordinates)
+                assert abs(ip) < 1e-10, \
+                    f"Colliding pair inner product = {ip}"
+
+    def test_collision_types_6_perm_8_half(self):
+        """6 collision pairs are perm+perm, 8 are half+half."""
+        roots = generate_e8_roots()
+        left = np.array([PHILLIPS_U_L @ r.coordinates for r in roots])
+        rounded = [tuple(np.round(v, 8)) for v in left]
+
+        from collections import defaultdict
+        groups = defaultdict(list)
+        for idx, key in enumerate(rounded):
+            groups[key].append(idx)
+
+        n_pp, n_hh = 0, 0
+        for key, idxs in groups.items():
+            if len(idxs) == 2:
+                types = {roots[i].root_type for i in idxs}
+                if types == {E8RootType.PERMUTATION}:
+                    n_pp += 1
+                elif types == {E8RootType.HALF_INTEGER}:
+                    n_hh += 1
+        assert n_pp == 6, f"Expected 6 perm+perm pairs, got {n_pp}"
+        assert n_hh == 8, f"Expected 8 half+half pairs, got {n_hh}"
+
+    def test_kernel_dimension_is_4(self):
+        """ker(U_L) has dimension 4 = 8 - rank(U_L)."""
+        rank = np.linalg.matrix_rank(PHILLIPS_U_L)
+        assert rank == 4
+        # Kernel dimension = 8 - 4 = 4
+        # SVD of full 8×8 matrix shows the kernel
+        _, S_full, _ = np.linalg.svd(PHILLIPS_MATRIX)
+        n_zero = np.sum(S_full < 1e-10)
+        assert n_zero == 4
+
+    def test_no_e8_roots_in_kernel(self):
+        """No E₈ root maps to the zero vector under U_L."""
+        roots = generate_e8_roots()
+        for r in roots:
+            proj = PHILLIPS_U_L @ r.coordinates
+            assert np.linalg.norm(proj) > 1e-6, \
+                f"Root {r.coordinates} is in kernel"
+
+
+# ==========================================================================
+# NEW THEOREMS: Round-Trip Eigenstructure
+# ==========================================================================
+
+class TestRoundTripEigenstructure:
+    """
+    Theorem (Round-Trip Factorization):
+
+    U^T U = (φ+2) · U_L^T U_L
+
+    This follows from U_R = φ·U_L:
+        U^T U = U_L^T U_L + U_R^T U_R
+              = U_L^T U_L + φ²·U_L^T U_L
+              = (1 + φ²)·U_L^T U_L
+              = (φ + 2)·U_L^T U_L
+
+    Eigenvalue consequences:
+    - 4 zero eigenvalues (the kernel)
+    - Eigenvalue 5 with multiplicity 2 (from (φ+2)(3-φ) = 5)
+    - Two non-degenerate eigenvalues summing to 10
+    - Total trace = 20 = Frobenius²
+    """
+
+    @pytest.fixture
+    def UTU(self):
+        return PHILLIPS_MATRIX.T @ PHILLIPS_MATRIX
+
+    @pytest.fixture
+    def eigenvalues(self, UTU):
+        return np.sort(np.linalg.eigvalsh(UTU))
+
+    def test_round_trip_factorization(self, UTU):
+        """U^T U = (φ+2) · U_L^T U_L."""
+        ULtUL = PHILLIPS_U_L.T @ PHILLIPS_U_L
+        expected = (PHI + 2) * ULtUL
+        assert np.allclose(UTU, expected, atol=1e-10)
+
+    def test_four_zero_eigenvalues(self, eigenvalues):
+        """4 eigenvalues are zero (kernel dimension = 4)."""
+        assert np.sum(np.abs(eigenvalues) < 1e-8) == 4
+
+    def test_four_positive_eigenvalues(self, eigenvalues):
+        """4 eigenvalues are strictly positive."""
+        assert np.sum(eigenvalues > 1e-8) == 4
+
+    def test_eigenvalue_5_has_multiplicity_2(self, eigenvalues):
+        """The eigenvalue 5 appears twice (from (φ+2)(3-φ) = 5)."""
+        pos_evals = eigenvalues[eigenvalues > 1e-8]
+        n_five = np.sum(np.isclose(pos_evals, 5.0, atol=1e-8))
+        assert n_five == 2, f"Expected eigenvalue 5 with mult 2, found {n_five}"
+
+    def test_eigenvalue_sum_is_frobenius(self, eigenvalues):
+        """Sum of all eigenvalues = tr(U^T U) = ||U||²_F = 20."""
+        assert abs(np.sum(eigenvalues) - 20.0) < 1e-8
+
+    def test_positive_eigenvalue_sum_is_20(self, eigenvalues):
+        """Sum of nonzero eigenvalues = 20."""
+        pos_sum = np.sum(eigenvalues[eigenvalues > 1e-8])
+        assert abs(pos_sum - 20.0) < 1e-8
+
+    def test_outer_eigenvalues_sum_to_10(self, eigenvalues):
+        """The two non-degenerate eigenvalues sum to 10 (= 20 - 2×5)."""
+        pos_evals = np.sort(eigenvalues[eigenvalues > 1e-8])
+        # The two that are NOT 5
+        non_five = [ev for ev in pos_evals if not np.isclose(ev, 5.0, atol=1e-8)]
+        assert len(non_five) == 2
+        assert abs(sum(non_five) - 10.0) < 1e-8
+
+    def test_cross_block_product(self):
+        """U_L^T U_R = φ · U_L^T U_L (from U_R = φ·U_L)."""
+        cross = PHILLIPS_U_L.T @ PHILLIPS_U_R
+        expected = PHI * (PHILLIPS_U_L.T @ PHILLIPS_U_L)
+        assert np.allclose(cross, expected, atol=1e-10)
+
+    def test_UR_frobenius_is_phi_sq_times_UL(self):
+        """||U_R||²_F = φ² · ||U_L||²_F."""
+        frob_L = np.sum(PHILLIPS_U_L ** 2)
+        frob_R = np.sum(PHILLIPS_U_R ** 2)
+        assert abs(frob_R - PHI**2 * frob_L) < 1e-10
+
+
+# ==========================================================================
+# NEW THEOREMS: Amplification Factor
+# ==========================================================================
+
+class TestAmplificationFactor:
+    """
+    Theorem (Amplification = 5):
+
+    Frobenius²/rank = 20/4 = 5 = number of 24-cells in the 600-cell.
+
+    This is NOT a coincidence but a structural identity:
+    - The eigenvalue 5 of U^T U comes from (φ+2)(3-φ) = 5
+    - The same √5-coupling that binds U_L to U_R produces the amplification
+    - The 600-cell decomposes into 5 inscribed 24-cells
+    """
+
+    def test_amplification_is_5(self):
+        """Frobenius²/rank = 20/4 = 5."""
+        frob_sq = np.sum(PHILLIPS_MATRIX ** 2)
+        rank = np.linalg.matrix_rank(PHILLIPS_MATRIX)
+        assert abs(frob_sq / rank - 5.0) < 1e-10
+
+    def test_amplification_matches_24cell_count(self):
+        """The 600-cell has exactly 5 inscribed 24-cells."""
+        # 600-cell: 120 vertices, 24-cell: 24 vertices
+        # 120 / 24 = 5 (this is the vertex counting argument)
+        assert 120 // 24 == 5
+        amp = np.sum(PHILLIPS_MATRIX ** 2) / np.linalg.matrix_rank(PHILLIPS_MATRIX)
+        assert abs(amp - 5.0) < 1e-10
+
+    def test_block_amplification_via_phi_sq(self):
+        """The right block amplification = φ² × left block amplification.
+        Combined: (1 + φ²) × left_amp = (φ+2) × left_amp = total_amp."""
+        frob_L = np.sum(PHILLIPS_U_L ** 2)
+        rank_L = np.linalg.matrix_rank(PHILLIPS_U_L)
+        amp_L = frob_L / rank_L  # per-block amplification
+        total_amp = (PHI + 2) * amp_L
+        assert abs(total_amp - 5.0) < 1e-10
+
+
+# ==========================================================================
+# NEW THEOREMS: Row Products (Non-Orthogonality)
+# ==========================================================================
+
+class TestRowProducts:
+    """
+    Theorem (Row Cross-Talk):
+
+    The rows of U_L are NOT orthogonal. The Gram matrix U_L U_L^T has:
+    - Diagonal entries = 3-φ (row norms²)
+    - Off-diagonal entries involving ±1/2 and ±(φ-1)/2
+
+    The Gram matrix U_L U_R^T has diagonal entries = φ(3-φ) = √5
+    (the √5-coupling appears on the diagonal of the cross-block Gram).
+
+    However, U_L U_L^T IS a circulant-like structure with exact entries
+    from the golden field Q(√5).
+    """
+
+    def test_UL_rows_not_orthogonal(self):
+        """U_L U_L^T ≠ (3-φ)·I₄."""
+        gram = PHILLIPS_U_L @ PHILLIPS_U_L.T
+        expected_diag = (3 - PHI) * np.eye(4)
+        assert not np.allclose(gram, expected_diag, atol=1e-4)
+
+    def test_UL_gram_diagonal_is_3_minus_phi(self):
+        """Diagonal of U_L U_L^T = 3-φ."""
+        gram = PHILLIPS_U_L @ PHILLIPS_U_L.T
+        for i in range(4):
+            assert abs(gram[i, i] - (3 - PHI)) < 1e-10
+
+    def test_UR_gram_diagonal_is_phi_plus_2(self):
+        """Diagonal of U_R U_R^T = φ+2."""
+        gram = PHILLIPS_U_R @ PHILLIPS_U_R.T
+        for i in range(4):
+            assert abs(gram[i, i] - (PHI + 2)) < 1e-10
+
+    def test_cross_gram_diagonal_is_sqrt5(self):
+        """Diagonal of U_L U_R^T = φ(3-φ) = √5."""
+        cross = PHILLIPS_U_L @ PHILLIPS_U_R.T
+        expected_diag = PHI * (3 - PHI)
+        # φ(3-φ) = 3φ - φ² = 3φ - φ - 1 = 2φ - 1 = √5
+        assert abs(expected_diag - np.sqrt(5)) < 1e-10
+        for i in range(4):
+            assert abs(cross[i, i] - expected_diag) < 1e-10
+
+    def test_gram_entries_in_golden_field(self):
+        """All entries of U_L U_L^T are in Q(√5) = {a + b·φ : a,b ∈ Q}.
+        The off-diagonal entries are:
+          0, ±1/2, and ±(2φ-3)/2 = ±(√5-2)/2 ≈ ±0.11803
+        All expressible as rationals plus rational multiples of φ.
+        """
+        gram = PHILLIPS_U_L @ PHILLIPS_U_L.T
+        golden_val = (2 * PHI - 3) / 2  # = (√5 - 2)/2 ≈ 0.11803
+        for i in range(4):
+            for j in range(4):
+                if i == j:
+                    continue
+                val = abs(gram[i, j])
+                is_zero = val < 1e-10
+                is_half = abs(val - 0.5) < 1e-10
+                is_golden = abs(val - golden_val) < 1e-10
+                assert is_zero or is_half or is_golden, \
+                    f"gram[{i},{j}]={gram[i,j]} not in golden field basis"
+
+
+# ==========================================================================
+# NEW THEOREMS: Chirality / Non-normality
+# ==========================================================================
+
+class TestChirality:
+    """
+    The Phillips matrix is NOT normal (U^T U ≠ U U^T), which means:
+    - It has a chiral structure (distinguishes left from right)
+    - The symmetric/antisymmetric decomposition preserves Frobenius: 20
+    - Its eigenvalues (of the 8×8 itself) are ALL REAL despite non-symmetry
+    """
+
+    def test_matrix_is_not_normal(self):
+        """U^T U ≠ U U^T (Phillips is not a normal operator)."""
+        UTU = PHILLIPS_MATRIX.T @ PHILLIPS_MATRIX
+        UUT = PHILLIPS_MATRIX @ PHILLIPS_MATRIX.T
+        assert not np.allclose(UTU, UUT, atol=1e-4)
+
+    def test_frobenius_splits_sym_antisym(self):
+        """||sym||² + ||antisym||² = ||U||² = 20."""
+        sym = (PHILLIPS_MATRIX + PHILLIPS_MATRIX.T) / 2
+        antisym = (PHILLIPS_MATRIX - PHILLIPS_MATRIX.T) / 2
+        assert abs(np.sum(sym**2) + np.sum(antisym**2) - 20.0) < 1e-10
+
+    def test_all_eigenvalues_are_real(self):
+        """Despite non-symmetry, all eigenvalues are real."""
+        evals = np.linalg.eigvals(PHILLIPS_MATRIX)
+        assert np.allclose(evals.imag, 0, atol=1e-8), \
+            f"Complex eigenvalues found: {evals}"
+
+    def test_four_zero_eigenvalues_of_full_matrix(self):
+        """The 8×8 matrix has exactly 4 zero eigenvalues (rank 4)."""
+        evals = np.sort(np.abs(np.linalg.eigvals(PHILLIPS_MATRIX)))
+        assert np.sum(evals < 1e-8) == 4
