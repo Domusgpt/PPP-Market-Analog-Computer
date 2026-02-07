@@ -20,6 +20,19 @@ from .quaternion_4d import (
     QuaternionRotation,
     IsoclinicRotation,
 )
+from .e8_projection import (
+    E8ProjectionPipeline,
+    E8Root,
+    E8RootType,
+    E8Projected,
+    generate_e8_roots,
+    project_e8_to_h4,
+    galois_conjugate,
+    icosian_norm,
+    normalize_icosian,
+    BAEZ_MATRIX,
+    BAEZ_CONJUGATE_MATRIX,
+)
 
 __all__ = [
     "H4Geometry",
@@ -32,4 +45,15 @@ __all__ = [
     "Quaternion4D",
     "QuaternionRotation",
     "IsoclinicRotation",
+    "E8ProjectionPipeline",
+    "E8Root",
+    "E8RootType",
+    "E8Projected",
+    "generate_e8_roots",
+    "project_e8_to_h4",
+    "galois_conjugate",
+    "icosian_norm",
+    "normalize_icosian",
+    "BAEZ_MATRIX",
+    "BAEZ_CONJUGATE_MATRIX",
 ]

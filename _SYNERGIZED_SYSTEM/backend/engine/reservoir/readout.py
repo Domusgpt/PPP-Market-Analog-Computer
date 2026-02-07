@@ -305,17 +305,36 @@ class ReservoirReadout:
 
 class MoireFeatureExtractor:
     """
-    Advanced feature extraction from moiré patterns.
+    Feature extraction from moiré patterns using Gabor, spectral, and HOG.
 
-    Extracts features designed for Vision LLM consumption:
-    - Fork count (topological defects)
-    - Fringe orientation
-    - Spatial frequency content
-    - Color channel statistics (for bichromatic)
+    Combines three complementary feature extraction strategies:
+    - Gabor filter bank: orientation and spatial frequency selectivity
+    - Spectral analysis: FFT-based radial/angular frequency bins
+    - HOG: gradient orientation histograms for shape structure
+
+    Plus: global statistics, patch grid, and fork detection.
     """
 
     def __init__(self, grid_size: Tuple[int, int] = (64, 64)):
         self.grid_size = grid_size
+
+        # Initialize feature extractors (lazy — imported on first use)
+        self._gabor = None
+        self._spectral = None
+        self._hog = None
+        self._n_features = None
+
+    def _ensure_extractors(self):
+        """Lazy initialization of feature extraction modules."""
+        if self._gabor is not None:
+            return
+        from ..features.gabor import GaborFilterBank
+        from ..features.spectral import SpectralAnalyzer
+        from ..features.hog import HOGDescriptor
+
+        self._gabor = GaborFilterBank(n_orientations=6, n_scales=3)
+        self._spectral = SpectralAnalyzer(n_radial_bins=8, n_angular_bins=6)
+        self._hog = HOGDescriptor(cell_size=(8, 8), n_bins=9)
 
     def extract(self, pattern: np.ndarray) -> np.ndarray:
         """
@@ -329,13 +348,13 @@ class MoireFeatureExtractor:
         Returns
         -------
         np.ndarray
-            Feature vector
+            Feature vector combining Gabor + spectral + HOG + statistics
         """
+        self._ensure_extractors()
         features = []
 
         # Handle RGB vs grayscale
         if pattern.ndim == 3:
-            # RGB pattern
             gray = np.mean(pattern, axis=2)
             features.extend(self._channel_stats(pattern))
         else:
@@ -348,44 +367,43 @@ class MoireFeatureExtractor:
                           self.grid_size[1] / gray.shape[1])
             gray = zoom(gray, zoom_factors, order=1)
 
-        # Global statistics
+        # 1. Global statistics (5 features)
         features.extend([
             np.mean(gray),
             np.std(gray),
             np.min(gray),
             np.max(gray),
-            (np.max(gray) - np.min(gray)) / (np.max(gray) + np.min(gray) + 1e-8),  # Contrast
+            (np.max(gray) - np.min(gray)) / (np.max(gray) + np.min(gray) + 1e-8),
         ])
 
-        # Spatial frequency (simple FFT features)
-        fft = np.abs(np.fft.fft2(gray))
-        fft_shifted = np.fft.fftshift(fft)
+        # 2. Gabor features — orientation × scale energy
+        gabor_resp = self._gabor.apply(gray)
+        features.extend(gabor_resp.features.tolist())
 
-        # Radial frequency bins
-        cy, cx = fft_shifted.shape[0] // 2, fft_shifted.shape[1] // 2
-        Y, X = np.ogrid[:fft_shifted.shape[0], :fft_shifted.shape[1]]
-        R = np.sqrt((X - cx)**2 + (Y - cy)**2)
+        # 3. Spectral features — radial × angular frequency bins
+        spectral_res = self._spectral.analyze(gray)
+        features.extend(spectral_res.features.tolist())
 
-        for r in [5, 10, 15, 20]:
-            mask = (R >= r - 2) & (R < r + 2)
-            features.append(np.mean(fft_shifted[mask]) if np.any(mask) else 0)
+        # 4. HOG features — gradient orientation histograms
+        hog_res = self._hog.compute(gray)
+        features.extend(hog_res.features.tolist())
 
-        # Fork detection (simplified)
+        # 5. Patch statistics (8×8 grid = 64 features)
+        ph = max(1, gray.shape[0] // 8)
+        pw = max(1, gray.shape[1] // 8)
+        for i in range(8):
+            for j in range(8):
+                r0, r1 = i * ph, min((i + 1) * ph, gray.shape[0])
+                c0, c1 = j * pw, min((j + 1) * pw, gray.shape[1])
+                patch = gray[r0:r1, c0:c1]
+                features.append(np.mean(patch) if patch.size > 0 else 0.0)
+
+        # 6. Fork detection + dominant orientation (2 features)
         fork_count = self._detect_forks(gray)
         features.append(fork_count)
-
-        # Dominant orientation
         gx = np.gradient(gray, axis=1)
         gy = np.gradient(gray, axis=0)
-        orientation = np.arctan2(np.sum(gy), np.sum(gx))
-        features.append(orientation)
-
-        # Patch statistics (4x4 grid)
-        patch_h, patch_w = gray.shape[0] // 4, gray.shape[1] // 4
-        for i in range(4):
-            for j in range(4):
-                patch = gray[i*patch_h:(i+1)*patch_h, j*patch_w:(j+1)*patch_w]
-                features.append(np.mean(patch))
+        features.append(np.arctan2(np.sum(gy), np.sum(gx)))
 
         return np.array(features, dtype=np.float32)
 
@@ -398,26 +416,21 @@ class MoireFeatureExtractor:
         return stats
 
     def _detect_forks(self, pattern: np.ndarray, threshold: float = 0.3) -> int:
-        """
-        Simplified fork (topological defect) detection.
-
-        Returns approximate count of forks in pattern.
-        """
-        # Gradient-based edge detection
+        """Simplified fork (topological defect) detection."""
         gx = np.gradient(pattern, axis=1)
         gy = np.gradient(pattern, axis=0)
         edge_mag = np.sqrt(gx**2 + gy**2)
-
-        # Find local maxima in edge magnitude
         from scipy.ndimage import maximum_filter
         local_max = maximum_filter(edge_mag, size=3)
         peaks = (edge_mag == local_max) & (edge_mag > threshold * np.max(edge_mag))
-
         return int(np.sum(peaks))
 
     @property
     def n_features(self) -> int:
-        """Total number of features extracted."""
-        # 5 global + 4 freq + 1 fork + 1 orient + 16 patch = 27
-        # + 6 if RGB
-        return 27
+        """Total number of features extracted (computed on first call)."""
+        if self._n_features is None:
+            # Compute by running on a dummy pattern
+            dummy = np.random.default_rng(0).random(self.grid_size)
+            feats = self.extract(dummy)
+            self._n_features = len(feats)
+        return self._n_features

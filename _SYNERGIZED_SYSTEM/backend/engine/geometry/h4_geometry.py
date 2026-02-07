@@ -295,146 +295,56 @@ class TrilaticDecomposition:
 
     def _decompose(self):
         """
-        Decompose the 24-cell into three 16-cells.
+        Decompose the 24-cell into three disjoint 16-cells.
 
-        The decomposition is based on the coordinate structure:
-        - Alpha: Vertices with specific coordinate patterns
-        - Beta: Second orthogonal set
-        - Gamma: Third orthogonal set
+        This is the W(D₄) ⊂ W(F₄) coset decomposition (index 3).
+        The 24 Hurwitz quaternion vertices partition cleanly:
+
+          Alpha: 8 axis-aligned vertices — perms of (±1, 0, 0, 0)
+          Beta:  8 half-integer vertices with EVEN count of negative signs
+          Gamma: 8 half-integer vertices with ODD count of negative signs
+
+        Each set forms a regular 16-cell (cross-polytope) at radius 1,
+        with 4 antipodal pairs and 24 edges of length √2.
+        The three sets are perfectly disjoint and their union is the 24-cell.
         """
-        vertices = self.polytope_24.get_vertex_array()
-
-        # Classification based on vertex coordinates
         alpha_verts = []
         beta_verts = []
         gamma_verts = []
 
         for v in self.polytope_24.vertices:
             arr = v.to_array()
-
-            # Check if it's a "axis-aligned" vertex (one ±1, rest 0)
-            nonzero = np.sum(np.abs(arr) > 0.1)
-
-            if nonzero == 1:
-                # Axis-aligned vertices split by which axis
-                max_idx = np.argmax(np.abs(arr))
-                if max_idx in [0, 1]:  # x or y axis
-                    alpha_verts.append(v)
-                elif max_idx in [2, 3]:  # z or w axis
-                    beta_verts.append(v)
-            else:
-                # Half-integer vertices split by sign pattern
-                sign_sum = np.sum(arr)
-                if np.isclose(sign_sum, 0):
-                    alpha_verts.append(v)
-                elif sign_sum > 0:
-                    beta_verts.append(v)
-                else:
-                    gamma_verts.append(v)
-
-        # Rebalance to ensure 8 vertices per cell
-        all_verts = list(self.polytope_24.vertices)
-
-        # Use a proper 3-coloring based on geometric properties
-        self.cell_alpha, self.cell_beta, self.cell_gamma = \
-            self._compute_proper_trilatic(all_verts)
-
-    def _compute_proper_trilatic(self, vertices: List[Vertex4D]) -> Tuple[
-            Polytope16Cell, Polytope16Cell, Polytope16Cell]:
-        """
-        Compute proper trilatic decomposition ensuring each 16-cell is regular.
-
-        The key insight is that the 24-cell can be seen as the union of
-        three orthogonal 16-cells, rotated by specific angles.
-        """
-        # The three 16-cells are defined by the following vertex sets:
-        # We use a coordinate-based partition
-
-        cell_a_vertices = []
-        cell_b_vertices = []
-        cell_c_vertices = []
-
-        for v in vertices:
-            arr = v.to_array()
-
-            # Compute a "phase" based on coordinate relationships
-            # This properly separates the vertices into three 16-cells
-
-            # Check coordinate magnitudes
             abs_arr = np.abs(arr)
-            max_val = np.max(abs_arr)
 
-            if np.isclose(max_val, 1.0):
-                # Unit axis vertex - assign by axis
-                axis = np.argmax(abs_arr)
-                if axis == 0:
-                    cell_a_vertices.append(Vertex4D.from_array(
-                        arr, channel=TrilaticChannel.ALPHA))
-                elif axis == 1:
-                    cell_b_vertices.append(Vertex4D.from_array(
-                        arr, channel=TrilaticChannel.BETA))
-                elif axis == 2:
-                    cell_a_vertices.append(Vertex4D.from_array(
-                        arr, channel=TrilaticChannel.ALPHA))
-                else:
-                    cell_b_vertices.append(Vertex4D.from_array(
-                        arr, channel=TrilaticChannel.BETA))
+            # Classify: axis-aligned (one ±1, rest 0) vs half-integer (all ±½)
+            n_nonzero = np.sum(abs_arr > 0.1)
+
+            if n_nonzero == 1:
+                # Axis-aligned vertex → Alpha
+                alpha_verts.append(Vertex4D.from_array(
+                    arr, channel=TrilaticChannel.ALPHA))
             else:
-                # Half-integer vertex - assign by sign pattern
-                signs = tuple(np.sign(arr).astype(int))
-                sign_hash = hash(signs) % 3
-
-                if sign_hash == 0:
-                    cell_a_vertices.append(Vertex4D.from_array(
-                        arr, channel=TrilaticChannel.ALPHA))
-                elif sign_hash == 1:
-                    cell_b_vertices.append(Vertex4D.from_array(
+                # Half-integer vertex → count negative signs
+                n_negative = np.sum(arr < -0.1)
+                if n_negative % 2 == 0:
+                    # Even number of minus signs → Beta
+                    beta_verts.append(Vertex4D.from_array(
                         arr, channel=TrilaticChannel.BETA))
                 else:
-                    cell_c_vertices.append(Vertex4D.from_array(
+                    # Odd number of minus signs → Gamma
+                    gamma_verts.append(Vertex4D.from_array(
                         arr, channel=TrilaticChannel.GAMMA))
 
-        # Ensure we have exactly 8 vertices per cell by redistributing if needed
-        all_assigned = cell_a_vertices + cell_b_vertices + cell_c_vertices
+        assert len(alpha_verts) == 8, f"Alpha has {len(alpha_verts)} vertices, expected 8"
+        assert len(beta_verts) == 8, f"Beta has {len(beta_verts)} vertices, expected 8"
+        assert len(gamma_verts) == 8, f"Gamma has {len(gamma_verts)} vertices, expected 8"
 
-        # Use a geometric approach: find three mutually inscribed 16-cells
-        cell_a = Polytope16Cell(channel=TrilaticChannel.ALPHA)
-        cell_b = Polytope16Cell(channel=TrilaticChannel.BETA)
-        cell_c = Polytope16Cell(channel=TrilaticChannel.GAMMA)
-
-        # Apply rotations to create three orthogonal 16-cells
-        # The three 16-cells are related by 4D rotations
-        base_16cell = cell_a.get_vertex_array()
-
-        # Rotation matrices in 4D for the trilatic
-        theta = np.pi / 4  # 45 degrees
-
-        # Rotation in xz plane
-        R1 = np.array([
-            [np.cos(theta), 0, -np.sin(theta), 0],
-            [0, 1, 0, 0],
-            [np.sin(theta), 0, np.cos(theta), 0],
-            [0, 0, 0, 1]
-        ])
-
-        # Rotation in yw plane
-        R2 = np.array([
-            [1, 0, 0, 0],
-            [0, np.cos(theta), 0, -np.sin(theta)],
-            [0, 0, 1, 0],
-            [0, np.sin(theta), 0, np.cos(theta)]
-        ])
-
-        # Apply rotations
-        cell_b_coords = (R1 @ base_16cell.T).T
-        cell_c_coords = (R2 @ base_16cell.T).T
-
-        cell_b.vertices = [Vertex4D.from_array(c, channel=TrilaticChannel.BETA)
-                          for c in cell_b_coords]
-        cell_c.vertices = [Vertex4D.from_array(c, channel=TrilaticChannel.GAMMA)
-                          for c in cell_c_coords]
-
-        return cell_a, cell_b, cell_c
+        self.cell_alpha = Polytope16Cell(
+            vertices=alpha_verts, channel=TrilaticChannel.ALPHA)
+        self.cell_beta = Polytope16Cell(
+            vertices=beta_verts, channel=TrilaticChannel.BETA)
+        self.cell_gamma = Polytope16Cell(
+            vertices=gamma_verts, channel=TrilaticChannel.GAMMA)
 
     def get_channel_state(self, channel: TrilaticChannel) -> np.ndarray:
         """Get the state register for a specific trilatic channel."""

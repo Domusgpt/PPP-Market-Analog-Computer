@@ -137,34 +137,87 @@ class TestTrinityDecomposition:
         assert len(trilatic.cell_beta.vertices) == 8
         assert len(trilatic.cell_gamma.vertices) == 8
 
-    def test_total_vertex_count(self, trilatic):
-        """Each channel produces 8 vertices (3 × 8 = 24 total slots)."""
-        total = (len(trilatic.cell_alpha.vertices) +
-                 len(trilatic.cell_beta.vertices) +
-                 len(trilatic.cell_gamma.vertices))
-        assert total == 24
-
-    def test_channels_vertices_on_sphere(self, trilatic):
-        """All vertices in all channels should lie on the same radius sphere."""
-        all_radii = []
+    def test_channels_cover_all_24_vertices(self, trilatic):
+        """3 × 8 = 24 unique vertices — all 24-cell vertices accounted for."""
+        all_verts = set()
         for cell in [trilatic.cell_alpha, trilatic.cell_beta, trilatic.cell_gamma]:
             for v in cell.vertices:
-                all_radii.append(v.distance_from_origin())
-        r0 = all_radii[0]
-        for r in all_radii:
-            assert abs(r - r0) < 1e-6, f"Vertex radius {r} != {r0}"
+                all_verts.add(tuple(np.round(v.to_array(), 8)))
+        assert len(all_verts) == 24
+
+    def test_channels_are_disjoint(self, trilatic):
+        """The three 16-cells share no vertices (W(D₄) coset decomposition)."""
+        alpha = set(tuple(np.round(v.to_array(), 8))
+                    for v in trilatic.cell_alpha.vertices)
+        beta = set(tuple(np.round(v.to_array(), 8))
+                   for v in trilatic.cell_beta.vertices)
+        gamma = set(tuple(np.round(v.to_array(), 8))
+                    for v in trilatic.cell_gamma.vertices)
+
+        assert alpha & beta == set(), "Alpha and Beta share vertices"
+        assert alpha & gamma == set(), "Alpha and Gamma share vertices"
+        assert beta & gamma == set(), "Beta and Gamma share vertices"
+
+    def test_channels_vertices_on_unit_sphere(self, trilatic):
+        """All vertices in all channels lie on the unit 3-sphere (radius 1)."""
+        for cell in [trilatic.cell_alpha, trilatic.cell_beta, trilatic.cell_gamma]:
+            for v in cell.vertices:
+                r = v.distance_from_origin()
+                assert abs(r - 1.0) < 1e-6, f"Vertex radius {r} != 1.0"
+
+    def test_each_channel_is_cross_polytope(self, trilatic):
+        """Each 16-cell should have 4 antipodal pairs and 24 edges of length √2."""
+        for cell in [trilatic.cell_alpha, trilatic.cell_beta, trilatic.cell_gamma]:
+            verts = cell.get_vertex_array()
+            # Check 4 antipodal pairs: for each vertex, -v must also be present
+            for v in verts:
+                neg_v = -v
+                found = any(np.allclose(neg_v, w, atol=1e-8) for w in verts)
+                assert found, f"Missing antipodal vertex for {v}"
+            # Check edge count: non-antipodal pairs at distance √2
+            n_edges = 0
+            for i in range(len(verts)):
+                for j in range(i + 1, len(verts)):
+                    d = np.linalg.norm(verts[i] - verts[j])
+                    if np.isclose(d, np.sqrt(2), atol=1e-6):
+                        n_edges += 1
+            assert n_edges == 24, f"Expected 24 edges, got {n_edges}"
+
+    def test_alpha_is_axis_vertices(self, trilatic):
+        """Alpha channel = permutations of (±1, 0, 0, 0)."""
+        for v in trilatic.cell_alpha.vertices:
+            arr = v.to_array()
+            n_nonzero = np.sum(np.abs(arr) > 0.1)
+            assert n_nonzero == 1, f"Alpha vertex {arr} is not axis-aligned"
+
+    def test_beta_gamma_are_half_integer(self, trilatic):
+        """Beta and Gamma channels = (±½, ±½, ±½, ±½) vertices."""
+        for cell in [trilatic.cell_beta, trilatic.cell_gamma]:
+            for v in cell.vertices:
+                arr = v.to_array()
+                assert np.allclose(np.abs(arr), 0.5, atol=1e-8), \
+                    f"Half-integer vertex {arr} has wrong magnitude"
+
+    def test_beta_even_gamma_odd_signs(self, trilatic):
+        """Beta = even number of negative signs, Gamma = odd."""
+        for v in trilatic.cell_beta.vertices:
+            n_neg = np.sum(v.to_array() < -0.1)
+            assert n_neg % 2 == 0, f"Beta vertex has {n_neg} negative signs (expected even)"
+        for v in trilatic.cell_gamma.vertices:
+            n_neg = np.sum(v.to_array() < -0.1)
+            assert n_neg % 2 == 1, f"Gamma vertex has {n_neg} negative signs (expected odd)"
 
     def test_get_channel_state_returns_array(self, trilatic):
         """get_channel_state returns np.ndarray for each channel."""
         for channel in TrilaticChannel:
             state = trilatic.get_channel_state(channel)
             assert isinstance(state, np.ndarray)
+            assert state.shape == (8, 4)
 
     def test_get_all_vertices(self, trilatic):
         all_verts = trilatic.get_all_vertices()
         assert isinstance(all_verts, np.ndarray)
-        assert all_verts.shape[0] == 24
-        assert all_verts.shape[1] == 4
+        assert all_verts.shape == (24, 4)
 
 
 # =========================================================================

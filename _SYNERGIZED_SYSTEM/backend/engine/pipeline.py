@@ -142,14 +142,17 @@ class OpticalKirigamiMoire:
         self._moire: Optional[Any] = None
         self._talbot: Optional[Any] = None
 
-        # Readout layer
-        self._readout = ReservoirReadout(ReadoutConfig(
-            n_features=256,
-            n_outputs=self.config.n_outputs
-        ))
-
-        # Feature extractor
+        # Feature extractor (Gabor + Spectral + HOG + statistics)
         self._feature_extractor = MoireFeatureExtractor(self.config.grid_size)
+
+        # Readout layer — uses the same feature extractor for consistency
+        self._readout = ReservoirReadout(
+            ReadoutConfig(
+                n_features=self._feature_extractor.n_features,
+                n_outputs=self.config.n_outputs,
+            ),
+            feature_extractor=self._feature_extractor.extract
+        )
 
         # History for temporal analysis
         self._history: List[EncodingResult] = []
