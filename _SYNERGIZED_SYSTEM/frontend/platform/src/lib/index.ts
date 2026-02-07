@@ -42,8 +42,3 @@ export * from './contracts';
 // Adapters - external ingestion helpers
 export * from './adapters';
 
-// Convenience re-exports
-export {
-  getTimeBinder,
-  getStereoscopicFeed
-} from './fusion';

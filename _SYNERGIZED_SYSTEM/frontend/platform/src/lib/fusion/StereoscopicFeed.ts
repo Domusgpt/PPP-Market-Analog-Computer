@@ -152,6 +152,7 @@ class EventEmitter<Events extends Record<string, unknown>> {
 // ============================================================================
 
 interface DataPrismEvents {
+  [key: string]: unknown;
   'tick': IndexedTick;
   'chart': ChartDataPoint;
   'cpe': CPERenderData;

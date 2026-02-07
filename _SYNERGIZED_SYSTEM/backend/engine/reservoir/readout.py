@@ -203,11 +203,12 @@ class ReservoirReadout:
             self.W = W_full
             self.b = np.zeros(self.config.n_outputs)
 
+        # Mark as trained before computing accuracy (predict requires it)
+        self._is_trained = True
+
         # Compute training accuracy
         predictions = self.predict_batch(patterns)
         accuracy = np.mean(predictions == labels)
-
-        self._is_trained = True
         self._train_accuracy = accuracy
         self._n_samples_seen = n_samples
 

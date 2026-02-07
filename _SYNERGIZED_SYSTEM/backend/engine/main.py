@@ -26,10 +26,12 @@ from dataclasses import dataclass
 import json
 
 # Local imports
-from src.physics import TrilaticLattice, MoireInterference, TalbotResonator
-from src.kirigami import TristableCell, KirigamiSheet, CellState
-from src.kirigami.kirigami_sheet import SheetConfig, CutPattern
-from src.control import TripoleActuator
+from .physics.trilatic_lattice import TrilaticLattice
+from .physics.moire_interference import MoireInterference
+from .physics.talbot_resonator import TalbotResonator
+from .kirigami.tristable_cell import TristableCell, CellState
+from .kirigami.kirigami_sheet import KirigamiSheet, SheetConfig, CutPattern
+from .control.tripole_actuator import TripoleActuator
 
 
 @dataclass
