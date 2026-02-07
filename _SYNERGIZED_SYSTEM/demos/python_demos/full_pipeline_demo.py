@@ -18,17 +18,19 @@ digital logic gates.
 import numpy as np
 import sys
 import os
+from pathlib import Path
 
-# Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+# Add backend directory to path so engine package is importable
+_backend_dir = str(Path(__file__).resolve().parent.parent.parent / "backend")
+if _backend_dir not in sys.path:
+    sys.path.insert(0, _backend_dir)
 
-from optical_kirigami_moire import (
+from engine.pipeline import (
     OpticalKirigamiMoire,
     PipelineConfig,
     ComputationMode,
-    RuleEnforcer,
-    LogicPolarity,
 )
+from engine.enforcer import RuleEnforcer, LogicPolarity
 
 
 def print_header(title: str):

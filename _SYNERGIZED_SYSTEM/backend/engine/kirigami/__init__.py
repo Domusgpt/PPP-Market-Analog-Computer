@@ -13,7 +13,7 @@ Key Components:
 """
 
 from .tristable_cell import TristableCell, CellState
-from .kirigami_sheet import KirigamiSheet
+from .kirigami_sheet import KirigamiSheet, SheetConfig
 from .h4_kirigami import (
     H4KirigamiStack,
     KirigamiLayer,
@@ -29,6 +29,7 @@ __all__ = [
     "TristableCell",
     "CellState",
     "KirigamiSheet",
+    "SheetConfig",
     "H4KirigamiStack",
     "KirigamiLayer",
     "LayerPair",

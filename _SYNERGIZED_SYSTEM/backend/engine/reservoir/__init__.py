@@ -15,10 +15,14 @@ from .multiscale import MultiScaleReservoir
 from .learnable import LearnableReservoir
 from .esn import EchoStateReservoir
 from .criticality import CriticalityAnalyzer
+from .readout import ReservoirReadout, ReadoutConfig, MoireFeatureExtractor
 
 __all__ = [
     "MultiScaleReservoir",
     "LearnableReservoir",
     "EchoStateReservoir",
-    "CriticalityAnalyzer"
+    "CriticalityAnalyzer",
+    "ReservoirReadout",
+    "ReadoutConfig",
+    "MoireFeatureExtractor",
 ]

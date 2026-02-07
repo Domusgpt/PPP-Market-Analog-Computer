@@ -23,14 +23,9 @@ import numpy as np
 from dataclasses import dataclass, field
 from typing import Optional, List, Tuple, Dict, Any, Callable
 from enum import Enum
-import sys
-import os
-
-# Add parent paths for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import from existing modules (relative imports for package)
-from .rules.enforcer import RuleEnforcer, CommensurateLock, TalbotLock, TiltLock, LogicPolarity
+from .enforcer import RuleEnforcer, CommensurateLock, TalbotLock, TiltLock, LogicPolarity
 from .reservoir.readout import ReservoirReadout, ReadoutConfig, MoireFeatureExtractor
 
 
@@ -165,18 +160,9 @@ class OpticalKirigamiMoire:
             return
 
         # Import here to avoid circular imports
-        try:
-            from hemoc_stain_glass_src.kirigami.kirigami_sheet import (
-                KirigamiSheet, SheetConfig, CutPattern
-            )
-            from hemoc_stain_glass_src.physics.moire_interference import MoireInterference
-            from hemoc_stain_glass_src.physics.talbot_resonator import TalbotResonator
-            from hemoc_stain_glass_src.control.tripole_actuator import TripoleActuator
-        except ImportError:
-            # Fallback to local implementations
-            from .kirigami import KirigamiSheet, SheetConfig, CutPattern
-            from .physics import MoireInterference, TalbotResonator
-            from .control import TripoleActuator
+        from .kirigami.kirigami_sheet import KirigamiSheet, SheetConfig, CutPattern
+        from .physics import MoireInterference, TalbotResonator
+        from .control import TripoleActuator
 
         nx, ny = self.config.grid_size
 
