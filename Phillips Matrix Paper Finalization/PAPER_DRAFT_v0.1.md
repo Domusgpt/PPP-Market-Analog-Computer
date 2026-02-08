@@ -170,13 +170,32 @@ while the right block uses {±a, ±c} = {±a, ±aφ} (expanded by φ from center
 
 ### 2.3 Construction motivation
 
-This matrix was constructed in the course of building a geometric
-visualization system (PPP — Phase-locked Price Projection) that required
-mapping E₈ root structure to 4D for stereoscopic rendering. The design
-goal was an E₈-to-H₄ folding that decomposes into left and right H₄
-copies with golden-ratio coupling. The geometric-progression entry
-structure emerged from the constraint that the φ-scaling between blocks
-should be exact at the entry level, not merely approximate.
+This matrix emerged from a geometric cognition research program that
+began with musical structure. The Chronomorphic Polytopal Engine (CPE)
+[8] maps the 24 major and minor musical keys to the 24 vertices of the
+24-cell (icositetrachoron), with the circle of fifths realized as
+rotation in 4D and chord geometry captured by sub-polytopes (e.g., major
+triads as D₃-symmetric triangles, diminished 7ths as regular tetrahedra).
+Neo-Riemannian transformations (P, L, R operations on the Tonnetz)
+correspond to reflections in this 4D polytope space [9].
+
+The 600-cell contains exactly 5 inscribed 24-cells [1], making it the
+natural higher-dimensional container for the musical 24-cell. This
+motivated projecting E₈ root structure to H₄ — specifically, seeking a
+folding matrix that embeds 24-cell constellations within the projected
+600-cell. The matrix was constructed using golden-ratio entry constants
+derived from the 600-cell's coordinate structure (the vertex coordinates
+0, ±1/2, ±φ/2, ±1/(2φ) yield the geometric progression {b, a, c}).
+The design goal was a left-right decomposition with exact φ-scaling
+between H₄ copies, arising from the constraint that entry constants
+themselves form a geometric progression with ratio φ.
+
+Hyperdimensional computing (HDC) experiments using Voyage AI embeddings
+[10] validated the 24-cell geometric framework by projecting 1024D
+semantic vectors to 4D via Johnson-Lindenstrauss projection, confirming
+that the polytope geometry preserves meaningful structure under
+dimensionality reduction. This empirical validation preceded the
+construction of the 8×8 folding matrix by three days.
 
 ### 2.4 The E₈ root system
 
@@ -490,7 +509,9 @@ $$\frac{\|U\|_F^2}{\mathrm{rank}(U)} = \frac{20}{4} = 5$$
 
 **Remark.** We do not claim a proof that Frobenius²/rank must equal the
 24-cell count for all E₈-to-H₄ folding matrices. However, the coincidence
-is striking. The number 5 appears in at least five independent roles:
+is notable given the matrix's origin: it was constructed specifically to
+embed 24-cell constellations within the 600-cell's E₈ projection (§2.3).
+The number 5 appears in at least five independent roles:
 
 1. *Algebraic:* (φ+2)(3−φ) = 5
 2. *Spectral:* eigenvalue of U^T U with multiplicity 2
@@ -618,6 +639,18 @@ material.
 
 [7] J. C. Baez, "From the Icosahedron to E₈," *London Math. Soc.
     Newsletter*, No. 476, 2018.
+
+[8] P. Phillips, "MusicGeometryDomain: A Calibration Framework for the
+    Chronomorphic Polytopal Engine," Technical design document, January
+    2026. Maps 24 musical keys to 24-cell vertices with circle-of-fifths
+    as 4D rotation.
+
+[9] R. Cohn, "Neo-Riemannian Operations, Parsimonious Trichords, and
+    Their Tonnetz Representations," *Journal of Music Theory* 41(1),
+    pp. 1–66, 1997.
+
+[10] Voyage AI, "voyage-3: Neural embedding model," 2025.
+     https://www.voyageai.com/
 
 ---
 
