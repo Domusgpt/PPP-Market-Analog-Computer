@@ -1,17 +1,18 @@
-# The Totalistic Geometry of E8: Spectral Analysis of the H4 Folding Matrix
+# Spectral Analysis of a Golden-Ratio E₈-to-H₄ Folding Matrix
 
 **Paul Phillips**
 
-*Draft v0.1 — February 7, 2026*
+*Draft v0.2 — February 8, 2026*
 
 ---
 
 ## Abstract
 
-We perform a spectral analysis of the Moxness 8×8 folding matrix that
-projects the E₈ root system to H₄ polytopes. We prove that the matrix
-has rank 4, not 8: the right projection block U_R equals φ times the
-left block U_L, where φ is the golden ratio. This golden rank deficiency
+We construct an 8×8 folding matrix U that projects the E₈ root system
+to a pair of H₄ polytopes, with entry constants {a, b, c} = {1/2,
+(φ−1)/2, φ/2} forming a geometric progression with ratio φ (the golden
+ratio). We prove that U has rank 4, not 8: the right projection block
+U_R equals φ times the left block U_L. This golden rank deficiency
 implies that the round-trip operator U^T U factors as (φ+2)·U_L^T U_L,
 yielding an eigenvalue spectrum {0⁴, λ₁, 5², λ₂} where the eigenvalue
 5 has multiplicity 2, arising from the identity (φ+2)(3−φ) = 5. The
@@ -38,30 +39,29 @@ mediated by the golden ratio φ = (1+√5)/2, has been studied since
 Coxeter [1] and du Val [2].
 
 The projection from E₈ (8D) to H₄ (4D) can be realized by a folding
-matrix that maps the E₈ Dynkin diagram onto the H₄ diagram. Moxness
-[3] constructed an explicit 8×8 matrix U for this projection, producing
-a decomposition E₈ → H₄_L ⊕ H₄_R into left and right H₄ copies. His
-subsequent work [4,5] explored the fourfold chiral structure of the
-projected vertex sets and constructed a unimodular (determinant 1) variant.
-Most recently, Moxness [6] established an isomorphism between U·U and the
-3-qubit Hadamard matrix, connecting the folding matrix to quantum
-information theory.
+matrix that maps the E₈ Dynkin diagram onto the H₄ diagram. Several
+such matrices exist in the literature. Baez [7] gave a 4×8 matrix
+producing a single H₄ copy. Moxness [3] constructed a different 8×8
+matrix (the "C600 matrix"), which is sparse, symmetric, and rank 8,
+and used it for 3D visualization of E₈. His subsequent work [4,5,6]
+explored fourfold chiral structure, unimodular variants, and connections
+to the 3-qubit Hadamard matrix.
 
-This paper takes a different approach. Rather than studying the projected
-vertices, we study the operator structure of U itself — its rank, kernel,
-eigenvalues, and Gram matrices. Our central finding is:
+This paper introduces and analyzes a new 8×8 folding matrix — distinct
+from the Moxness C600 — that arises from a geometric-progression
+construction of entry constants. Its defining feature is:
 
-**Theorem (Golden Rank Deficiency).** *The Moxness folding matrix has rank
-4. The right block U_R is exactly φ times the left block U_L:*
+**Theorem (Golden Rank Deficiency).** *The Phillips folding matrix has
+rank 4. The right block U_R is exactly φ times the left block U_L:*
 
 $$U_R = \varphi \cdot U_L$$
 
-*verified to machine precision (error < 10⁻¹⁵) on the defining matrix.*
+*verified to machine precision (error < 10⁻¹⁵).*
 
-This identity, which does not appear in the existing literature on the
-folding matrix, implies that the 8×8 matrix carries no more information
-than the 4×8 left block — the right block is pure golden-ratio scaling
-with no rotation. From this single identity, we derive a chain of results:
+This identity, which does not hold for the Moxness C600 matrix (rank 8),
+implies that the 8×8 matrix carries no more information than the 4×8
+left block — the right block is pure golden-ratio scaling with no
+rotation. From this single identity, we derive a chain of results:
 
 1. **Column Trichotomy** (Theorem 2): Column norms fall into three classes
    {φ+2, 5/2, 3−φ} in a 2-4-2 pattern, establishing a dimensional
@@ -83,6 +83,26 @@ with no rotation. From this single identity, we derive a chain of results:
 All results are accompanied by computational verification on the complete
 240-root system (281 automated tests, 0 failures).
 
+### 1.1 Relationship to the Moxness C600 matrix
+
+The matrix studied here is not the Moxness C600 matrix [3]. A definitive
+computational comparison establishes that the two are entirely distinct:
+
+| Property        | Phillips matrix         | Moxness C600          |
+|-----------------|------------------------|-----------------------|
+| Size            | 8×8                    | 8×8                   |
+| Rank            | 4                      | 8                     |
+| Symmetry        | Non-symmetric          | Symmetric             |
+| Zero entries    | 0 (dense)              | 36 (sparse)           |
+| Determinant     | 0                      | ≈ 1755                |
+| Frobenius²      | 20                     | ≈ 57.9                |
+| Entry values    | {±1/2, ±(φ−1)/2, ±φ/2}| {0, ±1, ±φ, φ², 1/φ}  |
+| U_R = φ·U_L     | Yes                    | No                    |
+
+The stacked row-space has rank 7 (not 4), confirming the two matrices
+project E₈ into different 4-dimensional subspaces. Both accomplish
+E₈-to-H₄ projection, but through different geometric mechanisms.
+
 ### Notation
 
 Throughout, φ = (1+√5)/2 ≈ 1.618 denotes the golden ratio. We use the
@@ -96,7 +116,7 @@ for the golden field.
 
 ### 2.1 Definition
 
-The Moxness folding matrix [3] is the 8×8 real matrix
+The Phillips folding matrix is the 8×8 real matrix
 
 $$U = \begin{pmatrix} U_L \\ U_R \end{pmatrix}$$
 
@@ -122,12 +142,6 @@ U_R = [ c   a   c   a   c  -a   c  -a ]
       [ c  -a   a  -a  -c   c  -a   a ]
 ```
 
-Note that c = φ·b (since φ(φ−1)/2 = φ²/2−φ/2 = (φ+1)/2−φ/2 = 1/2...
-no: c = φ/2 and b = (φ−1)/2, so c/b = φ/(φ−1) = φ·φ = φ²).
-
-More precisely: c = φ·a and b = a/φ, so {a, b, c} = {a, a/φ, aφ} — a
-geometric progression with ratio φ, centered at a = 1/2.
-
 ### 2.2 Entry structure
 
 The three constants form a geometric progression:
@@ -143,7 +157,17 @@ with ratio φ and center a = 1/2. This means:
 The left block uses {±a, ±b} = {±a, ±a/φ} (contracted by 1/φ from center),
 while the right block uses {±a, ±c} = {±a, ±aφ} (expanded by φ from center).
 
-### 2.3 The E₈ root system
+### 2.3 Construction motivation
+
+This matrix was constructed in the course of building a geometric
+visualization system (PPP — Phase-locked Price Projection) that required
+mapping E₈ root structure to 4D for stereoscopic rendering. The design
+goal was an E₈-to-H₄ folding that decomposes into left and right H₄
+copies with golden-ratio coupling. The geometric-progression entry
+structure emerged from the constraint that the φ-scaling between blocks
+should be exact at the entry level, not merely approximate.
+
+### 2.4 The E₈ root system
 
 The 240 roots of E₈ fall into two types:
 
@@ -236,11 +260,8 @@ Similarly, each row of U_R has 4 entries of |a| and 4 of |c|:
 
     ||r_R||² = 4a² + 4c² = 1 + φ² = φ + 2.
 
-The pentagon identities: 2 sin 36° = 2 sin(π/5) = √((5−√5)/2)...
-more directly, 4 sin²36° = 2 − 2cos 72° = 2 − 2(2cos²36° − 1) =
-4 − 4cos²36°, giving 4sin²36° + 4cos²36° = 4, but we need
-4sin²36° = 3−φ. This follows from cos 72° = (√5−1)/4... [standard
-identity]. ∎
+The pentagon identities: 2 sin 36° = 2 sin(π/5) = √(3−φ) follows from
+4 sin²36° = 2 − 2cos 72° = 2 − 2(φ−1)/2 = 2 − φ + 1 = 3 − φ. ∎
 
 **Corollary.** The ratio ||r_R||/||r_L|| = √((φ+2)/(3−φ)) = √(φ²) = φ,
 and the product ||r_L||·||r_R|| = √((3−φ)(φ+2)) = √5. ∎
@@ -253,7 +274,7 @@ This section contains the paper's central result.
 
 ### 4.1 The identity U_R = φ · U_L
 
-**Theorem 3 (Golden Rank Deficiency).** *The right block of the Moxness
+**Theorem 3 (Golden Rank Deficiency).** *The right block of the Phillips
 folding matrix is exactly φ times the left block:*
 
 $$U_R = \varphi \cdot U_L$$
@@ -279,19 +300,19 @@ Therefore:
 
 and det(U) = 0 since U has a 4-dimensional kernel (dim ker = 8 − 4 = 4). ∎
 
-**Remark.** This result clarifies the relationship between the Moxness 8×8
+**Remark.** This result clarifies the relationship between the Phillips 8×8
 matrix and the Baez 4×8 matrix [7]. Both have rank 4, so both lose the
-same dimensional information. The difference is packaging: Baez uses zeros
-to fill the missing rows, while Moxness uses φ-scaled copies. Neither is
-"lossless" in the operator-theoretic sense, but the Moxness form encodes
-the golden ratio in the redundancy itself.
+same amount of dimensional information. The difference is packaging: Baez
+uses zeros to fill the missing rows, while the Phillips matrix uses
+φ-scaled copies. Neither is "lossless" in the operator-theoretic sense,
+but the Phillips form encodes the golden ratio in the redundancy itself.
 
-**Remark.** Moxness's unimodular variant [5] (det = 1) necessarily has rank 8,
-which means the U_R = φ·U_L identity is broken by the unimodular correction.
-This suggests a trade-off: the original matrix sacrifices full rank to
-achieve golden-ratio self-similarity between blocks, while the unimodular
-version sacrifices self-similarity to achieve volume preservation. Both are
-mathematically valid; they optimize for different invariants.
+**Remark.** The Moxness C600 matrix [3] has rank 8 and det ≈ 1755. Its
+blocks do NOT satisfy U_R = φ·U_L — the block-to-block ratios are not
+constant. This means the golden rank deficiency is specific to the
+Phillips construction and does not hold for E₈-to-H₄ folding matrices
+in general. The rank-4 property is a design consequence of the
+geometric-progression entry structure, not a universal feature.
 
 ### 4.2 The entry-level explanation
 
@@ -315,9 +336,8 @@ $$U_R \cdot v = \varphi \cdot (U_L \cdot v)$$
 *In particular, for every E₈ root r, the right projection is φ times the
 left projection: ||r_R|| / ||r_L|| = φ, and ||r_L|| · ||r_R|| = √5 · ||r||²/2.*
 
-This explains the φ-scaling observed in the projected vertex sets [4]:
-it is not a property of the E₈ roots or the H₄ geometry, but of the
-matrix itself.
+This φ-scaling is a direct consequence of the matrix construction, not
+a property of the E₈ roots or the H₄ geometry per se.
 
 ---
 
@@ -365,8 +385,8 @@ For exhaustiveness, we enumerate all 240 projections U_L · r_i, round to
 appear, with 14 images each occurring twice. For each collision pair, the
 difference r_a − r_b is computed and verified to equal ±d.
 
-Orthogonality: if r_a − r_b = d, then ⟨r_a, r_b⟩ = (||r_a||² − ||d||²)/2
-... no, more directly: for each pair, ⟨r_a, r_b⟩ is computed and equals 0.
+Orthogonality: for each collision pair (r_a, r_b) with r_a − r_b = d,
+we compute ⟨r_a, r_b⟩ = 0 directly.
 
 The type count (6 perm+perm, 8 half+half) is verified by enumeration. ∎
 
@@ -480,8 +500,7 @@ The matrix U is not normal: U^T U ≠ U U^T. This distinguishes the
 "input side" (E₈ space, analyzed by U^T U) from the "output side"
 (projection space, analyzed by U U^T). Despite the non-normality,
 all eigenvalues of U (as an 8×8 operator) are real — there are four
-zero eigenvalues and four nonzero real eigenvalues summing to zero
-(since U is traceless [3]).
+zero eigenvalues and four nonzero real eigenvalues.
 
 The non-normality connects to the chirality of the 600-cell's
 5-compound. The 600-cell admits two enantiomorphic inscriptions of 5
@@ -489,24 +508,28 @@ mutually disjoint 24-cells (left-handed and right-handed). The
 asymmetry U^T U ≠ U U^T may be the operator-theoretic signature of
 this geometric chirality, though we do not prove this connection here.
 
-### 7.2 Relation to Moxness's other results
+### 7.2 Comparison with the Moxness C600 matrix
 
-Moxness [6] proved that U·U − (U·U)⁻¹ = J, where J is the reverse
-identity (anti-diagonal) matrix, and that U·U has the same palindromic
+The Moxness C600 matrix [3] is a fundamentally different object:
+sparse, symmetric, rank 8, with entries from {0, ±1, ±φ, φ², 1/φ}.
+Its block structure is TL = BR, TR = BL (block circulant), in contrast
+to the Phillips matrix where U_R = φ·U_L.
+
+Moxness [6] proved that C600·C600 − (C600·C600)⁻¹ = J (the reverse
+identity matrix), and that C600·C600 has the same palindromic
 characteristic polynomial as the normalized 3-qubit Hadamard. These
-results analyze U as a full 8×8 operator. Our results analyze the
-sub-block structure (U_L vs U_R) and the rank deficiency. The two
-perspectives are complementary: Moxness's palindromic property may be
-related to the U_R = φ·U_L identity, since the block structure of
-[U_L; φ·U_L] creates a specific symmetry in U·U. We leave this
-connection for future work.
+results rely on the full-rank (rank 8) structure of C600 and do not
+apply to the Phillips matrix (which is singular).
 
-Moxness's unimodular variant [5] has det = 1 and therefore rank 8,
-which breaks the U_R = φ·U_L identity. This suggests a fundamental
-trade-off: the original matrix optimizes for golden self-similarity
-(rank 4, U_R = φ·U_L), while the unimodular version optimizes for
-volume preservation (rank 8, det = 1). Both are natural; they express
-different aspects of the E₈-to-H₄ relationship.
+Conversely, the rank-4 structure of the Phillips matrix enables the
+factorization theorems (Theorems 5-7) and the collision analysis
+(Theorem 4), which do not apply to the full-rank C600.
+
+The two matrices thus offer complementary perspectives on the
+E₈-to-H₄ relationship: Moxness's matrix preserves all 8 dimensions
+and connects to quantum information theory, while the Phillips matrix
+sacrifices 4 dimensions to achieve exact golden-ratio self-similarity
+between blocks.
 
 ### 7.3 The Gram matrix and Q(√5)
 
@@ -520,11 +543,12 @@ the √5-coupling at the operator level.
 ### 7.4 Computational methodology
 
 All theorems were verified computationally using a Python implementation
-that generates all 240 E₈ roots, projects them through both Baez [7]
-and Moxness matrices, and runs 281 automated tests covering matrix
-structure, projection properties, collision enumeration, and eigenvalue
-computation. Tests pass at machine precision (atol = 10⁻¹⁰ or better).
-The code and test suite are available as supplementary material.
+that generates all 240 E₈ roots, projects them through both the Phillips
+matrix and the Baez [7] matrix, and runs 281 automated tests covering
+matrix structure, projection properties, collision enumeration, and
+eigenvalue computation. Tests pass at machine precision (atol = 10⁻¹⁰
+or better). The code and test suite are available as supplementary
+material.
 
 ---
 

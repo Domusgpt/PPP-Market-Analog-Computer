@@ -7,9 +7,10 @@ to 4D H₄ polytopes via two projection approaches:
 1. **Baez 4×8 matrix** — projects E₈ → single H₄ copy (lossy).
    Reference: John C. Baez, "From the Icosahedron to E₈"
 
-2. **Phillips 8×8 matrix** — full E₈ → H₄_L ⊕ H₄_R decomposition (lossless).
-   Reference: Phillips, "The Totalistic Geometry of E8" (2026)
-   Based on the Moxness H4 folding matrix with verified properties:
+2. **Phillips 8×8 matrix** — full E₈ → H₄_L ⊕ H₄_R decomposition.
+   An original dense projection matrix with entry constants forming a
+   golden-ratio geometric progression {a/φ, a, aφ} where a = 1/2.
+   Verified properties:
    - Column Trichotomy (Theorem 4.1): 2-4-2 norm pattern {3-φ, 2.5, φ+2}
    - Pentagonal Row Norms (Theorem 5.1): √(3-φ) = 2·sin(36°)
    - Frobenius norm² = 20 (matches 600-cell vertex valence)
@@ -57,16 +58,24 @@ BAEZ_CONJUGATE_MATRIX = np.array([
 # PHILLIPS MATRIX (8×8) — Full E₈ → H₄_L ⊕ H₄_R decomposition
 # =============================================================================
 # Phillips, "The Totalistic Geometry of E8" (2026)
-# Based on J. Gregory Moxness, H4 folding matrix
+#
+# An original 8×8 dense projection matrix for the E₈ → H₄ folding.
+# NOT the Moxness C600 matrix (which is sparse, symmetric, and rank 8).
+# This matrix is dense (no zeros), non-symmetric, and rank 4.
 #
 # Constants:
 #   a = 1/2                 ≈ 0.500
 #   b = (φ-1)/2 = 1/(2φ)   ≈ 0.309
 #   c = φ/2                 ≈ 0.809
 #
+# Entry structure: {a, b, c} form a geometric progression with ratio φ,
+# centered at a = 1/2. That is: b = a/φ, c = aφ.
+#
 # The matrix has two blocks:
 #   U_L (rows 0-3): entries from {±a, ±b}  — contracted row norm² = 3-φ
 #   U_R (rows 4-7): entries from {±a, ±c}  — expanded  row norm² = φ+2
+#
+# Fundamental identity: U_R = φ · U_L (rank 4, not 8)
 #
 # Verified properties:
 #   Column Trichotomy: dims {0,4}=φ+2, {1,2,5,6}=2.5, {3,7}=3-φ (the 2-4-2)
