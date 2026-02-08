@@ -86,22 +86,33 @@ All results are accompanied by computational verification on the complete
 ### 1.1 Relationship to the Moxness C600 matrix
 
 The matrix studied here is not the Moxness C600 matrix [3]. A definitive
-computational comparison establishes that the two are entirely distinct:
+computational comparison, using the corrected matrix provided directly
+by Moxness (personal communication, 2026), establishes that the two are
+entirely distinct:
 
-| Property        | Phillips matrix         | Moxness C600          |
-|-----------------|------------------------|-----------------------|
-| Size            | 8×8                    | 8×8                   |
-| Rank            | 4                      | 8                     |
-| Symmetry        | Non-symmetric          | Symmetric             |
-| Zero entries    | 0 (dense)              | 36 (sparse)           |
-| Determinant     | 0                      | ≈ 1755                |
-| Frobenius²      | 20                     | ≈ 57.9                |
-| Entry values    | {±1/2, ±(φ−1)/2, ±φ/2}| {0, ±1, ±φ, φ², 1/φ}  |
-| U_R = φ·U_L     | Yes                    | No                    |
+| Property           | Phillips matrix         | Moxness φ𝕌            |
+|--------------------|------------------------|-----------------------|
+| Size               | 8×8                    | 8×8                   |
+| Rank               | 4                      | 8                     |
+| Symmetry           | Non-symmetric          | Symmetric             |
+| Traceless          | No                     | Yes (Tr = 0)          |
+| CentroSymmetric    | No                     | Yes                   |
+| Zero entries       | 0 (dense)              | 36 (sparse)           |
+| Determinant        | 0                      | ≈ 1755                |
+| Frobenius²         | 20                     | ≈ 57.9                |
+| Entry values       | {±1/2, ±(φ−1)/2, ±φ/2}| {0, ±1, ±φ, ±1/φ, ±φ²}|
+| Eigenvalues        | {0⁴, λ₁, 5², λ₂}      | {±2, ±2, ±2φ, ±2φ}   |
+| U_R = φ·U_L        | Yes                    | No (palindromic)      |
+| L/R norm ratio     | φ (universal)          | {1/φ, 1, φ} (varies)  |
+| Unique 4D points   | 226 (14 collisions)    | 240 (no collisions)   |
+| Shell radii        | 21                     | 2                     |
 
-The stacked row-space has rank 7 (not 4), confirming the two matrices
-project E₈ into different 4-dimensional subspaces. Both accomplish
-E₈-to-H₄ projection, but through different geometric mechanisms.
+The stacked row-space has rank 8 (not 4), confirming the two matrices
+project E₈ into completely orthogonal 4-dimensional subspaces. The
+Moxness matrix has a palindromic block structure (row *i* equals
+row 8−*i* column-reversed), while the Phillips matrix has pure
+golden-ratio scaling between blocks. Both accomplish E₈-to-H₄
+projection, but through fundamentally different geometric mechanisms.
 
 ### Notation
 
@@ -510,26 +521,46 @@ this geometric chirality, though we do not prove this connection here.
 
 ### 7.2 Comparison with the Moxness C600 matrix
 
-The Moxness C600 matrix [3] is a fundamentally different object:
-sparse, symmetric, rank 8, with entries from {0, ±1, ±φ, φ², 1/φ}.
-Its block structure is TL = BR, TR = BL (block circulant), in contrast
-to the Phillips matrix where U_R = φ·U_L.
+The Moxness φ𝕌 matrix [3] (corrected version, personal communication)
+is a fundamentally different object: sparse (36 zeros), symmetric,
+rank 8, traceless, centrosymmetric, with entries from
+{0, ±1, ±φ, ±1/φ, ±φ²} and eigenvalues {±2, ±2, ±2φ, ±2φ}.
+
+Its block structure is palindromic: row *i* equals row (8−*i*)
+column-reversed. The inner rows (2–7) differ between top and bottom
+halves only in the signs of the ±1 entries, while the φ entries
+remain unchanged. This contrasts with the Phillips matrix where
+U_R = φ·U_L (pure scaling, no sign changes).
+
+The operational differences are stark:
+
+- Moxness produces **240 unique** 4D points per block (no collisions),
+  on exactly **2 shell radii** (2 and φ²). Phillips produces 226
+  unique points on **21 shells** with 14 collision pairs.
+
+- Moxness's L/R norm ratios take **3 values** {1/φ, 1, φ}, varying
+  by root. Phillips's L/R norm ratio is **universally φ** for every
+  E₈ root — a consequence of U_R = φ·U_L.
+
+- The row spaces are **completely orthogonal** (stacked rank = 8),
+  meaning the two matrices project E₈ into non-overlapping 4D subspaces.
 
 Moxness [6] proved that C600·C600 − (C600·C600)⁻¹ = J (the reverse
 identity matrix), and that C600·C600 has the same palindromic
 characteristic polynomial as the normalized 3-qubit Hadamard. These
 results rely on the full-rank (rank 8) structure of C600 and do not
-apply to the Phillips matrix (which is singular).
+apply to the Phillips matrix (which is singular, det = 0).
 
 Conversely, the rank-4 structure of the Phillips matrix enables the
 factorization theorems (Theorems 5-7) and the collision analysis
 (Theorem 4), which do not apply to the full-rank C600.
 
 The two matrices thus offer complementary perspectives on the
-E₈-to-H₄ relationship: Moxness's matrix preserves all 8 dimensions
-and connects to quantum information theory, while the Phillips matrix
-sacrifices 4 dimensions to achieve exact golden-ratio self-similarity
-between blocks.
+E₈-to-H₄ relationship: Moxness's matrix is a full-rank rotation
+that preserves all 8 dimensions and connects to quantum information
+theory, while the Phillips matrix is a rank-deficient projection
+that achieves exact golden-ratio self-similarity between blocks,
+creating a richer shell structure at the cost of 14 collisions.
 
 ### 7.3 The Gram matrix and Q(√5)
 
