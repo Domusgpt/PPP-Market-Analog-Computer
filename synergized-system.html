@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optical Kirigami Moire Encoder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { color-scheme: dark; }
+        body { font-family:'Inter',sans-serif; background:#06101d; color:#d8f5ff; margin:0; }
+        body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index:-1;
+            background: radial-gradient(circle at 20% 30%,rgba(220,20,60,0.10),transparent 55%),
+                        radial-gradient(circle at 80% 15%,rgba(130,95,255,0.08),transparent 50%),
+                        linear-gradient(190deg,rgba(4,16,32,0.9),rgba(10,25,48,0.75)); }
+        canvas { border-radius:0.75rem; display:block; }
+        .card { background:rgba(6,20,40,0.88); border:1px solid rgba(104,178,255,0.2); border-radius:1rem; padding:1.25rem;
+                box-shadow:0 22px 50px -34px rgba(0,89,190,0.5); }
+        .lbl { font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(146,212,255,0.6); }
+        .val { font-family:'JetBrains Mono',monospace; }
+        .bar-bg { height:5px; border-radius:3px; background:rgba(255,255,255,0.06); overflow:hidden; }
+        .bar-fg { height:100%; border-radius:3px; transition:width 0.12s ease-out; }
+        select,button { font-family:inherit; }
+        select { background:rgba(10,25,48,0.9); color:#d8f5ff; border:1px solid rgba(104,178,255,0.3); border-radius:0.5rem; padding:0.3rem 0.5rem; font-size:0.75rem; }
+        .ctrl-btn { padding:0.35rem 0.75rem; border-radius:0.5rem; font-size:0.75rem; font-weight:600; cursor:pointer; transition:all 0.15s; border:1px solid; }
+    </style>
+</head>
+<body class="antialiased">
+<div class="max-w-7xl mx-auto px-4 md:px-6 py-6 space-y-5">
+
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <div>
+            <p class="lbl">Synergized System &mdash; Optical Kirigami Moire Encoder</p>
+            <h1 class="text-2xl md:text-3xl font-extrabold text-white mt-1">Stained Glass Flower</h1>
+        </div>
+        <div class="flex items-center gap-3 flex-wrap">
+            <span class="lbl">Mode:</span>
+            <select id="sel-mode">
+                <option value="0,0">Aligned (0.00&deg;)</option>
+                <option value="5,1">Edge (7.34&deg;)</option>
+                <option value="4,1">Fine (9.43&deg;)</option>
+                <option value="3,1" selected>Intermediate (13.17&deg;)</option>
+                <option value="2,1">Coarse (21.79&deg;)</option>
+            </select>
+            <select id="sel-talbot">
+                <option value="integer">Talbot: Integer (AND/OR)</option>
+                <option value="half">Talbot: Half-Integer (NAND/XOR)</option>
+            </select>
+            <button id="btn-inject" class="ctrl-btn bg-emerald-900/50 border-emerald-500/40 text-emerald-200 hover:bg-emerald-800/60">Inject Noise</button>
+            <button id="btn-reset" class="ctrl-btn bg-rose-900/50 border-rose-500/40 text-rose-200 hover:bg-rose-800/60">Reset</button>
+            <a href="index.html" class="ctrl-btn bg-blue-900/40 border-blue-500/30 text-blue-200 hover:bg-blue-800/40 no-underline">Back to PPP</a>
+        </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+        <!-- Col 1 (span-5): Moire + Bichromatic -->
+        <div class="lg:col-span-5 space-y-5">
+            <div class="card" style="border-color:rgba(220,20,60,0.3)">
+                <div class="flex items-center justify-between mb-2">
+                    <div><p class="lbl" style="color:rgba(255,100,120,0.7)">Moire Interference Field</p>
+                    <p class="text-xs text-rose-200/50 mt-0.5">T(x,y) = (1/3)&Sigma;cos(G<sub>i</sub>&middot;r) &mdash; two layers, multiplicative</p></div>
+                    <div class="text-right">
+                        <p class="text-xs text-rose-300/50">L<sub>M</sub> = a / 2sin(&theta;/2)</p>
+                        <p class="val text-sm text-rose-100" id="val-period">-</p>
+                    </div>
+                </div>
+                <canvas id="moire-canvas" width="400" height="300" style="width:100%;border:1px solid rgba(220,20,60,0.25);background:#000"></canvas>
+                <div class="grid grid-cols-3 gap-3 mt-3">
+                    <div><p class="lbl">Contrast (Michelson)</p><p class="val text-lg text-rose-100" id="val-contrast">-</p>
+                        <div class="bar-bg"><div class="bar-fg" id="bar-contrast" style="width:0%;background:linear-gradient(90deg,#dc143c,#ff6b81)"></div></div></div>
+                    <div><p class="lbl">Twist Angle</p><p class="val text-lg text-rose-100" id="val-angle">-</p></div>
+                    <div><p class="lbl">Amplification</p><p class="val text-lg text-rose-100" id="val-amp">-</p></div>
+                </div>
+            </div>
+
+            <div class="card" style="border-color:rgba(0,200,200,0.25)">
+                <p class="lbl" style="color:rgba(0,200,200,0.7)">Bichromatic Output (Cyan 500nm + Red 650nm)</p>
+                <canvas id="bichrome-canvas" width="400" height="120" style="width:100%;border:1px solid rgba(0,200,200,0.2);background:#000;margin-top:0.5rem"></canvas>
+                <div class="grid grid-cols-4 gap-2 mt-2">
+                    <div><p class="lbl">Gate</p><p class="val text-sm" id="val-gate">AND</p></div>
+                    <div><p class="lbl">Polarity</p><p class="val text-sm" id="val-polarity">POSITIVE</p></div>
+                    <div><p class="lbl">Z<sub>T</sub></p><p class="val text-sm" id="val-zt">-</p></div>
+                    <div><p class="lbl">Gap</p><p class="val text-sm" id="val-gap">-</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Col 2 (span-4): Kirigami Sheet (the actual reservoir) -->
+        <div class="lg:col-span-4 space-y-5">
+            <div class="card" style="border-color:rgba(130,95,255,0.3)">
+                <p class="lbl" style="color:rgba(160,140,255,0.7)">Kirigami Sheet &mdash; Reservoir State</p>
+                <p class="text-xs text-purple-200/40 mt-0.5">Hex lattice of tristable cells &mdash; U(x)=k((x)(x-0.5)(x-1))&sup2;</p>
+                <canvas id="sheet-canvas" width="320" height="320" style="width:100%;border:1px solid rgba(130,95,255,0.2);background:#000;margin-top:0.5rem"></canvas>
+                <div class="grid grid-cols-3 gap-2 mt-3 text-center">
+                    <div><div class="w-2 h-2 rounded-full mx-auto" style="background:#22c55e"></div><p class="lbl mt-1">Closed</p><p class="val text-sm" id="val-closed">-</p></div>
+                    <div><div class="w-2 h-2 rounded-full mx-auto" style="background:#fbbf24"></div><p class="lbl mt-1">Intermediate</p><p class="val text-sm" id="val-inter">-</p></div>
+                    <div><div class="w-2 h-2 rounded-full mx-auto" style="background:#ef4444"></div><p class="lbl mt-1">Open</p><p class="val text-sm" id="val-open">-</p></div>
+                </div>
+                <div class="bar-bg mt-2" style="height:8px">
+                    <div style="display:flex;height:100%;border-radius:4px;overflow:hidden">
+                        <div id="bar-closed" style="background:#22c55e;width:33%;transition:width 0.2s"></div>
+                        <div id="bar-inter" style="background:#fbbf24;width:34%;transition:width 0.2s"></div>
+                        <div id="bar-open" style="background:#ef4444;width:33%;transition:width 0.2s"></div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-3">
+                    <div><p class="lbl">Energy</p><p class="val text-sm" id="val-energy">-</p></div>
+                    <div><p class="lbl">Cascade Steps</p><p class="val text-sm" id="val-cascade">-</p></div>
+                </div>
+            </div>
+
+            <div class="card" style="border-color:rgba(255,165,0,0.25)">
+                <p class="lbl" style="color:rgba(255,180,80,0.7)">Transmission Field &mdash; Moire Readout</p>
+                <canvas id="trans-canvas" width="320" height="160" style="width:100%;border:1px solid rgba(255,165,0,0.2);background:#000;margin-top:0.5rem"></canvas>
+            </div>
+        </div>
+
+        <!-- Col 3 (span-3): Controls + Telemetry -->
+        <div class="lg:col-span-3 space-y-5">
+            <div class="card" style="border-color:rgba(220,20,60,0.25)">
+                <p class="lbl" style="color:rgba(255,100,120,0.7)">Rule Set 1: Commensurate Angles</p>
+                <p class="text-xs text-rose-200/40 mt-0.5">cos&theta; = (n&sup2;+4mn+m&sup2;) / 2(n&sup2;+mn+m&sup2;)</p>
+                <div class="mt-2 space-y-1" id="angle-table"></div>
+            </div>
+
+            <div class="card" style="border-color:rgba(0,200,200,0.25)">
+                <p class="lbl" style="color:rgba(0,200,200,0.7)">Rule Set 3: Talbot Resonance Ladder</p>
+                <p class="text-xs text-cyan-200/40 mt-0.5">Z<sub>T</sub> = (3/2)a&sup2;/&lambda;</p>
+                <div class="mt-2 space-y-1" id="talbot-table"></div>
+            </div>
+
+            <div class="card" style="border-color:rgba(90,190,255,0.25)">
+                <p class="lbl" style="color:rgba(120,200,255,0.7)">Feature Vector (Reservoir Readout)</p>
+                <div class="mt-2 space-y-1" id="feature-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center text-xs text-blue-200/25 pb-6">Synergized System &mdash; HEMOC-SGF + PPP + HEMAC + CPE + Rotorary</footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+// ======================================================================
+// PHYSICS ENGINE (port of backend/engine Python code to JS)
+// ======================================================================
+
+const TWO_PI = 2 * Math.PI;
+const DEG = Math.PI / 180;
+
+// --- Rule Set 1: Commensurate Angles ---
+// cos(theta) = (n^2 + 4mn + m^2) / (2*(n^2 + mn + m^2))
+const COMMENSURATE = [
+    {m:1,n:1, label:'Aligned'},
+    {m:2,n:1, label:'Coarse'},
+    {m:3,n:1, label:'Intermediate'},
+    {m:4,n:1, label:'Fine'},
+    {m:5,n:1, label:'Edge'},
+    {m:6,n:1, label:'6,1'},
+    {m:7,n:1, label:'7,1'},
+    {m:8,n:1, label:'8,1'},
+];
+function commensurateAngle(m,n) {
+    const num = n*n + 4*m*n + m*m;
+    const den = 2*(n*n + m*n + m*m);
+    return Math.acos(Math.max(-1, Math.min(1, num/den)));
+}
+COMMENSURATE.forEach(c => { c.angle = commensurateAngle(c.m, c.n); c.deg = c.angle / DEG; });
+
+// --- Rule Set 3: Talbot Resonance ---
+// Z_T = (3/2) * a^2 / lambda
+const LATTICE_A = 1.0;         // micrometers
+const LAMBDA_RED = 0.650;      // micrometers (650 nm)
+const LAMBDA_CYAN = 0.500;     // micrometers (500 nm)
+const Z_T = 1.5 * LATTICE_A * LATTICE_A / LAMBDA_RED;
+
+function talbotGap(order, halfInt) {
+    return halfInt ? (order + 0.5) * Z_T : order * Z_T;
+}
+
+// --- Hexagonal Grating ---
+// T(x,y) = (1/3) * sum_i cos(G_i . r)
+// Three wave vectors at 0, 120, 240 degrees
+const K = TWO_PI / LATTICE_A;
+function hexGrating(X, Y, rotation) {
+    let sum = 0;
+    for (let i = 0; i < 3; i++) {
+        const phi = rotation + i * TWO_PI / 3;
+        const gx = K * Math.cos(phi);
+        const gy = K * Math.sin(phi);
+        sum += Math.cos(gx * X + gy * Y);
+    }
+    return (sum / 3 + 1) / 2; // normalize to [0,1]
+}
+
+// --- Moire Pattern ---
+// Two hexagonal gratings at twist angle theta, multiplicative interference
+function computeMoire(W, H, fieldW, fieldH, twistAngle, displacement) {
+    const cosT = Math.cos(twistAngle), sinT = Math.sin(twistAngle);
+    const dx = displacement[0], dy = displacement[1];
+    const intensity = new Float32Array(W * H);
+    const phase = new Float32Array(W * H);
+    let iMin = Infinity, iMax = -Infinity;
+    for (let py = 0; py < H; py++) {
+        for (let px = 0; px < W; px++) {
+            const x = (px / W - 0.5) * fieldW;
+            const y = (py / H - 0.5) * fieldH;
+            const layer1 = hexGrating(x, y, 0);
+            // Rotated + displaced layer
+            const x2 = x * cosT + y * sinT - dx;
+            const y2 = -x * sinT + y * cosT - dy;
+            const layer2 = hexGrating(x2, y2, 0);
+            const val = layer1 * layer2;
+            intensity[py * W + px] = val;
+            phase[py * W + px] = Math.atan2(Math.sin(layer2 * TWO_PI) * layer1, Math.cos(layer2 * TWO_PI) * layer1);
+            if (val < iMin) iMin = val;
+            if (val > iMax) iMax = val;
+        }
+    }
+    const contrast = (iMax + iMin) > 0 ? (iMax - iMin) / (iMax + iMin) : 0;
+    const period = twistAngle > 1e-6 ? LATTICE_A / (2 * Math.sin(twistAngle / 2)) : Infinity;
+    return { intensity, phase, contrast, period, iMin, iMax, W, H };
+}
+
+// --- Bichromatic Moire (Cyan + Red) ---
+function computeBichromatic(moire, transmission) {
+    const N = moire.W * moire.H;
+    const rgb = new Uint8ClampedArray(N * 4);
+    for (let i = 0; i < N; i++) {
+        const t = transmission ? transmission[i] : 1;
+        const base = moire.intensity[i];
+        const cyan = base * t;
+        const red = base * (1 - t + t * 0.5);
+        const r = Math.floor(red * 200);
+        const g = Math.floor((cyan + red) * 0.5 * 80);
+        const b = Math.floor(cyan * 220);
+        rgb[i * 4] = r;
+        rgb[i * 4 + 1] = g;
+        rgb[i * 4 + 2] = b;
+        rgb[i * 4 + 3] = 255;
+    }
+    return rgb;
+}
+
+// --- Logic Gate Evaluation ---
+function evalLogicGate(intensity, gate, threshold) {
+    const N = intensity.length;
+    const out = new Float32Array(N);
+    for (let i = 0; i < N; i++) {
+        const v = intensity[i];
+        switch(gate) {
+            case 'AND':  out[i] = v > threshold ? 1 : 0; break;
+            case 'OR':   out[i] = v > threshold * 0.3 ? 1 : 0; break;
+            case 'XOR':  out[i] = (v > threshold * 0.3 && v < threshold * 0.7) ? 1 : 0; break;
+            case 'NAND': out[i] = v <= threshold ? 1 : 0; break;
+        }
+    }
+    return out;
+}
+
+// --- Tristable Cell (triple-well potential) ---
+// U(x) = k * ((x)(x-0.5)(x-1))^2
+// Three stable minima at 0, 0.5, 1
+function tripleWellPotential(x, k) {
+    const f = x * (x - 0.5) * (x - 1);
+    return k * f * f;
+}
+function tripleWellForce(x, k) {
+    const dx = 0.001;
+    return -(tripleWellPotential(x + dx, k) - tripleWellPotential(x - dx, k)) / (2 * dx);
+}
+
+// --- Kirigami Sheet (hex lattice of tristable cells) ---
+class KirigamiSheet {
+    constructor(nx, ny, stiffness, coupling, damping) {
+        this.nx = nx; this.ny = ny;
+        this.stiffness = stiffness || 1.0;
+        this.coupling = coupling || 0.5;
+        this.damping = damping || 0.1;
+        this.values = new Float32Array(nx * ny);       // continuous [0,1]
+        this.velocity = new Float32Array(nx * ny);
+        this.totalEnergy = 0;
+    }
+
+    idx(i, j) { return j * this.nx + i; }
+
+    // Inject input field into the sheet (this is how data enters the reservoir)
+    inject(field, scale) {
+        scale = scale || 1.0;
+        for (let j = 0; j < this.ny; j++) {
+            for (let i = 0; i < this.nx; i++) {
+                const fi = Math.floor(i / this.nx * field.length);
+                const fj = Math.floor(j / this.ny * field[0].length);
+                const input = (field[fi] ? field[fi][fj] || 0 : 0) * scale;
+                const k = this.idx(i, j);
+                this.values[k] = this.values[k] * 0.2 + input * 0.8;
+                this.velocity[k] += input * 0.5;
+                this.values[k] = Math.max(0, Math.min(1, this.values[k]));
+            }
+        }
+    }
+
+    // Inject 1D data reshaped to 2D
+    inject1D(data, scale) {
+        scale = scale || 1.0;
+        for (let k = 0; k < this.nx * this.ny && k < data.length; k++) {
+            const input = data[k] * scale;
+            this.values[k] = this.values[k] * 0.2 + input * 0.8;
+            this.velocity[k] += input * 0.5;
+            this.values[k] = Math.max(0, Math.min(1, this.values[k]));
+        }
+    }
+
+    // Hex neighbors (6 per cell)
+    getNeighborIndices(i, j) {
+        const even = j % 2 === 0;
+        const offsets = even
+            ? [[-1,0],[1,0],[-1,-1],[0,-1],[-1,1],[0,1]]
+            : [[-1,0],[1,0],[0,-1],[1,-1],[0,1],[1,1]];
+        const out = [];
+        for (const [di, dj] of offsets) {
+            const ni = i + di, nj = j + dj;
+            if (ni >= 0 && ni < this.nx && nj >= 0 && nj < this.ny) {
+                out.push(this.idx(ni, nj));
+            }
+        }
+        return out;
+    }
+
+    // One physics step: compute forces, integrate (velocity verlet)
+    step(dt) {
+        dt = dt || 0.01;
+        const forces = new Float32Array(this.nx * this.ny);
+        // Compute all forces first
+        for (let j = 0; j < this.ny; j++) {
+            for (let i = 0; i < this.nx; i++) {
+                const k = this.idx(i, j);
+                const x = this.values[k];
+                // Internal: triple-well restoring force
+                let f = tripleWellForce(x, this.stiffness);
+                // Damping
+                f -= this.damping * this.velocity[k];
+                // Neighbor coupling (spring-like)
+                const nbrs = this.getNeighborIndices(i, j);
+                for (const nk of nbrs) {
+                    f += this.coupling * (this.values[nk] - x);
+                }
+                forces[k] = f;
+            }
+        }
+        // Integrate
+        this.totalEnergy = 0;
+        for (let k = 0; k < this.values.length; k++) {
+            this.velocity[k] += forces[k] * dt;
+            this.values[k] += this.velocity[k] * dt;
+            this.values[k] = Math.max(0, Math.min(1, this.values[k]));
+            this.totalEnergy += tripleWellPotential(this.values[k], this.stiffness);
+        }
+        return this.totalEnergy;
+    }
+
+    // Run cascade until convergence
+    cascade(maxSteps, threshold) {
+        maxSteps = maxSteps || 50;
+        threshold = threshold || 1e-3;
+        let steps = 0;
+        for (let s = 0; s < maxSteps; s++) {
+            const e = this.step(0.02);
+            steps = s + 1;
+            if (e < threshold) break;
+        }
+        return steps;
+    }
+
+    // Get discrete state counts
+    getCounts() {
+        let closed = 0, inter = 0, open = 0;
+        for (let k = 0; k < this.values.length; k++) {
+            const v = this.values[k];
+            if (v < 0.25) closed++;
+            else if (v < 0.75) inter++;
+            else open++;
+        }
+        const total = this.values.length;
+        return { closed: closed/total, inter: inter/total, open: open/total };
+    }
+
+    // Get optical transmission (smooth interpolation between states)
+    getTransmission() {
+        const t = new Float32Array(this.values.length);
+        for (let k = 0; k < this.values.length; k++) {
+            const x = this.values[k];
+            if (x < 0.5) {
+                const f = x * 2;
+                t[k] = 0.1 * (1 - f) + 0.5 * f;
+            } else {
+                const f = (x - 0.5) * 2;
+                t[k] = 0.5 * (1 - f) + 0.9 * f;
+            }
+        }
+        return t;
+    }
+
+    reset() {
+        this.values.fill(0);
+        this.velocity.fill(0);
+        this.totalEnergy = 0;
+    }
+
+    // Feature extraction for reservoir readout
+    extractFeatures() {
+        const vals = this.values;
+        const n = vals.length;
+        let sum = 0, sum2 = 0, min = Infinity, max = -Infinity;
+        for (let k = 0; k < n; k++) {
+            sum += vals[k]; sum2 += vals[k] * vals[k];
+            if (vals[k] < min) min = vals[k];
+            if (vals[k] > max) max = vals[k];
+        }
+        const mean = sum / n;
+        const std = Math.sqrt(sum2 / n - mean * mean);
+        const counts = this.getCounts();
+        // Spatial correlation (nearest-neighbor mean difference)
+        let corrSum = 0, corrCount = 0;
+        for (let j = 0; j < this.ny; j++) {
+            for (let i = 0; i < this.nx; i++) {
+                const k = this.idx(i, j);
+                const nbrs = this.getNeighborIndices(i, j);
+                for (const nk of nbrs) {
+                    corrSum += Math.abs(vals[k] - vals[nk]);
+                    corrCount++;
+                }
+            }
+        }
+        const spatialCorr = corrCount > 0 ? corrSum / corrCount : 0;
+        return {
+            mean, std, min, max,
+            closed: counts.closed, inter: counts.inter, open: counts.open,
+            energy: this.totalEnergy,
+            spatialCorrelation: spatialCorr,
+        };
+    }
+}
+
+// ======================================================================
+// STATE
+// ======================================================================
+const SHEET_NX = 24, SHEET_NY = 24;
+const sheet = new KirigamiSheet(SHEET_NX, SHEET_NY, 1.0, 0.4, 0.12);
+let currentAngle = COMMENSURATE[2].angle; // Intermediate (13.17 deg)
+let currentM = 3, currentN = 1;
+let talbotMode = 'integer'; // 'integer' or 'half'
+let talbotOrder = 1;
+let currentGap = talbotGap(1, false);
+let displacement = [0, 0];
+let frameCount = 0;
+let noisePhase = 0;
+
+// ======================================================================
+// CANVASES
+// ======================================================================
+const moireCanvas = document.getElementById('moire-canvas');
+const moireCtx = moireCanvas.getContext('2d');
+const bichromeCanvas = document.getElementById('bichrome-canvas');
+const bichromeCtx = bichromeCanvas.getContext('2d');
+const sheetCanvas = document.getElementById('sheet-canvas');
+const sheetCtx = sheetCanvas.getContext('2d');
+const transCanvas = document.getElementById('trans-canvas');
+const transCtx = transCanvas.getContext('2d');
+
+// ======================================================================
+// DRAWING
+// ======================================================================
+
+function drawMoireField(moire) {
+    const W = moire.W, H = moire.H;
+    const img = moireCtx.createImageData(W, H);
+    const range = moire.iMax - moire.iMin || 1;
+    for (let i = 0; i < W * H; i++) {
+        const v = (moire.intensity[i] - moire.iMin) / range;
+        img.data[i*4]   = Math.floor(v * 240);
+        img.data[i*4+1] = Math.floor(v * 40);
+        img.data[i*4+2] = Math.floor(v * 80 + (1-v) * 40);
+        img.data[i*4+3] = 255;
+    }
+    moireCtx.putImageData(img, 0, 0);
+}
+
+function drawBichromatic(rgb, W, H) {
+    const img = bichromeCtx.createImageData(W, H);
+    img.data.set(rgb);
+    bichromeCtx.putImageData(img, 0, 0);
+}
+
+function drawSheet() {
+    const W = sheetCanvas.width, H = sheetCanvas.height;
+    const cellW = W / SHEET_NX, cellH = H / SHEET_NY;
+    sheetCtx.fillStyle = '#000';
+    sheetCtx.fillRect(0, 0, W, H);
+
+    for (let j = 0; j < SHEET_NY; j++) {
+        for (let i = 0; i < SHEET_NX; i++) {
+            const v = sheet.values[sheet.idx(i, j)];
+            const hexOff = (j % 2) * cellW * 0.5;
+            const cx = i * cellW + hexOff + cellW / 2;
+            const cy = j * cellH + cellH / 2;
+            const r = Math.min(cellW, cellH) * 0.42;
+
+            // Color: green(closed) -> yellow(intermediate) -> red(open)
+            let red, green, blue;
+            if (v < 0.5) {
+                const t = v * 2;
+                red = Math.floor(t * 251);
+                green = Math.floor((1-t) * 197 + t * 191);
+                blue = Math.floor((1-t) * 94 + t * 36);
+            } else {
+                const t = (v - 0.5) * 2;
+                red = Math.floor((1-t) * 251 + t * 239);
+                green = Math.floor((1-t) * 191 + t * 68);
+                blue = Math.floor((1-t) * 36 + t * 68);
+            }
+
+            // Draw hexagon
+            sheetCtx.beginPath();
+            for (let s = 0; s < 6; s++) {
+                const a = s * Math.PI / 3 - Math.PI / 6;
+                const px = cx + r * Math.cos(a);
+                const py = cy + r * Math.sin(a);
+                s === 0 ? sheetCtx.moveTo(px, py) : sheetCtx.lineTo(px, py);
+            }
+            sheetCtx.closePath();
+            sheetCtx.fillStyle = `rgb(${red},${green},${blue})`;
+            sheetCtx.fill();
+            sheetCtx.strokeStyle = 'rgba(255,255,255,0.06)';
+            sheetCtx.lineWidth = 0.5;
+            sheetCtx.stroke();
+        }
+    }
+}
+
+function drawTransmission(trans) {
+    const W = transCanvas.width, H = transCanvas.height;
+    const img = transCtx.createImageData(W, H);
+    const sx = SHEET_NX / W, sy = SHEET_NY / H;
+    for (let py = 0; py < H; py++) {
+        for (let px = 0; px < W; px++) {
+            const ci = Math.min(SHEET_NX - 1, Math.floor(px * sx));
+            const cj = Math.min(SHEET_NY - 1, Math.floor(py * sy));
+            const t = trans[cj * SHEET_NX + ci];
+            const idx = (py * W + px) * 4;
+            img.data[idx]   = Math.floor(t * 255);
+            img.data[idx+1] = Math.floor(t * 180);
+            img.data[idx+2] = Math.floor(t * 60 + (1-t) * 30);
+            img.data[idx+3] = 255;
+        }
+    }
+    transCtx.putImageData(img, 0, 0);
+}
+
+// ======================================================================
+// SIDE PANELS
+// ======================================================================
+
+function buildAngleTable() {
+    const el = document.getElementById('angle-table');
+    el.innerHTML = '';
+    COMMENSURATE.forEach(c => {
+        const active = Math.abs(c.angle - currentAngle) < 0.001;
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-2 text-xs';
+        row.innerHTML = `<span class="w-2 h-2 rounded-full" style="background:${active?'#dc143c':'rgba(255,255,255,0.1)'}"></span>
+            <span class="val w-8 text-right ${active?'text-rose-200':'text-blue-200/40'}">(${c.m},${c.n})</span>
+            <span class="${active?'text-white font-bold':'text-blue-200/40'}">${c.deg.toFixed(2)}&deg;</span>
+            <span class="text-blue-200/30">${c.label}</span>`;
+        el.appendChild(row);
+    });
+}
+
+function buildTalbotTable() {
+    const el = document.getElementById('talbot-table');
+    el.innerHTML = '';
+    for (let n = 1; n <= 5; n++) {
+        const gapInt = talbotGap(n, false);
+        const gapHalf = talbotGap(n, true);
+        const activeInt = talbotMode === 'integer' && talbotOrder === n;
+        const activeHalf = talbotMode === 'half' && talbotOrder === n;
+        const row = document.createElement('div');
+        row.className = 'flex gap-2 text-xs';
+        row.innerHTML = `<span class="val w-4 text-right text-blue-200/30">N=${n}</span>
+            <span class="w-2 h-2 rounded-full mt-1" style="background:${activeInt?'#22c55e':'rgba(255,255,255,0.06)'}"></span>
+            <span class="${activeInt?'text-green-200 font-bold':'text-blue-200/30'}">${gapInt.toFixed(3)}&mu;m</span>
+            <span class="text-blue-200/20">|</span>
+            <span class="w-2 h-2 rounded-full mt-1" style="background:${activeHalf?'#f97316':'rgba(255,255,255,0.06)'}"></span>
+            <span class="${activeHalf?'text-orange-200 font-bold':'text-blue-200/30'}">${gapHalf.toFixed(3)}&mu;m</span>`;
+        el.appendChild(row);
+    }
+}
+
+function buildFeatureList(features) {
+    const el = document.getElementById('feature-list');
+    el.innerHTML = '';
+    const entries = [
+        ['mean', features.mean],
+        ['std', features.std],
+        ['min', features.min],
+        ['max', features.max],
+        ['closed%', features.closed],
+        ['inter%', features.inter],
+        ['open%', features.open],
+        ['energy', features.energy],
+        ['spatial_corr', features.spatialCorrelation],
+    ];
+    entries.forEach(([name, val]) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-2';
+        const norm = Math.min(1, Math.abs(val));
+        row.innerHTML = `<span class="text-xs text-blue-100/40 w-20">${name}</span>
+            <div class="flex-1 bar-bg"><div class="bar-fg" style="width:${norm*100}%;background:rgba(90,190,255,0.5)"></div></div>
+            <span class="val text-xs text-blue-100/50 w-12 text-right">${val.toFixed(3)}</span>`;
+        el.appendChild(row);
+    });
+}
+
+// ======================================================================
+// MAIN LOOP
+// ======================================================================
+
+function tick() {
+    frameCount++;
+    noisePhase += 0.05;
+
+    // Slow displacement drift to show dynamic moire
+    displacement[0] = Math.sin(noisePhase * 0.3) * 0.2;
+    displacement[1] = Math.cos(noisePhase * 0.4) * 0.15;
+
+    // Run a few physics steps on the kirigami sheet
+    sheet.step(0.015);
+    sheet.step(0.015);
+
+    // Compute moire
+    const MW = moireCanvas.width, MH = moireCanvas.height;
+    const moire = computeMoire(MW, MH, 20, 15, currentAngle, displacement);
+
+    // Get transmission from kirigami sheet
+    const trans = sheet.getTransmission();
+
+    // Compute bichromatic output using transmission as layer modulation
+    const BW = bichromeCanvas.width, BH = bichromeCanvas.height;
+    const bichromeMoire = computeMoire(BW, BH, 20, 7, currentAngle, displacement);
+    // Resample transmission to bichromatic canvas size
+    const transResampled = new Float32Array(BW * BH);
+    for (let py = 0; py < BH; py++) {
+        for (let px = 0; px < BW; px++) {
+            const ci = Math.min(SHEET_NX-1, Math.floor(px/BW*SHEET_NX));
+            const cj = Math.min(SHEET_NY-1, Math.floor(py/BH*SHEET_NY));
+            transResampled[py*BW+px] = trans[cj*SHEET_NX+ci];
+        }
+    }
+    const biRgb = computeBichromatic(bichromeMoire, transResampled);
+
+    // Logic gate evaluation
+    const isHalf = talbotMode === 'half';
+    const gate = isHalf ? 'NAND' : 'AND';
+    const polarity = isHalf ? 'NEGATIVE' : 'POSITIVE';
+    currentGap = talbotGap(talbotOrder, isHalf);
+
+    // Draw
+    drawMoireField(moire);
+    drawBichromatic(biRgb, BW, BH);
+    drawSheet();
+    drawTransmission(trans);
+
+    // Update metrics
+    const counts = sheet.getCounts();
+    const features = sheet.extractFeatures();
+    const amp = currentAngle > 1e-6 ? (LATTICE_A / (2 * Math.sin(currentAngle/2))) / LATTICE_A : Infinity;
+
+    document.getElementById('val-contrast').textContent = moire.contrast.toFixed(4);
+    document.getElementById('bar-contrast').style.width = (moire.contrast * 100) + '%';
+    document.getElementById('val-angle').textContent = (currentAngle / DEG).toFixed(2) + '\u00b0';
+    document.getElementById('val-period').textContent = isFinite(moire.period) ? moire.period.toFixed(2) + ' \u00b5m' : '\u221e';
+    document.getElementById('val-amp').textContent = isFinite(amp) ? amp.toFixed(1) + '\u00d7' : '\u221e';
+
+    document.getElementById('val-closed').textContent = (counts.closed * 100).toFixed(0) + '%';
+    document.getElementById('val-inter').textContent = (counts.inter * 100).toFixed(0) + '%';
+    document.getElementById('val-open').textContent = (counts.open * 100).toFixed(0) + '%';
+    document.getElementById('bar-closed').style.width = (counts.closed * 100) + '%';
+    document.getElementById('bar-inter').style.width = (counts.inter * 100) + '%';
+    document.getElementById('bar-open').style.width = (counts.open * 100) + '%';
+    document.getElementById('val-energy').textContent = sheet.totalEnergy.toFixed(4);
+    document.getElementById('val-cascade').textContent = frameCount;
+
+    document.getElementById('val-gate').textContent = gate;
+    document.getElementById('val-polarity').textContent = polarity;
+    document.getElementById('val-polarity').style.color = isHalf ? '#f97316' : '#22c55e';
+    document.getElementById('val-zt').textContent = Z_T.toFixed(4) + ' \u00b5m';
+    document.getElementById('val-gap').textContent = currentGap.toFixed(4) + ' \u00b5m';
+
+    buildFeatureList(features);
+
+    requestAnimationFrame(tick);
+}
+
+// ======================================================================
+// CONTROLS
+// ======================================================================
+
+document.getElementById('sel-mode').addEventListener('change', function() {
+    const [m, n] = this.value.split(',').map(Number);
+    currentM = m; currentN = n;
+    currentAngle = commensurateAngle(m, n);
+    buildAngleTable();
+});
+
+document.getElementById('sel-talbot').addEventListener('change', function() {
+    talbotMode = this.value === 'half' ? 'half' : 'integer';
+    currentGap = talbotGap(talbotOrder, talbotMode === 'half');
+    buildTalbotTable();
+});
+
+document.getElementById('btn-inject').addEventListener('click', function() {
+    // Inject random noise into the kirigami sheet (simulates data input)
+    const noise = new Float32Array(SHEET_NX * SHEET_NY);
+    for (let k = 0; k < noise.length; k++) {
+        noise[k] = Math.random();
+    }
+    sheet.inject1D(noise, 0.8);
+    // Run cascade to let the reservoir settle
+    sheet.cascade(30, 1e-3);
+});
+
+document.getElementById('btn-reset').addEventListener('click', function() {
+    sheet.reset();
+});
+
+// ======================================================================
+// INIT
+// ======================================================================
+buildAngleTable();
+buildTalbotTable();
+
+// Seed the sheet with some initial structure
+const seed = new Float32Array(SHEET_NX * SHEET_NY);
+for (let k = 0; k < seed.length; k++) {
+    seed[k] = Math.random() * 0.4;
+}
+sheet.inject1D(seed, 0.6);
+sheet.cascade(20, 1e-3);
+
+requestAnimationFrame(tick);
+
+})();
+</script>
+</body>
+</html>

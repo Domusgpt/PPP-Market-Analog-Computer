@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  # ── The Physics Reactor (HEMOC-SGF Python Engine) ──────────────────────
+  engine:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hemoc-sgf-engine
+    ports:
+      - "8765:8765"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - HEMOC_FPS=30
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import websockets; print('ok')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── The Control Room (PPP React/Vite Frontend) ────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ppp-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - engine
+    environment:
+      - VITE_HEMOC_WS_URL=ws://engine:8765
+    restart: unless-stopped
