@@ -65,3 +65,4 @@ jobs:
         run: |
           echo "✅ Deployed to: ${{ steps.deployment.outputs.page_url }}"
           echo "🔗 Phase-Lock Live: ${{ steps.deployment.outputs.page_url }}phase-lock-live.html"
+          echo "🧬 Synergized System: ${{ steps.deployment.outputs.page_url }}synergized-system.html"
