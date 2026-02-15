@@ -2,8 +2,15 @@
 # =============================================================================
 # HEMOC + PPP Cross-Repo Environment Setup
 # =============================================================================
-# Idempotent bootstrap for both repos. Safe for Claude Code, Jules, and devs.
+# Full-stack bootstrap for both repos. Safe for Claude Code, Jules, and devs.
+# Idempotent — safe to run multiple times.
+#
 # Usage: bash scripts/env-setup.sh
+#
+# Tool tiers:
+#   REQUIRED  — script fails without these
+#   RECOMMEND — warnings if missing, needed for standard dev workflow
+#   OPTIONAL  — informational if missing, needed for specific tasks
 # =============================================================================
 set -euo pipefail
 
@@ -26,9 +33,10 @@ warn() { echo -e "  ${YELLOW}WARN${NC} $1"; }
 header() { echo -e "\n${BOLD}=== $1 ===${NC}"; }
 
 ERRORS=0
+WARNINGS=0
 
 # ---------------------------------------------------------------------------
-# 1) Environment Detection (informational only)
+# 1) Environment Detection
 # ---------------------------------------------------------------------------
 header "Environment Detection"
 AGENT_ENV="developer"
@@ -44,9 +52,9 @@ info "PPP_ROOT: $PPP_ROOT"
 info "HEMOC_ROOT: $HEMOC_ROOT"
 
 # ---------------------------------------------------------------------------
-# 2) System Prerequisites
+# 2) System Prerequisites (REQUIRED)
 # ---------------------------------------------------------------------------
-header "System Prerequisites"
+header "System Prerequisites (Required)"
 
 # Python
 if command -v python3 &>/dev/null; then
@@ -73,6 +81,7 @@ if command -v node &>/dev/null; then
   fi
 else
   warn "node not found - PPP frontend tests will be skipped"
+  WARNINGS=$((WARNINGS + 1))
 fi
 
 # Git
@@ -89,7 +98,81 @@ if [ "$ERRORS" -gt 0 ]; then
 fi
 
 # ---------------------------------------------------------------------------
-# 3) PPP Python Backend
+# 3) Recommended CLI Tools
+# ---------------------------------------------------------------------------
+header "Recommended CLI Tools"
+
+# GitHub CLI — needed for PR management (HEMOC has 21+ PRs across branches)
+if command -v gh &>/dev/null; then
+  GH_VERSION=$(gh --version 2>&1 | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
+  if gh auth status &>/dev/null; then
+    pass "gh CLI v$GH_VERSION (authenticated)"
+  else
+    warn "gh CLI v$GH_VERSION installed but NOT authenticated"
+    info "  Run: gh auth login"
+    WARNINGS=$((WARNINGS + 1))
+  fi
+else
+  warn "gh CLI not found — needed for PR management across HEMOC branches"
+  info "  Install: https://cli.github.com/"
+  WARNINGS=$((WARNINGS + 1))
+fi
+
+# jq — needed for JSON processing, schema validation, result inspection
+if command -v jq &>/dev/null; then
+  pass "jq $(jq --version 2>&1 | grep -oE '[0-9]+\.[0-9]+' || echo '')"
+else
+  warn "jq not found — needed for JSON result inspection and schema work"
+  WARNINGS=$((WARNINGS + 1))
+fi
+
+# ---------------------------------------------------------------------------
+# 4) Optional Infrastructure Tools
+# ---------------------------------------------------------------------------
+header "Optional Infrastructure Tools"
+
+# Docker — PPP has docker-compose.yml, HEMOC has deploy/Dockerfile
+if command -v docker &>/dev/null; then
+  DOCKER_VERSION=$(docker --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
+  pass "docker $DOCKER_VERSION"
+  if docker compose version &>/dev/null 2>&1; then
+    pass "docker compose $(docker compose version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo '')"
+  elif command -v docker-compose &>/dev/null; then
+    pass "docker-compose (legacy)"
+  else
+    info "docker compose plugin not found (needed for: cd _SYNERGIZED_SYSTEM && docker compose up)"
+  fi
+else
+  info "docker not found (optional — needed for full-stack integration and GPU training)"
+  info "  PPP:   cd _SYNERGIZED_SYSTEM && docker compose up --build"
+  info "  HEMOC: docker build -f deploy/Dockerfile -t hemoc-train ."
+fi
+
+# Firebase CLI — referenced in project tooling
+if command -v firebase &>/dev/null; then
+  pass "firebase CLI $(firebase --version 2>&1 | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo '')"
+else
+  info "firebase CLI not found (optional — install: npm install -g firebase-tools)"
+fi
+
+# Cloud GPU CLIs (for Phase C scaled training)
+for CLI_NAME in gcloud runpodctl vastai; do
+  if command -v "$CLI_NAME" &>/dev/null; then
+    pass "$CLI_NAME available"
+  fi
+done
+# Don't warn about cloud CLIs — they're only needed for scaled training
+info "Cloud GPU CLIs (gcloud, runpodctl, vastai): see docs/GPU_CLOUD_GUIDE.md"
+
+# Weights & Biases CLI
+if command -v wandb &>/dev/null; then
+  pass "wandb CLI $(wandb --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo '')"
+else
+  info "wandb CLI not found (installed in Python venvs below; standalone CLI optional)"
+fi
+
+# ---------------------------------------------------------------------------
+# 5) PPP Python Backend
 # ---------------------------------------------------------------------------
 header "PPP Python Backend"
 PPP_BACKEND="$PPP_ROOT/_SYNERGIZED_SYSTEM/backend"
@@ -102,15 +185,20 @@ if [ -d "$PPP_BACKEND" ]; then
     info "Venv exists, reusing"
   fi
 
-  # Subshell to avoid polluting outer env
   (
     source "$PPP_BACKEND/.venv/bin/activate"
     pip install --upgrade pip -q 2>/dev/null
+
     # Try editable install first; fall back to direct deps if pyproject build backend fails
+    # (Known issue: pyproject.toml uses setuptools.backends._legacy:_Backend which doesn't exist)
     if ! pip install -e "$PPP_BACKEND[dev]" -q 2>/dev/null; then
       warn "Editable install failed (build backend issue) - installing deps directly"
       pip install numpy scipy websockets pytest pytest-asyncio -q 2>/dev/null
     fi
+
+    # Dev tooling for PPP Python
+    pip install black isort flake8 -q 2>/dev/null || warn "Linter install failed (non-fatal)"
+
     python -c "import numpy; import scipy; print('imports OK')" && pass "PPP Python deps installed" || fail "PPP Python import check"
   ) || { fail "PPP Python setup"; ERRORS=$((ERRORS + 1)); }
 else
@@ -118,7 +206,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 4) PPP Node Frontend
+# 6) PPP Node Frontend
 # ---------------------------------------------------------------------------
 header "PPP Node Frontend"
 if command -v npm &>/dev/null && [ -f "$PPP_ROOT/package.json" ]; then
@@ -132,7 +220,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 5) HEMOC Clone/Update
+# 7) HEMOC Clone/Update
 # ---------------------------------------------------------------------------
 header "HEMOC Repository"
 if [ -d "$HEMOC_ROOT/.git" ]; then
@@ -149,7 +237,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 6) HEMOC Python
+# 8) HEMOC Python
 # ---------------------------------------------------------------------------
 header "HEMOC Python"
 if [ -d "$HEMOC_ROOT" ]; then
@@ -163,8 +251,28 @@ if [ -d "$HEMOC_ROOT" ]; then
   (
     source "$HEMOC_ROOT/.venv/bin/activate"
     pip install --upgrade pip -q 2>/dev/null
-    pip install -r "$HEMOC_ROOT/requirements.txt" -q 2>/dev/null
+
+    # Core deps
+    if [ -f "$HEMOC_ROOT/requirements.txt" ]; then
+      pip install -r "$HEMOC_ROOT/requirements.txt" -q 2>/dev/null
+    fi
     pip install pytest pytest-cov -q 2>/dev/null
+
+    # Dev tooling: linters + formatters
+    pip install black isort flake8 -q 2>/dev/null || warn "Linter install failed (non-fatal)"
+
+    # Documentation tooling
+    pip install mkdocs mkdocs-material pymdown-extensions -q 2>/dev/null || warn "MkDocs install failed (optional)"
+
+    # Experiment tracking
+    pip install wandb -q 2>/dev/null || warn "wandb install failed (optional — needed for cloud training)"
+
+    # Schema validation
+    pip install jsonschema -q 2>/dev/null || warn "jsonschema install failed (needed for benchmark contract validation)"
+
+    # Audio processing (optional — for audio domain experiments)
+    pip install soundfile -q 2>/dev/null || info "soundfile not installed (optional — needed for audio experiments)"
+
     python -c "import numpy; import scipy; print('imports OK')" && pass "HEMOC Python deps installed" || fail "HEMOC Python import check"
   ) || { fail "HEMOC Python setup"; ERRORS=$((ERRORS + 1)); }
 else
@@ -172,7 +280,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 7) HEMOC Visual System (conditional)
+# 9) HEMOC Visual System (conditional)
 # ---------------------------------------------------------------------------
 header "HEMOC Visual System"
 if [ -f "$HEMOC_ROOT/hemoc-visual-system/package.json" ]; then
@@ -186,7 +294,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 8) Smoke Tests
+# 10) Smoke Tests
 # ---------------------------------------------------------------------------
 header "Smoke Tests"
 
@@ -239,12 +347,17 @@ if [ -f "$HEMOC_ROOT/.venv/bin/activate" ]; then
 fi
 
 # ---------------------------------------------------------------------------
-# 9) Summary
+# 11) Summary
 # ---------------------------------------------------------------------------
 header "Environment Report"
 echo ""
 echo "  Python:        $(python3 --version 2>&1)"
 echo "  Node:          $(node --version 2>/dev/null || echo 'not installed')"
+echo "  Git:           $(git --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+echo "  gh CLI:        $(gh --version 2>&1 | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' 2>/dev/null || echo 'not installed')"
+echo "  Docker:        $(docker --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' 2>/dev/null || echo 'not installed')"
+echo "  jq:            $(jq --version 2>&1 | grep -oE '[0-9]+\.[0-9]+' 2>/dev/null || echo 'not installed')"
+echo ""
 echo "  PPP root:      $PPP_ROOT"
 echo "  PPP venv:      $PPP_BACKEND/.venv"
 echo "  PPP branch:    $(cd "$PPP_ROOT" && git branch --show-current 2>/dev/null || echo 'N/A')"
@@ -252,20 +365,50 @@ echo "  HEMOC root:    $HEMOC_ROOT"
 echo "  HEMOC venv:    $HEMOC_ROOT/.venv"
 echo "  HEMOC branch:  $(cd "$HEMOC_ROOT" && git branch --show-current 2>/dev/null || echo 'N/A')"
 echo ""
-echo "  +-----------------------+--------+"
-echo "  | Component             | Status |"
-echo "  +-----------------------+--------+"
-printf "  | %-21s | %-6s |\n" "PPP Python" "$PPP_PY_RESULT"
-printf "  | %-21s | %-6s |\n" "PPP Node" "$PPP_NODE_RESULT"
-printf "  | %-21s | %-6s |\n" "HEMOC Python" "$HEMOC_PY_RESULT"
-echo "  +-----------------------+--------+"
+echo "  +-------------------------------+--------+"
+echo "  | Component                     | Status |"
+echo "  +-------------------------------+--------+"
+printf "  | %-29s | %-6s |\n" "PPP Python backend" "$PPP_PY_RESULT"
+printf "  | %-29s | %-6s |\n" "PPP Node frontend" "$PPP_NODE_RESULT"
+printf "  | %-29s | %-6s |\n" "HEMOC Python" "$HEMOC_PY_RESULT"
+echo "  +-------------------------------+--------+"
 echo ""
 
+# Dev tooling summary
+header "Dev Tooling (in venvs)"
+for TOOL in black isort flake8 mkdocs wandb jsonschema; do
+  if [ -f "$HEMOC_ROOT/.venv/bin/$TOOL" ] || [ -f "$HEMOC_ROOT/.venv/bin/$TOOL" ]; then
+    pass "$TOOL"
+  elif [ -f "$PPP_BACKEND/.venv/bin/$TOOL" ]; then
+    pass "$TOOL (PPP venv only)"
+  else
+    info "$TOOL not installed"
+  fi
+done
+echo ""
+
+# Docker info
+if command -v docker &>/dev/null; then
+  header "Docker Quick Start"
+  echo "  PPP full-stack:   cd $PPP_ROOT/_SYNERGIZED_SYSTEM && docker compose up --build"
+  echo "  HEMOC GPU train:  docker build -f $HEMOC_ROOT/deploy/Dockerfile -t hemoc-train $HEMOC_ROOT"
+  echo ""
+fi
+
+# Final status
 if [ "$ERRORS" -gt 0 ]; then
   echo -e "${RED}Setup completed with $ERRORS error(s). Review output above.${NC}"
   exit 1
-else
-  echo -e "${GREEN}Setup complete. Activate venvs before running Python:${NC}"
+elif [ "$WARNINGS" -gt 0 ]; then
+  echo -e "${YELLOW}Setup complete with $WARNINGS warning(s). Review recommended tools above.${NC}"
+  echo ""
+  echo -e "${GREEN}Activate venvs before running Python:${NC}"
   echo "  PPP:   source $PPP_BACKEND/.venv/bin/activate"
   echo "  HEMOC: source $HEMOC_ROOT/.venv/bin/activate"
+else
+  echo -e "${GREEN}Setup complete. All tools available.${NC}"
+  echo ""
+  echo "  Activate venvs before running Python:"
+  echo "    PPP:   source $PPP_BACKEND/.venv/bin/activate"
+  echo "    HEMOC: source $HEMOC_ROOT/.venv/bin/activate"
 fi

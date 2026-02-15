@@ -43,6 +43,11 @@ Before writing ANY code, read these documents. The order matters — each builds
 | 5 | `docs/PROJECT_STATUS.md` | 15 experiments with correlation progression 0.008 -> 0.916 |
 | 6 | `FINAL_ANALYSIS_REPORT.md` | V4 Plastic Encoder benchmark: why plastic ratio (1.32^L) wins |
 
+> **Doc caveat (PROJECT_STATUS.md):** The "Module Inventory" section lists `src/` paths that do not
+> exist in the repo. Working code is in `demos/` and `main.py`. Treat `src/` paths as aspirational.
+> **Doc caveat (FINAL_ANALYSIS_REPORT.md):** References `src/core/plastic_encoder.py` which doesn't
+> exist. The actual encoder implementations are in `demos/dual_decoder.py`.
+
 ### Understanding the gaps (what needs doing)
 
 | # | File (HEMOC repo) | What it tells you |
@@ -51,6 +56,12 @@ Before writing ANY code, read these documents. The order matters — each builds
 | 8 | `docs/MUSICGEOMETRY_GAP_ANALYSIS.md` | 5 gaps vs MusicGeometry framework, CPE paper alignment, Trinity Decomposition |
 | 9 | `docs/benchmark_contract.md` | Schema governance: required fields, thresholds, validation rules |
 
+> **Doc caveat (MUSICGEOMETRY_GAP_ANALYSIS.md):** Claims domain-diverse training achieves 0.73
+> cross-domain transfer and marks it DONE. This CONTRADICTS `docs/TESTING_REVIEW_AND_DEV_TRACK.md`
+> which correctly states domain-diverse training has NEVER BEEN RUN, and `docs/PROJECT_STATUS.md`
+> which shows cross-domain transfer FAILS at -0.027. Treat the 0.73 claim as aspirational/erroneous.
+> **Doc caveat (benchmark_contract.md):** Only exists on `hemoc-visual-system-init-*` branch, not main.
+
 ### Understanding the infrastructure
 
 | # | File | What it tells you |
@@ -58,6 +69,10 @@ Before writing ANY code, read these documents. The order matters — each builds
 | 10 | PPP `DEV_TRACK.md` | 38 sessions of PPP development: adapters, telemetry, sonic geometry |
 | 11 | PPP `docs/refactor-plan.md` | PPP core/adapter architecture: how dashboards plug in |
 | 12 | HEMOC `docs/STRUCTURAL_TRAINING_VISION.md` | Music as training curriculum: why audio domain is the right starting point |
+
+> **Branch note:** HEMOC docs 4-8, 12 exist on `main`. Doc 9 (`benchmark_contract.md`),
+> `docs/HEMOC_ARCHITECTURE_DETAILED.md`, `docs/ONTOLOGY_BLUEPRINT_ICE_ECT_DRAFT.md`, and
+> `scripts/validate_results_schema.py` only exist on `hemoc-visual-system-init-4592349023335104422`.
 
 ---
 
@@ -152,6 +167,18 @@ Code exists at `demos/domain_diverse_training.py`. It has NEVER BEEN RUN.
 4. **Regression protection**: No merge without `pytest tests/unit/ && pytest tests/integration/`
 5. **Academic rigor**: Claims require evidence table entries; conjectures are labeled as such
 6. **Reproducibility by default**: Fixed fixture packs, versioned result schema, env reports
+
+---
+
+## Known Doc Contradictions (HEMOC)
+
+These contradictions across HEMOC docs have been verified. Trust the sources marked AUTHORITATIVE.
+
+| Claim | Doc A (WRONG) | Doc B (AUTHORITATIVE) | Truth |
+|-------|--------------|----------------------|-------|
+| Domain-diverse training status | MUSICGEOMETRY_GAP_ANALYSIS: "done, 0.73 transfer" | TESTING_REVIEW: "NOT RUN" | **Never run**. Code exists at `demos/domain_diverse_training.py` but has never been executed. |
+| Module paths (`src/`) | PROJECT_STATUS: lists `src/hdc/`, `src/streaming/`, etc. | Actual repo: no `src/` dir | **`src/` doesn't exist**. Working code is in `demos/` and `main.py`. |
+| Plastic encoder location | FINAL_ANALYSIS_REPORT: `src/core/plastic_encoder.py` | Actual repo | **File doesn't exist**. Encoder implementations are in `demos/dual_decoder.py`. |
 
 ---
 
