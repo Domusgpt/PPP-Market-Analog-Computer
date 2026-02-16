@@ -23,10 +23,10 @@ import {
   PersistencePair,
   TopologicalVoid,
   MATH_CONSTANTS
-} from '../types/index.js';
+} from '../geometric_algebra/types.js';
 
-import { Lattice24, getDefaultLattice } from '../topology/Lattice24.js';
-import { distance, centroid } from '../math/GeometricAlgebra.js';
+import { Lattice24, getDefaultLattice } from '../geometric_algebra/Lattice24.js';
+import { distance, centroid } from '../geometric_algebra/GeometricAlgebra.js';
 
 // =============================================================================
 // TYPES

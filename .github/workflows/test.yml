@@ -22,3 +22,18 @@ jobs:
           pip install -e ".[dev]"
       - name: Run tests
         run: pytest tests/ -v --tb=short
+
+  typescript-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
+      - name: Run math-core tests
+        run: npx tsx --test tests/math-core-*.test.ts
+      - name: Type check math_core
+        run: npx tsc --noEmit -p _SYNERGIZED_SYSTEM/lib/math_core/tsconfig.json
+        continue-on-error: true

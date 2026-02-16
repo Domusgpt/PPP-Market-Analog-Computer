@@ -7,7 +7,8 @@
     "test:phase-lock": "tsx tests/phase-locked-stereoscopy.test.ts",
     "test:adapters": "tsx tests/adapter.test.ts",
     "test:bridge": "tsx tests/adapter-bridge.test.ts",
-    "test:all": "npm run test && npm run test:phase-lock && npm run test:adapters && npm run test:bridge"
+    "test:math-core": "tsx --test tests/math-core-*.test.ts",
+    "test:all": "npm run test && npm run test:phase-lock && npm run test:adapters && npm run test:bridge && npm run test:math-core"
   },
   "devDependencies": {
     "tsx": "^4.21.0",

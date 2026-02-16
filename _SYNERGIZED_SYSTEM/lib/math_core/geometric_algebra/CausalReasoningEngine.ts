@@ -33,7 +33,7 @@ import {
   TelemetryEventType,
   TelemetrySubscriber,
   MATH_CONSTANTS
-} from '../types/index.js';
+} from './types.js';
 
 import {
   dot,
