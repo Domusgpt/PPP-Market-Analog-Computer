@@ -103,6 +103,57 @@
             display: grid;
             gap: 1rem;
         }
+        .action-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        @media (min-width: 1024px) {
+            .action-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+        .action-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.8rem;
+            border-radius: 999px;
+            background: rgba(88, 197, 255, 0.12);
+            border: 1px solid rgba(88, 197, 255, 0.35);
+            color: rgba(164, 224, 255, 0.9);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1.1rem;
+            border-radius: 0.8rem;
+            border: 1px solid rgba(120, 200, 255, 0.4);
+            background: rgba(10, 32, 58, 0.9);
+            color: #d7f4ff;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .action-button:hover {
+            border-color: rgba(140, 216, 255, 0.7);
+            box-shadow: 0 0 24px rgba(88, 197, 255, 0.25);
+            transform: translateY(-1px);
+        }
+        .sample-panel {
+            background: rgba(9, 24, 44, 0.9);
+            border-radius: 0.85rem;
+            border: 1px solid rgba(98, 182, 255, 0.3);
+            padding: 1rem;
+            font-size: 0.85rem;
+            color: rgba(200, 230, 255, 0.85);
+            line-height: 1.6;
+        }
+        .sample-panel code {
+            color: #b9e4ff;
+        }
         @media (min-width: 1024px) {
             .list-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -144,6 +195,70 @@
         </nav>
 
         <main class="space-y-24">
+            <section id="showcase" class="space-y-6">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <p class="section-title">Show & Tell</p>
+                        <h2 class="text-2xl md:text-3xl font-semibold text-white">90-second walkthrough that makes PPP click</h2>
+                    </div>
+                    <span class="action-pill">Immediate Demo Path</span>
+                </div>
+                <p class="text-sm text-blue-100/80 max-w-4xl">
+                    Use this runbook to show a live, meaningful PPP output in under two minutes. It pairs the rendered
+                    hypercube with the telemetry API so viewers can see both the visuals and the live geometry intelligence.
+                </p>
+                <div class="action-grid">
+                    <article class="section-card space-y-3">
+                        <p class="text-sm uppercase tracking-wide text-blue-100/70">Step 1 • Launch</p>
+                        <h3 class="text-xl font-semibold text-white">Open the Hypercube Console</h3>
+                        <p class="text-sm text-blue-100/75">
+                            Start with the full operator surface so you can toggle auto-stream, sonic geometry, and telemetry on demand.
+                        </p>
+                        <a class="action-button" href="hypercube-core-webgl-framework.html">
+                            Open Hypercube Console
+                            <svg class="w-4 h-4 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </a>
+                    </article>
+                    <article class="section-card space-y-3">
+                        <p class="text-sm uppercase tracking-wide text-blue-100/70">Step 2 • Animate</p>
+                        <h3 class="text-xl font-semibold text-white">Drive a clear motion story</h3>
+                        <p class="text-sm text-blue-100/75">
+                            Toggle Auto-Stream, then enable Sonic Geometry (analysis-only mode) to light up the live telemetry feed without audio.
+                        </p>
+                        <ul class="text-sm text-blue-100/70 space-y-1">
+                            <li>• Auto-Stream → ON</li>
+                            <li>• Sonic Geometry → Analysis Only</li>
+                            <li>• Spinor Overlay → ON</li>
+                        </ul>
+                    </article>
+                    <article class="section-card space-y-3">
+                        <p class="text-sm uppercase tracking-wide text-blue-100/70">Step 3 • Show intelligence</p>
+                        <h3 class="text-xl font-semibold text-white">Pull live telemetry in DevTools</h3>
+                        <p class="text-sm text-blue-100/75">
+                            Open DevTools and run the snippet below to surface the live manifold and topology summary while the renderer updates.
+                        </p>
+                        <div class="sample-panel">
+                            <code>PPP.sonicGeometry.getManifold()</code><br>
+                            <code>PPP.sonicGeometry.getTopology()</code>
+                        </div>
+                    </article>
+                </div>
+                <div class="section-card space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <h3 class="text-xl font-semibold text-white">Optional: paste a curated data burst</h3>
+                            <p class="text-sm text-blue-100/75">
+                                Paste this JSON into the data input panel and hit Apply to show a controlled spin-orbit transition.
+                            </p>
+                        </div>
+                        <button id="copySample" type="button" class="action-button">Copy sample JSON</button>
+                    </div>
+                    <pre id="sampleData" class="sample-panel">[0.12,0.35,0.68,0.92,0.55,0.28,0.74,0.16,0.49,0.83,0.21,0.62,0.91,0.44,0.07,0.57]</pre>
+                    <p class="discreet-text">
+                        For best effect, leave Auto-Stream off while applying the burst, then re-enable it to compare deterministic vs synthetic motion.
+                    </p>
+                </div>
+            </section>
             <section id="snapshot" class="space-y-8">
                 <h2 class="text-2xl md:text-3xl font-semibold text-white">Release Snapshot</h2>
                 <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -520,6 +635,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
+        });
+    }
+
+    const copyButton = document.getElementById('copySample');
+    const sampleData = document.getElementById('sampleData');
+    if (copyButton && sampleData) {
+        copyButton.addEventListener('click', async () => {
+            const text = sampleData.textContent?.trim() ?? '';
+            if (!text) {
+                return;
+            }
+            await navigator.clipboard.writeText(text);
+            copyButton.textContent = 'Copied!';
+            setTimeout(() => {
+                copyButton.textContent = 'Copy sample JSON';
+            }, 1600);
         });
     }
 });
