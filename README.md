@@ -143,6 +143,28 @@ The complementary `continuum` payload (mirrored as `transmission.continuum`) con
 
 Subscribe via `PPP.sonicGeometry.onContinuum` (or `PPP_CONFIG.onSonicContinuum`) or pull the latest snapshot through `PPP.sonicGeometry.getContinuum()` to keep robotics and multimodal pipelines synchronized with the flux continuum alongside analysis, signal, transduction, manifold, and topology streams.
 
+---
+
+## GitHub Pages Deployment
+
+This repository is already configured to deploy to GitHub Pages via `.github/workflows/deploy-pages.yml`.
+
+### One-time setup (GitHub repository settings)
+
+1. Open **Settings → Pages**.
+2. Under **Build and deployment**, select **GitHub Actions** as the source.
+
+### Deploy a build
+
+- **Automatic:** push to `main`, `master`, or `work` to trigger the workflow.
+- **Manual:** go to **Actions → Deploy to GitHub Pages → Run workflow** (works from any branch).
+
+After the workflow completes, open the URL printed in the workflow logs. Useful entry points:
+
+- `/index.html` (overview + demo runbook)
+- `/phase-lock-live.html` (Phase-Lock Live)
+- `/hypercube-core-webgl-framework.html` (Hypercube Console)
+
 ### Spinor Continuum Lattice
 
 The complementary `lattice` payload (mirrored as `transmission.lattice`) fuses the flux continuum with topology axes, manifold voices, and carrier matrices to surface the weighted harmonic lattice that robotics receivers can ingest without audio:
