@@ -13,7 +13,7 @@
  * nested 600-cells that emerge from E₈.
  */
 
-import type { Vector4D } from '../types/index';
+import type { Vector4D } from '../geometric_algebra/types.js';
 
 // =============================================================================
 // CONSTANTS

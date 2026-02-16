@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "node16",
+    "strict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "allowJs": false
+  },
+  "include": [
+    "geometric_algebra/**/*.ts",
+    "topology/**/*.ts",
+    "tda/**/*.ts",
+    "engine/**/*.ts",
+    "domains/**/*.ts",
+    "encoding/**/*.ts",
+    "metacognition/**/*.ts",
+    "applications/**/*.ts",
+    "shaders/**/*.ts",
+    "index.ts"
+  ],
+  "exclude": [
+    "_archived/**",
+    "dist/**",
+    "node_modules/**"
+  ]
+}
