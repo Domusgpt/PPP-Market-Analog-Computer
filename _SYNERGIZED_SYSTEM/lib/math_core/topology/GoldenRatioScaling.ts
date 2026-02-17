@@ -14,7 +14,7 @@
  * - φ' = -1/φ (Galois conjugate)
  */
 
-import type { Vector4D } from '../types/index';
+import type { Vector4D } from '../geometric_algebra/types.js';
 
 // =============================================================================
 // CONSTANTS

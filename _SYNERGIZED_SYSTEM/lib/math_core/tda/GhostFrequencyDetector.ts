@@ -14,10 +14,10 @@ import type {
   TrinityAxis,
   BettiProfile,
   PersistencePair
-} from '../types/index';
+} from '../geometric_algebra/types.js';
 
-import { Lattice24, type LatticeVertex } from '../topology/Lattice24';
-import { normalize4D, dot4D, subtract4D, add4D, scale4D } from '../math/GeometricAlgebra';
+import { Lattice24, type LatticeVertex } from '../topology/CPE_Lattice24.js';
+import { normalize4D, dot4D, subtract4D, add4D, scale4D } from '../geometric_algebra/GeometricAlgebra.js';
 
 // =============================================================================
 // TYPES
