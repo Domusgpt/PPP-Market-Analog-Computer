@@ -33,7 +33,7 @@ import {
   TelemetryEventType,
   TelemetrySubscriber,
   MATH_CONSTANTS
-} from '../types/index.js';
+} from '../geometric_algebra/types.js';
 
 import {
   dot,
@@ -51,9 +51,9 @@ import {
   rotorMultiply,
   normalizeRotor,
   applyRotorToVector
-} from '../math/GeometricAlgebra.js';
+} from '../geometric_algebra/GeometricAlgebra.js';
 
-import { Lattice24, getDefaultLattice } from '../topology/Lattice24.js';
+import { Lattice24, getDefaultLattice } from '../topology/CPE_Lattice24.js';
 
 // =============================================================================
 // CONSTANTS

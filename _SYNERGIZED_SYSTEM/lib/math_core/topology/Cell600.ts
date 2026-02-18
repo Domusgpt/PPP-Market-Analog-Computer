@@ -25,7 +25,7 @@
 import {
   Vector4D,
   MATH_CONSTANTS
-} from '../types/index.js';
+} from '../geometric_algebra/types.js';
 
 import {
   magnitude,
@@ -33,7 +33,7 @@ import {
   scale,
   add,
   distance
-} from '../math/GeometricAlgebra.js';
+} from '../geometric_algebra/GeometricAlgebra.js';
 
 // =============================================================================
 // CONSTANTS

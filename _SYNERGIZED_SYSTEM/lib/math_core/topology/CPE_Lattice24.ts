@@ -41,7 +41,7 @@ import {
   PhaseShiftInfo,
   RotationPlane,
   MATH_CONSTANTS
-} from '../types/index.js';
+} from '../geometric_algebra/types.js';
 
 import {
   dot,
@@ -50,7 +50,7 @@ import {
   centroid as computeCentroid,
   distance,
   distanceSquared
-} from '../math/GeometricAlgebra.js';
+} from '../geometric_algebra/GeometricAlgebra.js';
 
 // =============================================================================
 // CONSTANTS

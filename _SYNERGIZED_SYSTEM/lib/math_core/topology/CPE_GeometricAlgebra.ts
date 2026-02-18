@@ -34,7 +34,7 @@ import {
   Rotor,
   RotationPlane,
   MATH_CONSTANTS
-} from '../types/index.js';
+} from '../geometric_algebra/types.js';
 
 // =============================================================================
 // BASIC VECTOR OPERATIONS

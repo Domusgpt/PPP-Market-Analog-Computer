@@ -44,16 +44,16 @@ import {
   GeometricChord,
   DEFAULT_ENGINE_CONFIG,
   MATH_CONSTANTS
-} from '../types/index.js';
+} from '../geometric_algebra/types.js';
 
-import { Lattice24, getDefaultLattice } from '../topology/Lattice24.js';
+import { Lattice24, getDefaultLattice } from '../topology/CPE_Lattice24.js';
 import { Cell600, getDefaultCell600 } from '../topology/Cell600.js';
 import { CausalReasoningEngine } from './CausalReasoningEngine.js';
 import { TrinityEngine } from './TrinityEngine.js';
 import { MusicGeometryDomain } from '../domains/MusicGeometryDomain.js';
 import { HDCEncoder, Hypervector } from '../encoding/HDCEncoder.js';
 import { HarmonicTopologist } from '../tda/PersistentHomology.js';
-import { magnitude, normalize } from '../math/GeometricAlgebra.js';
+import { magnitude, normalize } from '../geometric_algebra/GeometricAlgebra.js';
 
 // =============================================================================
 // CONFIGURATION

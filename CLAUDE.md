@@ -158,8 +158,8 @@ Code exists at `demos/domain_diverse_training.py`. It has NEVER BEEN RUN.
 ## Known Pitfalls
 
 **PPP repo**:
-- `_SYNERGIZED_SYSTEM/backend/engine/pipeline.py:33` has a blocking import error:
-  `from .rules.enforcer` should be `from .enforcer`. This breaks full pipeline import.
+- `_SYNERGIZED_SYSTEM/backend/engine/pipeline.py:33` import bug is FIXED (was `from .rules.enforcer`,
+  now correctly uses `from .enforcer`).
 - PPP test commands: `npm run test:all` (runs phase-lock, adapter, bridge tests)
 - Backend tests: `cd _SYNERGIZED_SYSTEM/backend && source .venv/bin/activate && pytest tests/ -v`
 
