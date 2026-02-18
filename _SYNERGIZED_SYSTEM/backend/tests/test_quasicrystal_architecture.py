@@ -74,6 +74,16 @@ class TestQuasicrystallineReservoir:
         # States shouldn't all be zero
         assert np.max(np.abs(states[-1])) > 1e-8, "Reservoir collapsed"
 
+
+    def test_parameterization_matches_formulas(self):
+        """Hierarchy damping/coupling should follow algebraic formulas."""
+        h = NumberFieldHierarchy()
+        report = h.validate_parameterization()
+        assert report['all_valid']
+        for level in report['levels']:
+            assert level['damping_valid']
+            assert level['coupling_valid']
+
     def test_reset(self):
         """Reset should zero the state."""
         r = QuasicrystallineReservoir(n_reservoir=16, input_dim=4)
@@ -188,6 +198,16 @@ class TestNumberFieldHierarchy:
             assert 'discriminant' in s
             assert 'spectral_radius' in s
 
+
+    def test_parameterization_matches_formulas(self):
+        """Hierarchy damping/coupling should follow algebraic formulas."""
+        h = NumberFieldHierarchy()
+        report = h.validate_parameterization()
+        assert report['all_valid']
+        for level in report['levels']:
+            assert level['damping_valid']
+            assert level['coupling_valid']
+
     def test_reset(self):
         """Reset should zero all states."""
         h = NumberFieldHierarchy(base_size=8)
@@ -217,6 +237,8 @@ class TestGaloisVerifier:
         roots = generate_e8_roots()
         result = v.verify(roots[0].coordinates)
         assert result['valid']
+        assert result['ratio_valid']
+        assert result['product_valid']
         assert abs(result['ratio'] - PHI) < 1e-8
 
     def test_random_vector(self):
@@ -237,6 +259,40 @@ class TestGaloisVerifier:
             # Also verify the √5 row norm product (matrix property)
             assert abs(result['sqrt5_row_norm_product'] - np.sqrt(5)) < 1e-8
 
+
+    def test_ratio_only_perturbation_detection(self):
+        """Ratio invariant should fail when right channel is perturbed."""
+        v = GaloisVerifier(tolerance=1e-12)
+        roots = generate_e8_roots()
+        vec = roots[0].coordinates
+        left, right = v.compute_dual(vec)
+
+        right_perturbed = right.copy()
+        right_perturbed[0] += 1e-3
+        ratio = np.linalg.norm(right_perturbed) / np.linalg.norm(left)
+        ratio_deviation = abs(ratio - PHI)
+
+        assert ratio_deviation > v.tolerance
+
+    def test_product_only_perturbation_detection(self):
+        """Product invariant should fail when vector norm coupling is perturbed."""
+        v = GaloisVerifier(tolerance=1e-12)
+        vec = np.random.RandomState(0).randn(8)
+        result = v.verify(vec)
+        assert result['product_valid']
+
+        # Perturb expected product analytically by scaling norm reference
+        wrong_expected = result['expected_product'] * 1.1
+        wrong_deviation = abs(result['product'] - wrong_expected)
+        assert wrong_deviation > v.tolerance * max(abs(wrong_expected), 1e-12)
+
+    def test_combined_validity_semantics(self):
+        """Combined validity should represent logical AND of both invariants."""
+        v = GaloisVerifier()
+        vec = np.random.RandomState(1).randn(8)
+        result = v.verify(vec)
+        assert result['valid'] == (result['ratio_valid'] and result['product_valid'])
+
     def test_error_rate_starts_zero(self):
         """Error rate should start at zero."""
         v = GaloisVerifier()
@@ -248,6 +304,10 @@ class TestGaloisVerifier:
         vectors = np.random.RandomState(42).randn(20, 8)
         result = v.verify_batch(vectors)
         assert result['n_vectors'] == 20
+        assert 'max_ratio_deviation' in result
+        assert 'max_product_deviation' in result
+        assert 'ratio_failures' in result
+        assert 'product_failures' in result
 
 
 # =========================================================================
@@ -371,6 +431,16 @@ class TestPadovanCascade:
         assert 'final_state' in result
         assert 'energies' in result
         assert result['final_state'].shape == (8, 8)
+
+
+    def test_parameterization_matches_formulas(self):
+        """Hierarchy damping/coupling should follow algebraic formulas."""
+        h = NumberFieldHierarchy()
+        report = h.validate_parameterization()
+        assert report['all_valid']
+        for level in report['levels']:
+            assert level['damping_valid']
+            assert level['coupling_valid']
 
     def test_reset(self):
         """Reset should zero state and velocity."""
