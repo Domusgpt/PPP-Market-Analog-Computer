@@ -6,7 +6,7 @@ Core streaming encoder for real-time data processing.
 """
 
 import numpy as np
-from typing import Optional, Callable, Dict, Generator
+from typing import Optional, Callable, Dict, Generator, Literal
 from dataclasses import dataclass
 from threading import Thread, Event
 from queue import Queue
@@ -14,6 +14,12 @@ import time
 
 from ..core.fast_cascade import FastCascadeSimulator
 from ..core.fast_moire import FastMoireComputer
+from ..geometry.quasicrystal_architecture import (
+    NumberFieldHierarchy,
+    QuasicrystallineReservoir,
+    PadovanCascade,
+    GaloisVerifier,
+)
 from .buffer import RingBuffer, FrameBuffer, FeatureBuffer
 
 
@@ -26,6 +32,7 @@ class StreamConfig:
     sample_rate: int = 22050  # For audio
     frame_rate: float = 30.0  # For video
     feature_rate: float = 10.0  # Features per second
+    architecture_mode: Literal["legacy", "quasicrystal"] = "legacy"
 
 
 @dataclass
@@ -62,6 +69,7 @@ class StreamEncoder:
 
     def __init__(self, config: Optional[StreamConfig] = None):
         self.config = config or StreamConfig()
+        self.architecture_mode = self.config.architecture_mode
 
         # Core components
         self.simulator = FastCascadeSimulator(
@@ -69,6 +77,17 @@ class StreamEncoder:
             coupling_strength=0.3
         )
         self.moire = FastMoireComputer()
+
+        self._qc_hierarchy: Optional[NumberFieldHierarchy] = None
+        self._qc_reservoir: Optional[QuasicrystallineReservoir] = None
+        self._qc_cascade: Optional[PadovanCascade] = None
+        self._qc_verifier: Optional[GaloisVerifier] = None
+        if self.architecture_mode == "quasicrystal":
+            qc_grid = min(self.config.grid_size)
+            self._qc_hierarchy = NumberFieldHierarchy(base_size=8)
+            self._qc_reservoir = QuasicrystallineReservoir(n_reservoir=64, input_dim=8)
+            self._qc_cascade = PadovanCascade(max_steps=max(20, self.config.cascade_steps * 4), grid_size=qc_grid, coupling=0.3)
+            self._qc_verifier = GaloisVerifier(tolerance=1e-6)
 
         # Buffers
         self.input_buffer = RingBuffer(self.config.buffer_size * 1024)
@@ -89,6 +108,10 @@ class StreamEncoder:
 
         # Callbacks
         self._on_frame: Optional[Callable[[StreamFrame], None]] = None
+
+    def _to_qc_vector(self, data: np.ndarray) -> np.ndarray:
+        splits = np.array_split(data.flatten(), 8)
+        return np.array([float(np.mean(s)) if len(s) else 0.0 for s in splits], dtype=np.float64)
 
     def process(self, data: np.ndarray) -> StreamFrame:
         """
@@ -125,24 +148,46 @@ class StreamEncoder:
         if data_max > data_min:
             data = (data - data_min) / (data_max - data_min)
 
-        # Incremental cascade (maintain state)
-        # Apply decay for fading memory
-        self.simulator.values *= 0.95
-        self.simulator.inject_input(data, scale=0.5)
+        if self.architecture_mode == "quasicrystal" and all(
+            x is not None for x in (self._qc_hierarchy, self._qc_reservoir, self._qc_cascade)
+        ):
+            qvec = self._to_qc_vector(data)
+            hierarchy_states = self._qc_hierarchy.step(qvec)  # type: ignore[union-attr]
+            reservoir_state = self._qc_reservoir.step(hierarchy_states[1])  # type: ignore[union-attr]
 
-        # Run short cascade
-        result = self.simulator.run(n_steps=self.config.cascade_steps)
+            side = self._qc_cascade.grid_size  # type: ignore[union-attr]
+            cascade_in = np.resize(reservoir_state, side * side).reshape(side, side)
+            self._qc_cascade.inject(cascade_in)  # type: ignore[union-attr]
+            qc_result = self._qc_cascade.run(n_epochs=1)  # type: ignore[union-attr]
+            state = qc_result['final_state']
+
+            if state.shape != self.config.grid_size:
+                from scipy.ndimage import zoom
+                factors = (self.config.grid_size[0] / state.shape[0], self.config.grid_size[1] / state.shape[1])
+                state = zoom(state, factors, order=1)
+
+            if self._qc_verifier is not None:
+                self._qc_verifier.verify(qvec)
+        else:
+            # Incremental cascade (maintain state)
+            # Apply decay for fading memory
+            self.simulator.values *= 0.95
+            self.simulator.inject_input(data, scale=0.5)
+
+            # Run short cascade
+            result = self.simulator.run(n_steps=self.config.cascade_steps)
+            state = result.final_state
 
         # Compute moiré pattern
         angle = self.moire.COMMENSURATE_ANGLES[self._angle_idx]
         moire_result = self.moire.compute(
             twist_angle=angle,
             grid_size=self.config.grid_size,
-            layer1_state=result.final_state
+            layer1_state=state
         )
 
         # Extract features
-        features = self._extract_features(moire_result.intensity, result.final_state)
+        features = self._extract_features(moire_result.intensity, state)
 
         # Create frame
         frame = StreamFrame(
@@ -221,6 +266,12 @@ class StreamEncoder:
         self.start_time = time.time()
         self.frame_index = 0
         self.simulator.reset()
+        if self._qc_hierarchy is not None:
+            self._qc_hierarchy.reset()
+        if self._qc_reservoir is not None:
+            self._qc_reservoir.reset()
+        if self._qc_cascade is not None:
+            self._qc_cascade.reset()
 
     def stop(self):
         """Stop stream processing."""
@@ -229,6 +280,12 @@ class StreamEncoder:
     def reset(self):
         """Reset encoder state."""
         self.simulator.reset()
+        if self._qc_hierarchy is not None:
+            self._qc_hierarchy.reset()
+        if self._qc_reservoir is not None:
+            self._qc_reservoir.reset()
+        if self._qc_cascade is not None:
+            self._qc_cascade.reset()
         self.pattern_buffer.clear()
         self.feature_buffer.clear()
         self.frame_index = 0
