@@ -169,3 +169,25 @@ This log captures the iterative development of the Polytopal Projection Platform
 ## Session 38 – Adapter metrics reset
 - Added reset helpers for adapter metrics to simplify session resets and testing.
 - Extended adapter tests and usage notes to cover reset behavior.
+
+## Session 39 – Quasicrystal integration execution model
+- Timestamp (UTC): 2026-02-18T02:03:39Z
+- Established a sequential-first integration strategy for quasicrystal architecture changes to reduce cross-module merge risk.
+- Added a dedicated execution plan with phased delivery, controlled parallelization gates, and quality criteria in docs/quasicrystal-integration-execution-plan.md.
+- Declared progression checkpoints for architecture wiring, feature integration, verification expansion, and API/documentation stabilization.
+
+## Session 40 – Phase A quasicrystal architecture integration
+- Timestamp (UTC): 2026-02-18T02:11:20Z
+- Integrated architecture-mode switching (`legacy`/`quasicrystal`) into the backend offline encoder and CLI surface to enable deterministic quasicrystal path activation.
+- Wired quasicrystal components (hierarchy, reservoir, Padovan cascade, Galois verification, allocator stats) into `encode_data` while preserving legacy path behavior.
+- Integrated architecture-mode switching into the streaming encoder with state-preserving quasicrystal execution flow.
+- Added integration tests covering schema and processing behavior for both modes in offline and streaming paths.
+- Validated with targeted pytest suite after installing required numeric dependencies (`numpy`, `scipy`).
+
+
+## Session 41 – Phase B/C quasicrystal formalization
+- Timestamp (UTC): 2026-02-18T02:43:04Z
+- Added golden-ratio wavelet integration to the unified feature extractor via a GoldenMRA adapter and new `wavelet_family` selector (`dyadic` or `golden`).
+- Expanded GaloisVerifier telemetry to return ratio and product invariants together, including batch-level failure counts by invariant and norm-product diagnostics.
+- Aligned NumberFieldHierarchy to a single algebraic/discriminant-derived constant table and added `validate_parameterization` for formula conformance checks.
+- Exported quasicrystal architecture classes from `engine.geometry` package API and added smoke/integration tests for new exports and wavelet family behavior.
