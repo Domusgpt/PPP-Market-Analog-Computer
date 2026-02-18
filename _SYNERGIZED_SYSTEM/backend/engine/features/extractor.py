@@ -6,13 +6,14 @@ Combines all feature extraction methods into a single API.
 """
 
 import numpy as np
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Literal, Optional, Set, Union
 from dataclasses import dataclass, field
 from enum import Enum, auto
 
 from .gabor import GaborFilterBank
 from .hog import HOGDescriptor
 from .wavelet import WaveletDecomposer
+from .golden_wavelet import GoldenMRAAdapter
 from .moments import compute_hu_moments, compute_zernike_moments
 from .spectral import SpectralAnalyzer
 
@@ -43,6 +44,7 @@ class FeatureConfig:
     hog_n_bins: int = 9
 
     # Wavelet parameters
+    wavelet_family: Literal['dyadic', 'golden'] = 'dyadic'
     wavelet_type: str = 'haar'
     wavelet_levels: int = 3
 
@@ -92,7 +94,7 @@ class FeatureExtractor:
         # Initialize extractors lazily
         self._gabor: Optional[GaborFilterBank] = None
         self._hog: Optional[HOGDescriptor] = None
-        self._wavelet: Optional[WaveletDecomposer] = None
+        self._wavelet: Optional[Union[WaveletDecomposer, GoldenMRAAdapter]] = None
         self._spectral: Optional[SpectralAnalyzer] = None
 
     def _get_gabor(self) -> GaborFilterBank:
@@ -111,12 +113,17 @@ class FeatureExtractor:
             )
         return self._hog
 
-    def _get_wavelet(self) -> WaveletDecomposer:
+    def _get_wavelet(self) -> Union[WaveletDecomposer, GoldenMRAAdapter]:
         if self._wavelet is None:
-            self._wavelet = WaveletDecomposer(
-                wavelet=self.config.wavelet_type,
-                n_levels=self.config.wavelet_levels
-            )
+            if self.config.wavelet_family == "golden":
+                self._wavelet = GoldenMRAAdapter(
+                    n_levels=self.config.wavelet_levels
+                )
+            else:
+                self._wavelet = WaveletDecomposer(
+                    wavelet=self.config.wavelet_type,
+                    n_levels=self.config.wavelet_levels
+                )
         return self._wavelet
 
     def _get_spectral(self) -> SpectralAnalyzer:
@@ -180,7 +187,7 @@ class FeatureExtractor:
             result = wavelet.decompose(image)
             features_by_type['wavelet'] = result.features
             n_wavelet = len(result.features)
-            feature_names.extend([f'wavelet_{i}' for i in range(n_wavelet)])
+            feature_names.extend([f'wavelet_{self.config.wavelet_family}_{i}' for i in range(n_wavelet)])
 
         # Moment features
         if self._should_extract(FeatureType.MOMENTS):

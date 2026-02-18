@@ -5,6 +5,7 @@ import numpy as np
 from engine.features.gabor import GaborFilterBank
 from engine.features.spectral import SpectralAnalyzer
 from engine.features.hog import HOGDescriptor
+from engine.features.extractor import FeatureConfig, FeatureExtractor, FeatureType
 
 
 @pytest.fixture
@@ -88,3 +89,43 @@ class TestHOGDescriptor:
     def test_features_are_finite(self, hog, test_pattern):
         result = hog.compute(test_pattern)
         assert np.all(np.isfinite(result.features))
+
+
+class TestUnifiedWaveletFamilies:
+    def test_dyadic_and_golden_wavelet_feature_prefixes(self, test_pattern):
+        dyadic_cfg = FeatureConfig(
+            features={FeatureType.WAVELET},
+            wavelet_family='dyadic',
+            wavelet_type='haar',
+            wavelet_levels=2,
+            normalize=False,
+        )
+        golden_cfg = FeatureConfig(
+            features={FeatureType.WAVELET},
+            wavelet_family='golden',
+            wavelet_levels=2,
+            normalize=False,
+        )
+
+        dyadic = FeatureExtractor(dyadic_cfg).extract(test_pattern)
+        golden = FeatureExtractor(golden_cfg).extract(test_pattern)
+
+        assert dyadic.n_features > 0
+        assert golden.n_features > 0
+        assert all(name.startswith('wavelet_dyadic_') for name in dyadic.feature_names)
+        assert all(name.startswith('wavelet_golden_') for name in golden.feature_names)
+
+    def test_golden_wavelet_deterministic_length(self, test_pattern):
+        cfg = FeatureConfig(
+            features={FeatureType.WAVELET},
+            wavelet_family='golden',
+            wavelet_levels=3,
+            normalize=False,
+        )
+        extractor = FeatureExtractor(cfg)
+        first = extractor.extract(test_pattern)
+        second = extractor.extract(test_pattern)
+
+        assert first.n_features == second.n_features
+        assert first.by_type['wavelet'].shape == second.by_type['wavelet'].shape
+        assert np.allclose(first.by_type['wavelet'], second.by_type['wavelet'])
