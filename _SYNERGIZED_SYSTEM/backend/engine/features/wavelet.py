@@ -66,7 +66,8 @@ class WaveletDecomposer:
         padded = np.pad(signal, len(filt) // 2, mode='wrap')
         # Convolve
         result = np.convolve(padded, filt, mode='valid')
-        # Downsample
+        # Trim to original length before downsampling to keep exact half resolution
+        result = result[:len(signal)]
         return result[::2]
 
     def _decompose_1d(self, signal: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
