@@ -168,7 +168,6 @@ export class HypercubeRenderer {
     render(now) {
         const elapsedSeconds = (now - this.startTime) * 0.001;
         this.uniformState.u_time = elapsedSeconds;
-        this.resizeCanvas();
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
         this.shaderProgram.use();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.fullscreenBuffer);
