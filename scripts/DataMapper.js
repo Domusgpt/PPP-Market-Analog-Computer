@@ -8,12 +8,14 @@ import { clampValue, lerp, cloneMappingDefinition } from './utils.js';
 export class DataMapper {
     constructor({ mapping = {}, smoothing = 0.25 } = {}) {
         this.mapping = cloneMappingDefinition(mapping);
+        this.mappingKeys = Object.keys(this.mapping);
         this.globalSmoothing = clampValue(smoothing, 0, 1);
         this.uniformState = {};
     }
 
     setMapping(mapping) {
         this.mapping = cloneMappingDefinition(mapping);
+        this.mappingKeys = Object.keys(this.mapping);
         this.uniformState = {};
     }
 
@@ -31,9 +33,11 @@ export class DataMapper {
             : dataArray && typeof dataArray.length === 'number'
                 ? Array.from(dataArray)
                 : [];
-        Object.entries(this.mapping).forEach(([uniformName, config]) => {
+
+        for (const uniformName of this.mappingKeys) {
+            const config = this.mapping[uniformName];
             if (!config) {
-                return;
+                continue;
             }
 
             const hasIndices = Array.isArray(config.indices) || ArrayBuffer.isView(config.indices);
@@ -83,7 +87,9 @@ export class DataMapper {
 
     getUniformSnapshot() {
         const snapshot = {};
-        Object.entries(this.uniformState).forEach(([key, value]) => {
+        const stateKeys = Object.keys(this.uniformState);
+        for (const key of stateKeys) {
+            const value = this.uniformState[key];
             if (Array.isArray(value)) {
                 snapshot[key] = value.slice();
             } else if (value instanceof Float32Array) {
@@ -91,7 +97,7 @@ export class DataMapper {
             } else {
                 snapshot[key] = value;
             }
-        });
+        }
         return snapshot;
     }
 

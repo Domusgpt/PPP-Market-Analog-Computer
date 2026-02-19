@@ -69,7 +69,6 @@ export class HypercubeRenderer {
         }
         this.gl = gl;
         this.shaderProgram = new ShaderProgram(gl, vertexShaderSource, fragmentShaderSource);
-        this.shaderProgram.use();
         this.positionLocation = this.shaderProgram.getAttribLocation('a_position');
         this.uniformLocations = {};
         this.#collectUniformLocations([
@@ -79,9 +78,17 @@ export class HypercubeRenderer {
             'u_primaryColor', 'u_secondaryColor', 'u_backgroundColor', 'u_dataChannels'
         ]);
         this.#createFullscreenTriangle();
+
         gl.disable(gl.DEPTH_TEST);
         gl.disable(gl.CULL_FACE);
         gl.clearColor(0.01, 0.01, 0.04, 1.0);
+
+        // Set static WebGL state
+        this.shaderProgram.use();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.fullscreenBuffer);
+        this.gl.enableVertexAttribArray(this.positionLocation);
+        this.gl.vertexAttribPointer(this.positionLocation, 2, this.gl.FLOAT, false, 0, 0);
+
         this.uniformState = {
             u_time: 0,
             u_resolution: new Float32Array([canvas.width || 1, canvas.height || 1]),
@@ -107,6 +114,8 @@ export class HypercubeRenderer {
             u_dataChannels: new Float32Array(DATA_CHANNEL_COUNT)
         };
         this.uniformState.u_dataChannels.fill(0.5);
+        this.uniformNames = Object.keys(this.uniformState);
+        this.dirtyUniforms = new Set(this.uniformNames);
         this.startTime = performance.now();
         this.render = this.render.bind(this);
         this.resizeObserver = new ResizeObserver(() => this.resizeCanvas());
@@ -116,10 +125,11 @@ export class HypercubeRenderer {
     }
 
     setUniformState(updates) {
-        Object.entries(updates).forEach(([key, value]) => {
+        for (const key in updates) {
             if (!(key in this.uniformState)) {
-                return;
+                continue;
             }
+            const value = updates[key];
             const current = this.uniformState[key];
             if (current instanceof Float32Array) {
                 this.#assignToFloatArray(current, value);
@@ -130,12 +140,14 @@ export class HypercubeRenderer {
             } else if (typeof value === 'number') {
                 this.uniformState[key] = value;
             }
-        });
+            this.dirtyUniforms.add(key);
+        }
     }
 
     getUniformState() {
         const snapshot = {};
-        Object.entries(this.uniformState).forEach(([key, value]) => {
+        for (const key of this.uniformNames) {
+            const value = this.uniformState[key];
             if (Array.isArray(value)) {
                 snapshot[key] = value.slice();
             } else if (value instanceof Float32Array) {
@@ -143,7 +155,7 @@ export class HypercubeRenderer {
             } else {
                 snapshot[key] = value;
             }
-        });
+        }
         return snapshot;
     }
 
@@ -163,16 +175,14 @@ export class HypercubeRenderer {
         } else {
             this.uniformState.u_resolution = [this.canvas.width, this.canvas.height];
         }
+        this.dirtyUniforms.add('u_resolution');
     }
 
     render(now) {
         const elapsedSeconds = (now - this.startTime) * 0.001;
         this.uniformState.u_time = elapsedSeconds;
+        this.dirtyUniforms.add('u_time');
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-        this.shaderProgram.use();
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.fullscreenBuffer);
-        this.gl.enableVertexAttribArray(this.positionLocation);
-        this.gl.vertexAttribPointer(this.positionLocation, 2, this.gl.FLOAT, false, 0, 0);
         this.#uploadUniforms();
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 3);
         requestAnimationFrame(this.render);
@@ -200,10 +210,14 @@ export class HypercubeRenderer {
     }
 
     #uploadUniforms() {
-        Object.entries(this.uniformState).forEach(([name, value]) => {
+        if (this.dirtyUniforms.size === 0) {
+            return;
+        }
+        for (const name of this.dirtyUniforms) {
+            const value = this.uniformState[name];
             const location = this.uniformLocations[name];
             if (location === null || location === undefined) {
-                return;
+                continue;
             }
             if (typeof value === 'number') {
                 this.gl.uniform1f(location, value);
@@ -212,7 +226,8 @@ export class HypercubeRenderer {
             } else if (value instanceof Float32Array) {
                 this.#uploadArrayUniform(location, value);
             }
-        });
+        }
+        this.dirtyUniforms.clear();
     }
 
     #uploadArrayUniform(location, value) {
