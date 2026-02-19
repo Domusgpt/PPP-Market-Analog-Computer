@@ -959,11 +959,14 @@
                 }
             });
             serialAdapter.connect().then(() => {
-                document.getElementById('connectionStatus').className = 'connection-status';
-                document.getElementById('connectionStatus').innerHTML = '<div class="status-dot active"></div><span>Serial Connected</span>';
+                const statusEl = document.getElementById('connectionStatus');
+                statusEl.className = 'connection-status';
+                statusEl.innerHTML = '<div class="status-dot active"></div><span>Serial Connected</span>';
             }).catch(err => {
-                document.getElementById('connectionStatus').className = 'connection-status disconnected';
-                document.getElementById('connectionStatus').innerHTML = `<div class="status-dot"></div><span>Serial Error: ${err.message}</span>`;
+                const statusEl = document.getElementById('connectionStatus');
+                statusEl.className = 'connection-status disconnected';
+                statusEl.innerHTML = '<div class="status-dot"></div><span></span>';
+                statusEl.querySelector('span').textContent = `Serial Error: ${err.message}`;
             });
         });
 
@@ -983,12 +986,14 @@
                     updateDataFeed();
                 },
                 onStatus: (status) => {
+                    const statusEl = document.getElementById('connectionStatus');
                     if (status === 'connected') {
-                        document.getElementById('connectionStatus').className = 'connection-status';
-                        document.getElementById('connectionStatus').innerHTML = '<div class="status-dot active"></div><span>WebSocket Connected</span>';
+                        statusEl.className = 'connection-status';
+                        statusEl.innerHTML = '<div class="status-dot active"></div><span>WebSocket Connected</span>';
                     } else {
-                        document.getElementById('connectionStatus').className = 'connection-status disconnected';
-                        document.getElementById('connectionStatus').innerHTML = `<div class="status-dot"></div><span>${status}</span>`;
+                        statusEl.className = 'connection-status disconnected';
+                        statusEl.innerHTML = '<div class="status-dot"></div><span></span>';
+                        statusEl.querySelector('span').textContent = status;
                     }
                 }
             });
