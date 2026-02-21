@@ -1,0 +1,360 @@
+# ============================================================================
+# HEMOC Canonical Experiment Registry
+# ============================================================================
+#
+# This file is the single source of truth for all HEMOC experiments.
+# Every experiment is tagged by:
+#   - track: "A" (feature decoding / structural training) or
+#            "B" (Phillips matrix / E8-H4 / 600-cell / cognitive ontology)
+#   - renderer_dependence: how sensitive to renderer fidelity
+#       discrete_invariant    -> proxy-safe
+#       continuous_manifold   -> proxy-INVALID (requires physics renderer)
+#       resolution_dependent  -> proxy-INVALID (requires physics renderer)
+#       noise_dependent       -> proxy-risk (may be affected)
+#   - status: proven / untested / invalidated / re-verified
+#
+# Renderer version note:
+#   Experiments before the renderer fix (pre-jules branch) that depend on
+#   continuous manifold fidelity are tagged "invalidated" until re-run
+#   with the corrected physics renderer.
+# ============================================================================
+
+experiments:
+
+  # ========================================================================
+  # TRACK A: Feature Decoding / Structural Training
+  # ========================================================================
+
+  - id: "exp-01"
+    name: "MLP Decoder Baseline"
+    track: "A"
+    renderer_dependence: "discrete_invariant"
+    code_path: "demos/dual_decoder.py"
+    success_criteria:
+      metric: "pearson_correlation"
+      threshold: 0.0
+      direction: "informational"
+    status: "proven"
+    result_artifact: "results/exp01_mlp_baseline.json"
+    notes: >
+      MLP fails on moire patterns (correlation 0.001-0.15).
+      This is explained by the centroid-zero problem: E8 roots sum
+      to zero, so aggregate statistics destroy positional information.
+
+  - id: "exp-05"
+    name: "Dual Decoder (Ridge + MLP)"
+    track: "A"
+    renderer_dependence: "discrete_invariant"
+    code_path: "demos/dual_decoder.py"
+    success_criteria:
+      metric: "pearson_correlation"
+      threshold: 0.3
+      direction: "above"
+    status: "proven"
+    result_artifact: "results/exp05_dual_decoder.json"
+    notes: "Achieves 0.405 correlation, recovers 3/6 angles. Hybrid helps."
+
+  - id: "exp-07"
+    name: "CNN Decoder Breakthrough"
+    track: "A"
+    renderer_dependence: "discrete_invariant"
+    code_path: "demos/option_e_scaled_cnn.py"
+    success_criteria:
+      metric: "pearson_correlation"
+      threshold: 0.6
+      direction: "above"
+    status: "proven"
+    result_artifact: "results/exp07_cnn_decoder.json"
+    notes: >
+      CNN achieves 0.657 correlation, recovers 5/6 angles.
+      Spatial inductive bias is critical for moire decoding.
+
+  - id: "exp-08"
+    name: "Pure Hypercube Encoding"
+    track: "A"
+    renderer_dependence: "discrete_invariant"
+    code_path: "demos/dual_decoder.py"
+    success_criteria:
+      metric: "pearson_correlation"
+      threshold: 0.0
+      direction: "informational"
+    status: "proven"
+    notes: >
+      Pure hypercube path fails at 0.090 correlation (0/6 angles).
+      Hybrid encoding (direct + hypercube) is required.
+
+  - id: "exp-12"
+    name: "Audio Pipeline (8K samples)"
+    track: "A"
+    renderer_dependence: "discrete_invariant"
+    code_path: "demos/option_e_scaled_cnn.py"
+    success_criteria:
+      metric: "pearson_correlation"
+      threshold: 0.85
+      direction: "above"
+    status: "proven"
+    result_artifact: "results/exp12_audio_8k.json"
+    notes: "Audio domain, 8K training samples. Correlation 0.894, 6/6 angles."
+
+  - id: "exp-13"
+    name: "Audio Pipeline (15K samples) -- CURRENT PEAK"
+    track: "A"
+    renderer_dependence: "discrete_invariant"
+    code_path: "demos/option_e_scaled_cnn.py"
+    success_criteria:
+      metric: "pearson_correlation"
+      threshold: 0.9
+      direction: "above"
+    status: "proven"
+    result_artifact: "results/exp13_audio_15k.json"
+    notes: >
+      Peak result: 0.916 correlation on 15K audio samples.
+      All 6 angles recovered. More data helps (8K->15K: 0.894->0.916).
+
+  - id: "exp-14"
+    name: "Cross-Domain Zero-Shot Transfer"
+    track: "A"
+    renderer_dependence: "discrete_invariant"
+    code_path: "demos/domain_diverse_training.py"
+    success_criteria:
+      metric: "pearson_correlation"
+      threshold: 0.0
+      direction: "informational"
+    status: "proven"
+    notes: >
+      Zero-shot transfer FAILS: correlation -0.027 (worse than random).
+      Domain-specific training is non-negotiable.
+
+  - id: "exp-15"
+    name: "Few-Shot Calibration (100 samples)"
+    track: "A"
+    renderer_dependence: "discrete_invariant"
+    code_path: "demos/domain_diverse_training.py"
+    success_criteria:
+      metric: "pearson_correlation"
+      threshold: 0.15
+      direction: "above"
+    status: "proven"
+    notes: >
+      100-sample calibration improves cross-domain from -0.027 to 0.22.
+      Strong improvement from minimal data.
+
+  - id: "exp-16"
+    name: "Domain-Diverse Training"
+    track: "A"
+    renderer_dependence: "discrete_invariant"
+    code_path: "demos/domain_diverse_training.py"
+    success_criteria:
+      metric: "pearson_correlation"
+      threshold: 0.7
+      direction: "above"
+    status: "untested"
+    depends_on: ["exp-13"]
+    notes: >
+      Code exists at demos/domain_diverse_training.py. NEVER BEEN RUN.
+      Requires GPU (see docs/GPU_CLOUD_GUIDE.md).
+      Expected: single-domain baseline, domain-diverse, few-shot sweep.
+
+  - id: "exp-17"
+    name: "Direct-Feature MLP Baseline (no visual encoding)"
+    track: "A"
+    renderer_dependence: "discrete_invariant"
+    code_path: ""
+    success_criteria:
+      metric: "pearson_correlation"
+      threshold: 0.0
+      direction: "informational"
+    status: "untested"
+    notes: >
+      Ceiling test: audio features -> predictions with NO visual encoding.
+      If this beats HEMOC, visual encoding adds no value.
+
+  - id: "exp-18"
+    name: "Random Pattern Control (floor test)"
+    track: "A"
+    renderer_dependence: "discrete_invariant"
+    code_path: ""
+    success_criteria:
+      metric: "pearson_correlation"
+      threshold: 0.0
+      direction: "informational"
+    status: "untested"
+    notes: >
+      Floor test: random images instead of moire patterns.
+      Expected: near-zero correlation. Proves moire structure matters.
+
+  - id: "exp-19"
+    name: "Golden Ratio Ablation (phi vs sqrt2 vs e vs learned)"
+    track: "A"
+    renderer_dependence: "discrete_invariant"
+    code_path: ""
+    success_criteria:
+      metric: "pearson_correlation"
+      threshold: 0.0
+      direction: "informational"
+    status: "untested"
+    notes: >
+      Key ablation: replace golden-ratio constants with alternatives.
+      Tests whether phi is architecturally necessary or just convenient.
+
+  # ========================================================================
+  # TRACK B: Phillips Matrix / E8-H4 / 600-Cell / Cognitive Ontology
+  # ========================================================================
+
+  - id: "exp-20"
+    name: "Discrete Navigation (Tonnetz / Neo-Riemannian)"
+    track: "B"
+    renderer_dependence: "discrete_invariant"
+    code_path: "experiments/cognitive_trials/train_navigation.py"
+    success_criteria:
+      metric: "accuracy"
+      threshold: 0.95
+      direction: "above"
+    status: "proven"
+    notes: >
+      100% accuracy on Tonnetz graph navigation. Proxy-safe because
+      discrete states can be solved by consistent partitioning.
+
+  - id: "exp-21"
+    name: "Noise Robustness (Vision vs Audio)"
+    track: "B"
+    renderer_dependence: "noise_dependent"
+    code_path: "experiments/cognitive_trials/"
+    success_criteria:
+      metric: "robustness_ratio"
+      threshold: 0.0
+      direction: "informational"
+    status: "proven"
+    notes: >
+      Comparative noise robustness between visual and audio channels.
+      Results may be partially affected by proxy renderer.
+
+  - id: "exp-22"
+    name: "Continuous Manifold Regression"
+    track: "B"
+    renderer_dependence: "continuous_manifold"
+    code_path: "experiments/cognitive_trials/"
+    success_criteria:
+      metric: "cosine_similarity"
+      threshold: 0.5
+      direction: "above"
+    status: "re-verified"
+    notes: >
+      Previously stuck at 0.42 cosine sim under proxy renderer.
+      After physics fix: ~0.519 visual, ~0.550 audio.
+      Renderer fix removed artificial ceiling.
+
+  - id: "exp-23"
+    name: "Foveated Regression (Physics Fix Re-Run)"
+    track: "B"
+    renderer_dependence: "resolution_dependent"
+    code_path: "experiments/cognitive_trials/"
+    success_criteria:
+      metric: "cosine_similarity"
+      threshold: 0.35
+      direction: "above"
+    status: "re-verified"
+    notes: >
+      Global 0.28 -> foveated 0.42 cosine similarity (+50%).
+      Proves spatially nonuniform information in rendered images.
+      Zoom reveals geometry-dependent detail.
+
+  - id: "exp-24"
+    name: "Adaptive Attention (Multi-Head Foveation)"
+    track: "B"
+    renderer_dependence: "resolution_dependent"
+    code_path: "experiments/cognitive_trials/"
+    success_criteria:
+      metric: "cosine_similarity"
+      threshold: 0.5
+      direction: "above"
+    status: "untested"
+    depends_on: ["exp-23"]
+    notes: >
+      First run shows attention collapse (cosine ~0.427, near-zero
+      center variance). Needs entropy regularization + diversity
+      constraints between heads.
+
+  - id: "exp-25"
+    name: "Dual-Channel Galois Rendering Validation"
+    track: "B"
+    renderer_dependence: "continuous_manifold"
+    code_path: "hemoc/render/dual_channel_renderer.py"
+    success_criteria:
+      metric: "galois_valid_rate"
+      threshold: 0.99
+      direction: "above"
+    status: "untested"
+    notes: >
+      Validate that dual h_L/h_R rendering maintains phi-coupling.
+      First integration test of the Galois verification architecture.
+
+  - id: "exp-26"
+    name: "Phillips Matrix Invariant Verification (Full Suite)"
+    track: "B"
+    renderer_dependence: "discrete_invariant"
+    code_path: "hemoc/theory/invariant_verifier.py"
+    success_criteria:
+      metric: "all_theorems_pass"
+      threshold: 1.0
+      direction: "equals"
+    status: "untested"
+    notes: >
+      Clean-room re-derivation and verification of all 15 Phillips
+      theorems. Includes fuzz harness for conjecture testing.
+
+  - id: "exp-27"
+    name: "Collision Universality (Conjecture 3)"
+    track: "B"
+    renderer_dependence: "discrete_invariant"
+    code_path: "hemoc/theory/invariant_verifier.py"
+    success_criteria:
+      metric: "collision_14_rate"
+      threshold: 0.95
+      direction: "above"
+    status: "untested"
+    notes: >
+      Test whether collision count of 14 depends ONLY on sign pattern.
+      Uses fuzz_entries() with 1000+ trials.
+
+  - id: "exp-28"
+    name: "Golden Hadamard Classification (Conjecture 5)"
+    track: "B"
+    renderer_dependence: "discrete_invariant"
+    code_path: "hemoc/theory/golden_hadamard.py"
+    success_criteria:
+      metric: "all_axioms_pass"
+      threshold: 1.0
+      direction: "equals"
+    status: "untested"
+    notes: >
+      Verify all 5 GH axioms for the Phillips matrix.
+      Scan random sign patterns for other GH family members.
+
+  - id: "exp-29"
+    name: "Quasicrystalline Reservoir vs Random ESN"
+    track: "B"
+    renderer_dependence: "discrete_invariant"
+    code_path: "_SYNERGIZED_SYSTEM/backend/engine/geometry/quasicrystal_architecture.py"
+    success_criteria:
+      metric: "spectral_radius_stability"
+      threshold: 0.0
+      direction: "informational"
+    status: "untested"
+    notes: >
+      Ablation: replace random reservoir with Gram-tiled reservoir.
+      Measure spectral radius, memory horizon, robustness under perturbation.
+
+  - id: "exp-30"
+    name: "Padovan vs Uniform Cascade Stepping"
+    track: "B"
+    renderer_dependence: "discrete_invariant"
+    code_path: "_SYNERGIZED_SYSTEM/backend/engine/geometry/quasicrystal_architecture.py"
+    success_criteria:
+      metric: "temporal_coverage"
+      threshold: 0.0
+      direction: "informational"
+    status: "untested"
+    notes: >
+      Compare Padovan-stepped cascade (rho-governed) with uniform
+      time stepping. Measure temporal scale coverage and energy stability.

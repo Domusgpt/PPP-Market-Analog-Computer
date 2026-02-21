@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "hemoc"
+version = "0.1.0"
+description = "Hexagonal Emergent Moire Optical Cognition — canonical math spine, verification, and experiment registry"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Paul Phillips"},
+]
+
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+gpu = [
+    "torch>=2.0",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[project.scripts]
+hemoc = "hemoc.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hemoc*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
