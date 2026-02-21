@@ -21,7 +21,7 @@ Usage:
 import numpy as np
 import argparse
 from pathlib import Path
-from typing import Optional, Tuple, List, Dict, Union
+from typing import Optional, Tuple, List, Dict, Union, Literal
 from dataclasses import dataclass
 import json
 
@@ -32,6 +32,13 @@ from .physics.talbot_resonator import TalbotResonator
 from .kirigami.tristable_cell import TristableCell, CellState
 from .kirigami.kirigami_sheet import KirigamiSheet, SheetConfig, CutPattern
 from .control.tripole_actuator import TripoleActuator
+from .geometry.quasicrystal_architecture import (
+    QuasicrystallineReservoir,
+    NumberFieldHierarchy,
+    GaloisVerifier,
+    PadovanCascade,
+    FiveFoldAllocator,
+)
 
 
 @dataclass
@@ -44,6 +51,7 @@ class EncoderConfig:
     n_angle_states: int = 5                     # Commensurate angle states
     n_gap_states: int = 3                       # Talbot gap states
     input_channels: int = 1                     # Number of input channels
+    architecture_mode: Literal["legacy", "quasicrystal"] = "legacy"
 
 
 class OpticalKirigamiEncoder:
@@ -72,6 +80,7 @@ class OpticalKirigamiEncoder:
 
     def __init__(self, config: Optional[EncoderConfig] = None):
         self.config = config or EncoderConfig()
+        self.architecture_mode = self.config.architecture_mode
 
         # Initialize physics components
         self.lattice = TrilaticLattice(self.config.lattice_constant)
@@ -106,6 +115,34 @@ class OpticalKirigamiEncoder:
         # Encoding state
         self.current_angle_idx = 0
         self.current_gap_idx = 1  # Start at first integer Talbot
+
+        # Optional quasicrystal architecture (Phase A integration spine)
+        self._qc: Optional[Dict[str, object]] = None
+        if self.architecture_mode == "quasicrystal":
+            qc_grid = min(self.config.grid_size)
+            self._qc = {
+                "hierarchy": NumberFieldHierarchy(base_size=8),
+                "reservoir": QuasicrystallineReservoir(n_reservoir=64, input_dim=8),
+                "verifier": GaloisVerifier(tolerance=1e-6),
+                "cascade": PadovanCascade(
+                    max_steps=max(20, self.config.cascade_steps * 4),
+                    grid_size=qc_grid,
+                    coupling=0.3,
+                ),
+                "allocator": FiveFoldAllocator(total_budget=1.0),
+            }
+
+    def _project_to_qc_vector(self, data: np.ndarray) -> np.ndarray:
+        """Project a 2D field to an 8D summary vector for quasicrystal dynamics."""
+        splits = np.array_split(data.flatten(), 8)
+        return np.array([float(np.mean(s)) if len(s) else 0.0 for s in splits], dtype=np.float64)
+
+    def _reshape_reservoir_to_grid(self, reservoir_state: np.ndarray, grid_size: int) -> np.ndarray:
+        """Map a 1D reservoir state into a 2D grid for cascade forcing."""
+        side = grid_size
+        needed = side * side
+        tiled = np.resize(reservoir_state, needed)
+        return tiled.reshape(side, side)
 
     def _setup_state_spaces(self):
         """Setup discrete state spaces for angle and gap control."""
@@ -169,26 +206,66 @@ class OpticalKirigamiEncoder:
         # Resize to grid size
         data = self._resize_to_grid(data)
 
-        # Inject into Layer 1 (primary encoding)
-        self.layer1.reset()
-        self.layer1.inject_input(data, input_scale=0.8)
+        qc_stats = None
+        if self.architecture_mode == "quasicrystal" and self._qc is not None:
+            hierarchy: NumberFieldHierarchy = self._qc["hierarchy"]  # type: ignore[assignment]
+            reservoir: QuasicrystallineReservoir = self._qc["reservoir"]  # type: ignore[assignment]
+            verifier: GaloisVerifier = self._qc["verifier"]  # type: ignore[assignment]
+            cascade: PadovanCascade = self._qc["cascade"]  # type: ignore[assignment]
+            allocator: FiveFoldAllocator = self._qc["allocator"]  # type: ignore[assignment]
 
-        # Run reservoir dynamics
-        self.layer1.run_cascade(
-            n_steps=self.config.cascade_steps,
-            dt=0.01
-        )
+            qvec = self._project_to_qc_vector(data)
+            hierarchy_states = hierarchy.step(qvec)
+            reservoir_state = reservoir.step(hierarchy_states[1])
 
-        # Complementary encoding for Layer 2
-        # Use inverted/phase-shifted data for bichromatic logic
-        complement_data = 1.0 - data
-        self.layer2.reset()
-        self.layer2.inject_input(complement_data, input_scale=0.6)
-        self.layer2.run_cascade(n_steps=self.config.cascade_steps // 2)
+            cascade_grid = self._reshape_reservoir_to_grid(reservoir_state, cascade.grid_size)
+            cascade.inject(cascade_grid)
+            cascade_result = cascade.run(n_epochs=1)
 
-        # Get layer states
-        layer1_state = self.layer1.get_state_field()
-        layer2_state = self.layer2.get_state_field()
+            layer1_state = cascade_result["final_state"]
+            layer2_state = 1.0 - layer1_state
+
+            # Upsample to configured moiré grid when cascade grid is smaller
+            if layer1_state.shape != self.config.grid_size:
+                layer1_state = self._resize_to_grid(layer1_state)
+                layer2_state = self._resize_to_grid(layer2_state)
+
+            galois = verifier.verify(qvec)
+            qc_stats = {
+                "galois_valid": bool(galois["valid"]),
+                "galois_deviation": float(galois["deviation"]),
+                "galois_ratio": float(galois["ratio"]),
+                "galois_ratio_valid": bool(galois["ratio_valid"]),
+                "galois_ratio_deviation": float(galois["ratio_deviation"]),
+                "galois_product": float(galois["product"]),
+                "galois_expected_product": float(galois["expected_product"]),
+                "galois_product_valid": bool(galois["product_valid"]),
+                "galois_product_deviation": float(galois["product_deviation"]),
+                "reservoir_spectral_radius": float(reservoir.spectral_radius),
+                "padovan_steps": int(cascade_result["n_padovan_steps"]),
+                "allocator_per_node": float(allocator.per_node_budget),
+            }
+        else:
+            # Inject into Layer 1 (primary encoding)
+            self.layer1.reset()
+            self.layer1.inject_input(data, input_scale=0.8)
+
+            # Run reservoir dynamics
+            self.layer1.run_cascade(
+                n_steps=self.config.cascade_steps,
+                dt=0.01
+            )
+
+            # Complementary encoding for Layer 2
+            # Use inverted/phase-shifted data for bichromatic logic
+            complement_data = 1.0 - data
+            self.layer2.reset()
+            self.layer2.inject_input(complement_data, input_scale=0.6)
+            self.layer2.run_cascade(n_steps=self.config.cascade_steps // 2)
+
+            # Get layer states
+            layer1_state = self.layer1.get_state_field()
+            layer2_state = self.layer2.get_state_field()
 
         # Get current configuration
         twist_angle = self.commensurate_angles[self.current_angle_idx]
@@ -206,7 +283,7 @@ class OpticalKirigamiEncoder:
         # Extract features from pattern
         features = self._extract_features(pattern, layer1_state, layer2_state)
 
-        return {
+        result = {
             "moire_intensity": pattern.intensity_field,
             "moire_spectral": pattern.spectral_field,
             "layer1_state": layer1_state,
@@ -214,8 +291,12 @@ class OpticalKirigamiEncoder:
             "features": features,
             "twist_angle": twist_angle,
             "gap": gap_state.gap,
-            "logic_mode": gap_state.logic_polarity
+            "logic_mode": gap_state.logic_polarity,
+            "architecture_mode": self.architecture_mode,
         }
+        if qc_stats is not None:
+            result["quasicrystal"] = qc_stats
+        return result
 
     def encode_audio(
         self,
@@ -301,12 +382,17 @@ class OpticalKirigamiEncoder:
         encoded_sequence = []
 
         if not use_reservoir_memory:
-            self.layer1.reset()
-            self.layer2.reset()
+            if self.architecture_mode == "quasicrystal" and self._qc is not None:
+                self._qc["hierarchy"].reset()  # type: ignore[index]
+                self._qc["reservoir"].reset()  # type: ignore[index]
+                self._qc["cascade"].reset()  # type: ignore[index]
+            else:
+                self.layer1.reset()
+                self.layer2.reset()
 
         for t, frame in enumerate(sequence):
             # Partial reset for fading memory
-            if use_reservoir_memory:
+            if use_reservoir_memory and self.architecture_mode != "quasicrystal":
                 # Apply decay to existing state
                 current_state = self.layer1.get_state_field()
                 decayed = current_state * 0.9  # Exponential decay
@@ -567,6 +653,11 @@ def main():
         "--grid-size", type=int, default=64,
         help="Grid resolution"
     )
+    parser.add_argument(
+        "--architecture-mode", type=str, default="legacy",
+        choices=["legacy", "quasicrystal"],
+        help="Computation architecture mode"
+    )
 
     args = parser.parse_args()
 
@@ -578,7 +669,10 @@ def main():
             print("Error: --input required for encode mode")
             return
 
-        config = EncoderConfig(grid_size=(args.grid_size, args.grid_size))
+        config = EncoderConfig(
+            grid_size=(args.grid_size, args.grid_size),
+            architecture_mode=args.architecture_mode,
+        )
         encoder = OpticalKirigamiEncoder(config)
 
         input_path = Path(args.input)
