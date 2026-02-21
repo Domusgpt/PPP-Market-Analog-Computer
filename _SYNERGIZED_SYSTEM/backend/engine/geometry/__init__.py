@@ -20,6 +20,18 @@ from .quaternion_4d import (
     QuaternionRotation,
     IsoclinicRotation,
 )
+from .quasicrystal_architecture import (
+    RHO,
+    QuasicrystallineReservoir,
+    GoldenMRA,
+    NumberFieldHierarchy,
+    GaloisVerifier,
+    PhasonErrorCorrector,
+    CollisionAwareEncoder,
+    PadovanCascade,
+    FiveFoldAllocator,
+)
+
 from .e8_projection import (
     E8ProjectionPipeline,
     E8Root,
@@ -77,4 +89,13 @@ __all__ = [
     "PHILLIPS_U_L",
     "PHILLIPS_U_R",
     "COLUMN_TRICHOTOMY",
+    "RHO",
+    "QuasicrystallineReservoir",
+    "GoldenMRA",
+    "NumberFieldHierarchy",
+    "GaloisVerifier",
+    "PhasonErrorCorrector",
+    "CollisionAwareEncoder",
+    "PadovanCascade",
+    "FiveFoldAllocator",
 ]

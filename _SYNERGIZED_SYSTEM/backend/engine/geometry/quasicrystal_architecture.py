@@ -427,6 +427,37 @@ class NumberFieldLevel:
     coupling: float          # inter-level coupling strength
 
 
+# Canonical hierarchy constants from the discriminant ladder specification
+# damping(level) = 1 / algebraic_number, coupling(level) = 1 / |discriminant|
+NUMBER_FIELD_LEVEL_SPECS = [
+    {
+        "name": "Q",
+        "algebraic_number": 1.0,
+        "discriminant": 1,
+        "degree": 1,
+    },
+    {
+        "name": "Q(sqrt(5))",
+        "algebraic_number": PHI,
+        "discriminant": 5,
+        "degree": 2,
+    },
+    {
+        "name": "Q(rho)",
+        "algebraic_number": RHO,
+        "discriminant": -23,
+        "degree": 3,
+    },
+]
+
+
+def _derive_level_parameters(spec: Dict[str, float]) -> Tuple[float, float]:
+    """Compute damping/coupling from the documented algebraic formulas."""
+    damping = 1.0 / float(spec["algebraic_number"])
+    coupling = 1.0 / abs(int(spec["discriminant"]))
+    return damping, coupling
+
+
 class NumberFieldHierarchy:
     """
     Three-level computational hierarchy governed by number fields.
@@ -451,32 +482,17 @@ class NumberFieldHierarchy:
     def __init__(self, base_size: int = 32):
         self.base_size = base_size
 
-        self.levels = [
-            NumberFieldLevel(
-                name="Q",
-                algebraic_number=1.0,
-                discriminant=1,
-                degree=1,
-                damping=0.5,       # Fast, digital
-                coupling=0.0,      # No self-coupling
-            ),
-            NumberFieldLevel(
-                name="Q(sqrt(5))",
-                algebraic_number=PHI,
-                discriminant=5,
-                degree=2,
-                damping=1.0 / PHI,   # ≈ 0.618 — golden damping
-                coupling=1.0 / 5,    # disc(φ) = 5
-            ),
-            NumberFieldLevel(
-                name="Q(rho)",
-                algebraic_number=RHO,
-                discriminant=-23,
-                degree=3,
-                damping=1.0 / RHO,   # ≈ 0.755 — plastic damping
-                coupling=1.0 / 23,   # |disc(ρ)| = 23
-            ),
-        ]
+        self.levels = []
+        for spec in NUMBER_FIELD_LEVEL_SPECS:
+            damping, coupling = _derive_level_parameters(spec)
+            self.levels.append(NumberFieldLevel(
+                name=spec["name"],
+                algebraic_number=float(spec["algebraic_number"]),
+                discriminant=int(spec["discriminant"]),
+                degree=int(spec["degree"]),
+                damping=damping,
+                coupling=coupling,
+            ))
 
         # State vectors for each level
         self.states = [np.zeros(base_size) for _ in self.levels]
@@ -581,6 +597,29 @@ class NumberFieldHierarchy:
 
         return histories
 
+    def validate_parameterization(self) -> Dict[str, object]:
+        """Validate damping/coupling values against documented formulas."""
+        level_reports = []
+        all_valid = True
+
+        for level in self.levels:
+            expected_damping = 1.0 / level.algebraic_number
+            expected_coupling = 1.0 / abs(level.discriminant)
+            damping_valid = np.isclose(level.damping, expected_damping, atol=1e-12)
+            coupling_valid = np.isclose(level.coupling, expected_coupling, atol=1e-12)
+            all_valid = all_valid and damping_valid and coupling_valid
+            level_reports.append({
+                'name': level.name,
+                'expected_damping': float(expected_damping),
+                'actual_damping': float(level.damping),
+                'expected_coupling': float(expected_coupling),
+                'actual_coupling': float(level.coupling),
+                'damping_valid': bool(damping_valid),
+                'coupling_valid': bool(coupling_valid),
+            })
+
+        return {'all_valid': all_valid, 'levels': level_reports}
+
     def reset(self):
         """Reset all level states."""
         self.states = [np.zeros(self.base_size) for _ in self.levels]
@@ -648,7 +687,7 @@ class GaloisVerifier:
 
     def verify(self, v8: np.ndarray) -> Dict:
         """
-        Compute and verify the Galois coupling.
+        Compute and verify the Galois coupling using ratio and product invariants.
 
         Parameters
         ----------
@@ -665,21 +704,27 @@ class GaloisVerifier:
 
         self.total_checks += 1
 
-        if left_norm < 1e-12:
-            # Zero vector — trivially satisfies coupling
-            return {
-                'left': left, 'right': right,
-                'ratio': float('nan'),
-                'expected_ratio': PHI,
-                'deviation': 0.0,
-                'valid': True,
-            }
+        ratio = float('nan')
+        ratio_deviation = 0.0
+        ratio_valid = True
+        if left_norm >= 1e-12:
+            ratio = right_norm / left_norm
+            ratio_deviation = float(abs(ratio - PHI))
+            ratio_valid = ratio_deviation < self.tolerance
 
-        ratio = right_norm / left_norm
-        deviation = abs(ratio - PHI)
+        vector_norm_sq = float(np.dot(v8, v8))
+        product = float(left_norm * right_norm)
+        expected_product = float(PHI * (left_norm ** 2))
+        expected_norm_product = float(np.sqrt(5) * vector_norm_sq / 2.0)
+        product_scale = max(abs(expected_product), 1e-12)
+        product_deviation = float(abs(product - expected_product))
+        norm_product_deviation = float(abs(product - expected_norm_product))
+        product_valid = product_deviation < self.tolerance * product_scale
+
+        deviation = max(ratio_deviation, product_deviation)
         self.max_deviation = max(self.max_deviation, deviation)
 
-        valid = deviation < self.tolerance
+        valid = ratio_valid and product_valid
         if not valid:
             self.error_count += 1
 
@@ -688,8 +733,16 @@ class GaloisVerifier:
             'right': right,
             'ratio': float(ratio),
             'expected_ratio': PHI,
+            'ratio_deviation': float(ratio_deviation),
+            'product': float(product),
+            'expected_product': float(expected_product),
+            'expected_norm_product': float(expected_norm_product),
+            'product_deviation': float(product_deviation),
+            'norm_product_deviation': float(norm_product_deviation),
             'deviation': float(deviation),
-            'valid': valid,
+            'ratio_valid': bool(ratio_valid),
+            'product_valid': bool(product_valid),
+            'valid': bool(valid),
         }
 
     def verify_batch(self, vectors: np.ndarray) -> Dict:
@@ -706,14 +759,28 @@ class GaloisVerifier:
         Dict with batch statistics
         """
         results = [self.verify(v) for v in vectors]
-        deviations = [r['deviation'] for r in results if not np.isnan(r['ratio'])]
+        ratio_deviations = [r['ratio_deviation'] for r in results if not np.isnan(r['ratio'])]
+        product_deviations = [r['product_deviation'] for r in results]
+        norm_product_deviations = [r['norm_product_deviation'] for r in results]
+
+        ratio_failures = sum(1 for r in results if not r['ratio_valid'])
+        product_failures = sum(1 for r in results if not r['product_valid'])
+        combined_failures = sum(1 for r in results if not r['valid'])
 
         return {
             'n_vectors': len(vectors),
             'all_valid': all(r['valid'] for r in results),
-            'max_deviation': max(deviations) if deviations else 0.0,
-            'mean_deviation': float(np.mean(deviations)) if deviations else 0.0,
-            'error_rate': sum(1 for r in results if not r['valid']) / len(results),
+            'max_deviation': max([r['deviation'] for r in results]) if results else 0.0,
+            'mean_ratio_deviation': float(np.mean(ratio_deviations)) if ratio_deviations else 0.0,
+            'max_ratio_deviation': max(ratio_deviations) if ratio_deviations else 0.0,
+            'mean_product_deviation': float(np.mean(product_deviations)) if product_deviations else 0.0,
+            'max_product_deviation': max(product_deviations) if product_deviations else 0.0,
+            'mean_norm_product_deviation': float(np.mean(norm_product_deviations)) if norm_product_deviations else 0.0,
+            'max_norm_product_deviation': max(norm_product_deviations) if norm_product_deviations else 0.0,
+            'ratio_failures': ratio_failures,
+            'product_failures': product_failures,
+            'combined_failures': combined_failures,
+            'error_rate': combined_failures / len(results) if results else 0.0,
         }
 
     def verify_e8_roots(self) -> Dict:
@@ -732,25 +799,13 @@ class GaloisVerifier:
         return self.error_count / self.total_checks
 
     def sqrt5_coupling_check(self, v8: np.ndarray) -> Dict:
-        """
-        Check the φ product coupling: ||U_L x|| · ||U_R x|| = φ · ||U_L x||².
-
-        Since U_R = φ·U_L, we have ||U_R x|| = φ·||U_L x||, so the product
-        is φ · ||U_L x||². The √5 identity applies to row norms of the matrix
-        itself: ||row_L|| · ||row_R|| = √(3-φ) · √(φ+2) = √5.
-        """
-        left, right = self.compute_dual(v8)
-        left_norm = np.linalg.norm(left)
-        right_norm = np.linalg.norm(right)
-
-        product = left_norm * right_norm
-        expected = PHI * left_norm ** 2
-
+        """Backward-compatible product coupling helper using dual invariants."""
+        result = self.verify(v8)
         return {
-            'product': float(product),
-            'expected': float(expected),
-            'deviation': float(abs(product - expected)),
-            'valid': abs(product - expected) < self.tolerance * max(expected, 1e-10),
+            'product': result['product'],
+            'expected': result['expected_product'],
+            'deviation': result['product_deviation'],
+            'valid': result['product_valid'],
             'sqrt5_row_norm_product': float(np.sqrt((3 - PHI) * (PHI + 2))),
         }
 
